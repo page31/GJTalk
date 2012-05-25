@@ -11,12 +11,12 @@ UINT CGJWnd::GetClassStyle() const
 }
 LRESULT CGJWnd::OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled)
 {
-	long styleValue=::GetWindowLong(*this,GWL_STYLE);
+	long styleValue=::GetWindowLong(m_hWnd,GWL_STYLE);
 	styleValue&=~WS_CAPTION;
-	::SetWindowLong(*this,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN);
+	::SetWindowLong(m_hWnd,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN);
 	
-	m_pm.Init(m_hWnd);
-	CDialogBuilder builder; 	turn 0;
+	m_pm.Init(m_hWnd); 
+	return 0;
 }
 
 

@@ -39,6 +39,8 @@
  
 using namespace DuiLib;
 
+
+
 #ifdef _DEBUG
 #   ifdef _UNICODE
 #       pragma comment(lib, "..\\bin\\DuiLib_ud.lib")
@@ -67,3 +69,4 @@ using namespace DuiLib;
 #endif
 
 
+#pragma comment(lib,"..\\bin\\XMPP.lib")
