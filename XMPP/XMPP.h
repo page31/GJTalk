@@ -28,7 +28,7 @@
 /*
  * The XMPP class implements the (COM) interface to the XMPP functionality. 
  */
-class XMPP 
+class AFX_CLASS_EXPORT XMPP 
 {
 private:
 	/*
@@ -48,36 +48,36 @@ public:
 	~XMPP();
 
 	/* IXMPP implementation */
-	STDMETHOD(SetProxySettings)(BSTR method,
-		BSTR server, USHORT port,
-		BSTR username, BSTR password,
-		BOOL useSSL = FALSE);
+	STDMETHOD(SetProxySettings)(LPTSTR method,
+		LPTSTR server, USHORT port,
+		LPTSTR username, LPTSTR password,
+		bool useSSL = false);
 
-	STDMETHOD(Connect)(BSTR server, USHORT port, BOOL useSSL = FALSE);
+	STDMETHOD(Connect)(LPTSTR server, USHORT port, bool useSSL = false);
 	STDMETHOD(Disconnect)();
 	STDMETHOD(StartTLS)();
 	STDMETHOD(StartSC)();
 
 	STDMETHOD(SendXML)(IDispatch* pDisp);
-	STDMETHOD(SendText)(BSTR strText);
+	STDMETHOD(SendText)(LPTSTR strText);
 
-	STDMETHOD(get_ConnectionIP)(BSTR *strIP);
-	STDMETHOD(get_ConnectionFQDN)(BSTR *fqdn);
+	STDMETHOD(get_ConnectionIP)(LPTSTR *strIP);
+	STDMETHOD(get_ConnectionFQDN)(LPTSTR *fqdn);
 
-	STDMETHOD(put_ConnectedHandler)(BSTR handler);
-	STDMETHOD(put_DisconnectedHandler)(BSTR handler);
-	STDMETHOD(put_IQHandler)(BSTR handler);
-	STDMETHOD(put_MessageHandler)(BSTR handler);
-	STDMETHOD(put_PresenceHandler)(BSTR handler);
-	STDMETHOD(put_DocumentStartHandler)(BSTR handler);
-	STDMETHOD(put_DocumentEndHandler)(BSTR handler);
-	STDMETHOD(put_StreamHandler)(BSTR handler);
-	STDMETHOD(put_StartTLSSucceededHandler)(BSTR handler);
-	STDMETHOD(put_StartTLSFailedHandler)(BSTR handler);
-	STDMETHOD(put_StartSCSucceededHandler)(BSTR handler);
-	STDMETHOD(put_StartSCFailedHandler)(BSTR handler);
+	STDMETHOD(put_ConnectedHandler)(LPTSTR handler);
+	STDMETHOD(put_DisconnectedHandler)(LPTSTR handler);
+	STDMETHOD(put_IQHandler)(LPTSTR handler);
+	STDMETHOD(put_MessageHandler)(LPTSTR handler);
+	STDMETHOD(put_PresenceHandler)(LPTSTR handler);
+	STDMETHOD(put_DocumentStartHandler)(LPTSTR handler);
+	STDMETHOD(put_DocumentEndHandler)(LPTSTR handler);
+	STDMETHOD(put_StreamHandler)(LPTSTR handler);
+	STDMETHOD(put_StartTLSSucceededHandler)(LPTSTR handler);
+	STDMETHOD(put_StartTLSFailedHandler)(LPTSTR handler);
+	STDMETHOD(put_StartSCSucceededHandler)(LPTSTR handler);
+	STDMETHOD(put_StartSCFailedHandler)(LPTSTR handler);
 
-	STDMETHOD(get_ServerFQDN)(LPBSTR serverFQDN);
+	STDMETHOD(get_ServerFQDN)(LPTSTR *serverFQDN);
 
 	/* Other methods */
 	//virtual void SetMainWnd(MainWnd* pMainWnd);

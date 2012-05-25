@@ -47,7 +47,7 @@ public:
 
 	void OnConnected();
 	void OnDisconnected();
-	void OnStanza(MSXML2::IXMLDOMDocument *pXMLDoc, const BSTR stanzaName);
+	void OnStanza(MSXML2::IXMLDOMDocument *pXMLDoc, const LPTSTR stanzaName);
 	void OnDocumentStart(const _bstr_t& xmlFragment);
 	void OnDocumentEnd(const _bstr_t& xmlFragment);
 	void OnStartTLSSucceeded();
@@ -55,17 +55,17 @@ public:
 	void OnStartSCSucceeded();
 	void OnStartSCFailed();
 
-	void SetConnectedHandler(const BSTR handler);
-	void SetDisconnectedHandler(const BSTR handler);
-	void SetIQHandler(const BSTR handler);
-	void SetMessageHandler(const BSTR handler);
-	void SetPresenceHandler(const BSTR handler);
-	void SetDocumentStartHandler(const BSTR handler);
-	void SetDocumentEndHandler(const BSTR handler);
-	void SetStreamHandler(const BSTR handler);
-	void SetStartTLSSucceededHandler(const BSTR handler);
-	void SetStartTLSFailedHandler(const BSTR handler);
-	void SetStartSCSucceededHandler(const BSTR handler);
-	void SetStartSCFailedHandler(const BSTR handler);
+	void SetConnectedHandler(const LPTSTR handler);
+	void SetDisconnectedHandler(const LPTSTR handler);
+	void SetIQHandler(const LPTSTR handler);
+	void SetMessageHandler(const LPTSTR handler);
+	void SetPresenceHandler(const LPTSTR handler);
+	void SetDocumentStartHandler(const LPTSTR handler);
+	void SetDocumentEndHandler(const LPTSTR handler);
+	void SetStreamHandler(const LPTSTR handler);
+	void SetStartTLSSucceededHandler(const LPTSTR handler);
+	void SetStartTLSFailedHandler(const LPTSTR handler);
+	void SetStartSCSucceededHandler(const LPTSTR handler);
+	void SetStartSCFailedHandler(const LPTSTR handler);
 
 };

@@ -44,12 +44,12 @@ XMPP::~XMPP()
  * Sets the proxy settings used for connecting to the XMPP server.
  */
 STDMETHODIMP XMPP::SetProxySettings(
-	BSTR method,
-	BSTR server,
+	LPTSTR method,
+	LPTSTR server,
 	USHORT port,
-	BSTR username,
-	BSTR password,
-	BOOL useSSL)
+	LPTSTR username,
+	LPTSTR password,
+	bool useSSL)
 {
 	if(_wcsicmp(method, L"none") == 0)
 	{
@@ -80,7 +80,7 @@ STDMETHODIMP XMPP::SetProxySettings(
 /*
  * Attempts to connect to the given XMPP server.
  */
-STDMETHODIMP XMPP::Connect(BSTR server, USHORT port, BOOL useSSL)
+STDMETHODIMP XMPP::Connect(LPTSTR server, USHORT port, bool useSSL)
 {
 	m_ConnectionManager.Connect(server, port, useSSL);
 	return S_OK;
@@ -120,7 +120,7 @@ STDMETHODIMP XMPP::StartSC()
 STDMETHODIMP XMPP::SendXML(IDispatch* pDisp)
 {
 	MSXML2::IXMLDOMDocument *pXMLDoc = NULL;
-	BSTR xmlString;
+	LPTSTR xmlString;
 
 	if(pDisp != NULL &&
 		SUCCEEDED(pDisp->QueryInterface(IID_IXMLDOMDocument,
@@ -142,7 +142,7 @@ STDMETHODIMP XMPP::SendXML(IDispatch* pDisp)
 /*
  * Sends a string of text to the XMPP server.
  */
-STDMETHODIMP XMPP::SendText(BSTR strText)
+STDMETHODIMP XMPP::SendText(LPTSTR strText)
 {
 	
 	m_ConnectionManager.SendText(std::wstring(strText));
@@ -152,7 +152,7 @@ STDMETHODIMP XMPP::SendText(BSTR strText)
 /*
  * Returns the local IP used by the client to connect to the server.
  */
-STDMETHODIMP XMPP::get_ConnectionIP(BSTR *strIP)
+STDMETHODIMP XMPP::get_ConnectionIP(LPTSTR *strIP)
 {
 	*strIP = ::SysAllocString(m_ConnectionManager.GetConnectionIP().c_str());
 	return S_OK;
@@ -161,7 +161,7 @@ STDMETHODIMP XMPP::get_ConnectionIP(BSTR *strIP)
 /*
  * Returns the Fully Qualified Domain name of the XMPP server.
  */
-STDMETHODIMP XMPP::get_ConnectionFQDN(BSTR *serverFQDN)
+STDMETHODIMP XMPP::get_ConnectionFQDN(LPTSTR *serverFQDN)
 {
 	*serverFQDN = ::SysAllocString(m_ConnectionManager.GetServerFQDN().c_str());
 	return S_OK;
@@ -170,7 +170,7 @@ STDMETHODIMP XMPP::get_ConnectionFQDN(BSTR *serverFQDN)
 /*
  * Sets the handler for the event generated when connection is set up.
  */
-STDMETHODIMP XMPP::put_ConnectedHandler(BSTR handler)
+STDMETHODIMP XMPP::put_ConnectedHandler(LPTSTR handler)
 {
 	m_Handlers.SetConnectedHandler(handler);
 	return S_OK;
@@ -179,7 +179,7 @@ STDMETHODIMP XMPP::put_ConnectedHandler(BSTR handler)
 /*
  * Sets the handler for the event generated when the connection has ended.
  */
-STDMETHODIMP XMPP::put_DisconnectedHandler(BSTR handler)
+STDMETHODIMP XMPP::put_DisconnectedHandler(LPTSTR handler)
 {
 	m_Handlers.SetDisconnectedHandler(handler);
 	return S_OK;
@@ -188,7 +188,7 @@ STDMETHODIMP XMPP::put_DisconnectedHandler(BSTR handler)
 /*
  * Sets the handler for the event generated when an iq stanza is received.
  */
-STDMETHODIMP XMPP::put_IQHandler(BSTR handler)
+STDMETHODIMP XMPP::put_IQHandler(LPTSTR handler)
 {
 	
 	m_Handlers.SetIQHandler(handler);
@@ -198,7 +198,7 @@ STDMETHODIMP XMPP::put_IQHandler(BSTR handler)
 /*
  * Sets the handler for the event generated when a message stanza is received.
  */
-STDMETHODIMP XMPP::put_MessageHandler(BSTR handler)
+STDMETHODIMP XMPP::put_MessageHandler(LPTSTR handler)
 {
 	m_Handlers.SetMessageHandler(handler);
 	return S_OK;
@@ -208,7 +208,7 @@ STDMETHODIMP XMPP::put_MessageHandler(BSTR handler)
  * Sets the handler for the event generated when a presence
  * stanza is received.
  */
-STDMETHODIMP XMPP::put_PresenceHandler(BSTR handler)
+STDMETHODIMP XMPP::put_PresenceHandler(LPTSTR handler)
 {
 	m_Handlers.SetPresenceHandler(handler);
 	return S_OK;
@@ -218,7 +218,7 @@ STDMETHODIMP XMPP::put_PresenceHandler(BSTR handler)
  * Sets the handler for the event generated the initial XML is received from
  * the server.
  */
-STDMETHODIMP XMPP::put_DocumentStartHandler(BSTR handler)
+STDMETHODIMP XMPP::put_DocumentStartHandler(LPTSTR handler)
 {
 	m_Handlers.SetDocumentStartHandler(handler);
 	return S_OK;
@@ -228,7 +228,7 @@ STDMETHODIMP XMPP::put_DocumentStartHandler(BSTR handler)
  * Sets the handler for the event generated when </stream:stream> is
  * received from the server.
  */
-STDMETHODIMP XMPP::put_DocumentEndHandler(BSTR handler)
+STDMETHODIMP XMPP::put_DocumentEndHandler(LPTSTR handler)
 {
 	m_Handlers.SetDocumentEndHandler(handler);
 	return S_OK;
@@ -238,7 +238,7 @@ STDMETHODIMP XMPP::put_DocumentEndHandler(BSTR handler)
  * Sets the handler for the event generated for XMPP stanzas with the stream
  * prefix.
  */
-STDMETHODIMP XMPP::put_StreamHandler(BSTR handler)
+STDMETHODIMP XMPP::put_StreamHandler(LPTSTR handler)
 {
 	m_Handlers.SetStreamHandler(handler);
 	return S_OK;
@@ -248,7 +248,7 @@ STDMETHODIMP XMPP::put_StreamHandler(BSTR handler)
  * Sets the handler for the event generated if a TLS connection is
  * successfully negotiated.
  */
-STDMETHODIMP XMPP::put_StartTLSSucceededHandler(BSTR handler)
+STDMETHODIMP XMPP::put_StartTLSSucceededHandler(LPTSTR handler)
 {
 	m_Handlers.SetStartTLSSucceededHandler(handler);
 	return S_OK;
@@ -258,7 +258,7 @@ STDMETHODIMP XMPP::put_StartTLSSucceededHandler(BSTR handler)
  * Sets the handler for the event generated if a TLS connection could not be
  * negotiated.
  */
-STDMETHODIMP XMPP::put_StartTLSFailedHandler(BSTR handler)
+STDMETHODIMP XMPP::put_StartTLSFailedHandler(LPTSTR handler)
 {
 	m_Handlers.SetStartTLSFailedHandler(handler);
 	return S_OK;
@@ -268,7 +268,7 @@ STDMETHODIMP XMPP::put_StartTLSFailedHandler(BSTR handler)
  * Sets the handler for the event generated if Stream Compression was
  * successfully initiated.
  */
-STDMETHODIMP XMPP::put_StartSCSucceededHandler(BSTR handler)
+STDMETHODIMP XMPP::put_StartSCSucceededHandler(LPTSTR handler)
 {
 	m_Handlers.SetStartSCSucceededHandler(handler);
 	return S_OK;
@@ -278,13 +278,13 @@ STDMETHODIMP XMPP::put_StartSCSucceededHandler(BSTR handler)
  * Sets the handler for the event generated if Stream Compression initiation
  * has failed.
  */
-STDMETHODIMP XMPP::put_StartSCFailedHandler(BSTR handler)
+STDMETHODIMP XMPP::put_StartSCFailedHandler(LPTSTR handler)
 {
 	m_Handlers.SetStartSCFailedHandler(handler);
 	return S_OK;
 }
 
-STDMETHODIMP XMPP::get_ServerFQDN(LPBSTR serverFQDN)
+STDMETHODIMP XMPP::get_ServerFQDN(LPTSTR *serverFQDN)
 {
 	*serverFQDN = ::SysAllocString(m_ConnectionManager.GetServerFQDN().c_str());
 	return S_OK;

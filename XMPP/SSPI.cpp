@@ -66,7 +66,7 @@ STDMETHODIMP SSPI::Reset()
 	m_fHaveCtxtHandle  = FALSE;
 	return S_OK;
 }
-STDMETHODIMP SSPI::GenerateResponse(BSTR Challenge, BOOL *Continue, BSTR *Response)
+STDMETHODIMP SSPI::GenerateResponse(LPTSTR Challenge, BOOL *Continue, BSTR *Response)
 {
 	/* Acquire a credentials handle if this is the first response */
 	if(m_fNewConversation == TRUE)

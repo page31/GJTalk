@@ -51,7 +51,7 @@ void XMPPHandlers::OnDisconnected()
 	//m_pMainWnd->Do(m_DisconnectedHandler, &_variant_t(""));
 }
 void XMPPHandlers::OnStanza(MSXML2::IXMLDOMDocument *pXMLDoc, 
-							const BSTR stanzaName)
+							const LPTSTR stanzaName)
 {
 	_bstr_t Handler;
 	if(!wcscmp(stanzaName, L"iq"))
@@ -93,51 +93,51 @@ void XMPPHandlers::OnStartSCFailed()
 	//m_pMainWnd->Do(m_StartSCFailedHandler, &_variant_t(""));
 }
 
-void XMPPHandlers::SetConnectedHandler(const BSTR handler)
+void XMPPHandlers::SetConnectedHandler(const LPTSTR handler)
 {
 	m_ConnectedHandler = handler;
 }
-void XMPPHandlers::SetDisconnectedHandler(const BSTR handler)
+void XMPPHandlers::SetDisconnectedHandler(const LPTSTR handler)
 {
 	m_DisconnectedHandler = handler;
 }
-void XMPPHandlers::SetIQHandler(const BSTR handler)
+void XMPPHandlers::SetIQHandler(const LPTSTR handler)
 {
 	m_IQHandler = handler;
 }
-void XMPPHandlers::SetMessageHandler(const BSTR handler)
+void XMPPHandlers::SetMessageHandler(const LPTSTR handler)
 {
 	m_MessageHandler = handler;
 }
-void XMPPHandlers::SetPresenceHandler(const BSTR handler)
+void XMPPHandlers::SetPresenceHandler(const LPTSTR handler)
 {
 	m_PresenceHandler = handler;
 }
-void XMPPHandlers::SetDocumentStartHandler(const BSTR handler)
+void XMPPHandlers::SetDocumentStartHandler(const LPTSTR handler)
 {
 	m_DocumentStartHandler = handler;
 }
-void XMPPHandlers::SetDocumentEndHandler(const BSTR handler)
+void XMPPHandlers::SetDocumentEndHandler(const LPTSTR handler)
 {
 	m_DocumentEndHandler = handler;
 }
-void XMPPHandlers::SetStreamHandler(const BSTR handler)
+void XMPPHandlers::SetStreamHandler(const LPTSTR handler)
 {
 	m_StreamHandler = handler;
 }
-void XMPPHandlers::SetStartTLSSucceededHandler(const BSTR handler)
+void XMPPHandlers::SetStartTLSSucceededHandler(const LPTSTR handler)
 {
 	m_StartTLSSucceededHandler = handler;
 }
-void XMPPHandlers::SetStartTLSFailedHandler(const BSTR handler)
+void XMPPHandlers::SetStartTLSFailedHandler(const LPTSTR handler)
 {
 	m_StartTLSFailedHandler = handler;
 }
-void XMPPHandlers::SetStartSCSucceededHandler(const BSTR handler)
+void XMPPHandlers::SetStartSCSucceededHandler(const LPTSTR handler)
 {
 	m_StartSCSucceededHandler = handler;
 }
-void XMPPHandlers::SetStartSCFailedHandler(const BSTR handler)
+void XMPPHandlers::SetStartSCFailedHandler(const LPTSTR handler)
 {
 	m_StartSCFailedHandler = handler;
 }

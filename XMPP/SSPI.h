@@ -38,7 +38,7 @@ public:
 
 	STDMETHOD(Reset)();
 	STDMETHOD(GenerateResponse)(
-		BSTR Challenge, BOOL *Continue, BSTR *Response);
+		LPTSTR Challenge, BOOL *Continue, BSTR *Response);
 
 private:
 	void Error(LPWSTR Where, LPWSTR WhenCalling, LPWSTR ErrorMessage);

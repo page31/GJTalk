@@ -134,7 +134,7 @@ std::wstring XMPPConnectionManager::GetConnectionIP()
  * Get the fully qualified domain name of the remote server.
  */
 std::wstring XMPPConnectionManager::GetServerFQDN()
-{
+{ 
 	return m_ServerName;
 }
 
@@ -241,7 +241,7 @@ bool XMPPConnectionManager::DoConnectWithSRV(SRVLookup& srvLookup)
  */
 bool XMPPConnectionManager::DoConnectWithoutSRV()
 {
-	bool success = m_Socket.Connect((BSTR) m_ServerName.c_str(), m_Port) == 0;
+	bool success = m_Socket.Connect((LPTSTR) m_ServerName.c_str(), m_Port) == 0;
 
 	if(success && !m_DoDisconnect)
 	{

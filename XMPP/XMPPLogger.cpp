@@ -99,7 +99,7 @@ void XMPPLogger::LogLoadXMLError(MSXML2::IXMLDOMDocument* xmlDoc,
 #ifdef CANLOG
 	MSXML2::IXMLDOMParseErrorPtr errorObj;
 	long errorCode, lineNumber, linePosition;
-	BSTR errorReason, sourceString;
+	LPTSTR errorReason, sourceString;
 	xmlDoc->get_parseError(&errorObj);
 	errorObj->get_errorCode(&errorCode);
 	errorObj->get_line(&lineNumber);
