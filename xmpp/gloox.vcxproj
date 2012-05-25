@@ -1,0 +1,341 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath11)</VCTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>xmpp</ProjectName>
+    <ProjectGuid>{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}</ProjectGuid>
+    <RootNamespace>gloox10</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50214.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetName>xmpp</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <IntDir>xmpp</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="adhoc.cpp" />
+    <ClCompile Include="amp.cpp" />
+    <ClCompile Include="annotations.cpp" />
+    <ClCompile Include="attention.cpp" />
+    <ClCompile Include="base64.cpp" />
+    <ClCompile Include="bookmarkstorage.cpp" />
+    <ClCompile Include="capabilities.cpp" />
+    <ClCompile Include="chatstate.cpp" />
+    <ClCompile Include="chatstatefilter.cpp" />
+    <ClCompile Include="client.cpp" />
+    <ClCompile Include="clientbase.cpp" />
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="compressiondefault.cpp" />
+    <ClCompile Include="compressionzlib.cpp" />
+    <ClCompile Include="connectionbosh.cpp" />
+    <ClCompile Include="connectionhttpproxy.cpp" />
+    <ClCompile Include="connectionsocks5proxy.cpp" />
+    <ClCompile Include="connectiontcpbase.cpp" />
+    <ClCompile Include="connectiontcpclient.cpp" />
+    <ClCompile Include="connectiontcpserver.cpp" />
+    <ClCompile Include="connectiontls.cpp" />
+    <ClCompile Include="connectiontlsserver.cpp" />
+    <ClCompile Include="dataform.cpp" />
+    <ClCompile Include="dataformfield.cpp" />
+    <ClCompile Include="dataformfieldcontainer.cpp" />
+    <ClCompile Include="dataformitem.cpp" />
+    <ClCompile Include="dataformreported.cpp" />
+    <ClCompile Include="delayeddelivery.cpp" />
+    <ClCompile Include="disco.cpp" />
+    <ClCompile Include="dns.cpp" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="eventdispatcher.cpp" />
+    <ClCompile Include="featureneg.cpp" />
+    <ClCompile Include="flexoff.cpp" />
+    <ClCompile Include="gloox.cpp" />
+    <ClCompile Include="gpgencrypted.cpp" />
+    <ClCompile Include="gpgsigned.cpp" />
+    <ClCompile Include="inbandbytestream.cpp" />
+    <ClCompile Include="instantmucroom.cpp" />
+    <ClCompile Include="iq.cpp" />
+    <ClCompile Include="jid.cpp" />
+    <ClCompile Include="lastactivity.cpp" />
+    <ClCompile Include="logsink.cpp" />
+    <ClCompile Include="md5.cpp" />
+    <ClCompile Include="message.cpp" />
+    <ClCompile Include="messageevent.cpp" />
+    <ClCompile Include="messageeventfilter.cpp" />
+    <ClCompile Include="messagefilter.cpp" />
+    <ClCompile Include="messagesession.cpp" />
+    <ClCompile Include="mucmessagesession.cpp" />
+    <ClCompile Include="mucroom.cpp" />
+    <ClCompile Include="mutex.cpp" />
+    <ClCompile Include="nickname.cpp" />
+    <ClCompile Include="nonsaslauth.cpp" />
+    <ClCompile Include="oob.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="prep.cpp" />
+    <ClCompile Include="presence.cpp" />
+    <ClCompile Include="privacyitem.cpp" />
+    <ClCompile Include="privacymanager.cpp" />
+    <ClCompile Include="privatexml.cpp" />
+    <ClCompile Include="pubsubevent.cpp" />
+    <ClCompile Include="pubsubitem.cpp" />
+    <ClCompile Include="pubsubmanager.cpp" />
+    <ClCompile Include="receipt.cpp" />
+    <ClCompile Include="registration.cpp" />
+    <ClCompile Include="rosteritem.cpp" />
+    <ClCompile Include="rostermanager.cpp" />
+    <ClCompile Include="search.cpp" />
+    <ClCompile Include="sha.cpp" />
+    <ClCompile Include="shim.cpp" />
+    <ClCompile Include="simanager.cpp" />
+    <ClCompile Include="siprofileft.cpp" />
+    <ClCompile Include="socks5bytestream.cpp" />
+    <ClCompile Include="socks5bytestreammanager.cpp" />
+    <ClCompile Include="socks5bytestreamserver.cpp" />
+    <ClCompile Include="softwareversion.cpp" />
+    <ClCompile Include="stanza.cpp" />
+    <ClCompile Include="stanzaextensionfactory.cpp" />
+    <ClCompile Include="subscription.cpp" />
+    <ClCompile Include="tag.cpp" />
+    <ClCompile Include="tlsdefault.cpp" />
+    <ClCompile Include="tlsgnutlsbase.cpp" />
+    <ClCompile Include="tlsgnutlsclient.cpp" />
+    <ClCompile Include="tlsgnutlsclientanon.cpp" />
+    <ClCompile Include="tlsgnutlsserveranon.cpp" />
+    <ClCompile Include="tlsopensslbase.cpp" />
+    <ClCompile Include="tlsopensslclient.cpp" />
+    <ClCompile Include="tlsopensslserver.cpp" />
+    <ClCompile Include="tlsschannel.cpp" />
+    <ClCompile Include="uniquemucroom.cpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="vcard.cpp" />
+    <ClCompile Include="vcardmanager.cpp" />
+    <ClCompile Include="vcardupdate.cpp" />
+    <ClCompile Include="xhtmlim.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="adhoc.h" />
+    <ClInclude Include="adhoccommandprovider.h" />
+    <ClInclude Include="adhochandler.h" />
+    <ClInclude Include="amp.h" />
+    <ClInclude Include="annotations.h" />
+    <ClInclude Include="annotationshandler.h" />
+    <ClInclude Include="attention.h" />
+    <ClInclude Include="base64.h" />
+    <ClInclude Include="bookmarkhandler.h" />
+    <ClInclude Include="bookmarkstorage.h" />
+    <ClInclude Include="bytestream.h" />
+    <ClInclude Include="bytestreamdatahandler.h" />
+    <ClInclude Include="bytestreamhandler.h" />
+    <ClInclude Include="capabilities.h" />
+    <ClInclude Include="chatstate.h" />
+    <ClInclude Include="chatstatefilter.h" />
+    <ClInclude Include="chatstatehandler.h" />
+    <ClInclude Include="client.h" />
+    <ClInclude Include="clientbase.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="compressionbase.h" />
+    <ClInclude Include="compressiondatahandler.h" />
+    <ClInclude Include="compressiondefault.h" />
+    <ClInclude Include="compressionzlib.h" />
+    <ClInclude Include="connectionbase.h" />
+    <ClInclude Include="connectionbosh.h" />
+    <ClInclude Include="connectiondatahandler.h" />
+    <ClInclude Include="connectionhandler.h" />
+    <ClInclude Include="connectionhttpproxy.h" />
+    <ClInclude Include="connectionlistener.h" />
+    <ClInclude Include="connectionsocks5proxy.h" />
+    <ClInclude Include="connectiontcpbase.h" />
+    <ClInclude Include="connectiontcpclient.h" />
+    <ClInclude Include="connectiontcpserver.h" />
+    <ClInclude Include="connectiontls.h" />
+    <ClInclude Include="connectiontlsserver.h" />
+    <ClInclude Include="dataform.h" />
+    <ClInclude Include="dataformfield.h" />
+    <ClInclude Include="dataformfieldcontainer.h" />
+    <ClInclude Include="dataformitem.h" />
+    <ClInclude Include="dataformreported.h" />
+    <ClInclude Include="delayeddelivery.h" />
+    <ClInclude Include="disco.h" />
+    <ClInclude Include="discohandler.h" />
+    <ClInclude Include="disconodehandler.h" />
+    <ClInclude Include="dns.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="event.h" />
+    <ClInclude Include="eventdispatcher.h" />
+    <ClInclude Include="eventhandler.h" />
+    <ClInclude Include="featureneg.h" />
+    <ClInclude Include="flexoff.h" />
+    <ClInclude Include="flexoffhandler.h" />
+    <ClInclude Include="gloox.h" />
+    <ClInclude Include="gpgencrypted.h" />
+    <ClInclude Include="gpgsigned.h" />
+    <ClInclude Include="inbandbytestream.h" />
+    <ClInclude Include="instantmucroom.h" />
+    <ClInclude Include="iq.h" />
+    <ClInclude Include="iqhandler.h" />
+    <ClInclude Include="jid.h" />
+    <ClInclude Include="lastactivity.h" />
+    <ClInclude Include="lastactivityhandler.h" />
+    <ClInclude Include="loghandler.h" />
+    <ClInclude Include="logsink.h" />
+    <ClInclude Include="macros.h" />
+    <ClInclude Include="md5.h" />
+    <ClInclude Include="message.h" />
+    <ClInclude Include="messageevent.h" />
+    <ClInclude Include="messageeventfilter.h" />
+    <ClInclude Include="messageeventhandler.h" />
+    <ClInclude Include="messagefilter.h" />
+    <ClInclude Include="messagehandler.h" />
+    <ClInclude Include="messagesession.h" />
+    <ClInclude Include="messagesessionhandler.h" />
+    <ClInclude Include="mucinvitationhandler.h" />
+    <ClInclude Include="mucmessagesession.h" />
+    <ClInclude Include="mucroom.h" />
+    <ClInclude Include="mucroomconfighandler.h" />
+    <ClInclude Include="mucroomhandler.h" />
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="mutexguard.h" />
+    <ClInclude Include="nickname.h" />
+    <ClInclude Include="nonsaslauth.h" />
+    <ClInclude Include="oob.h" />
+    <ClInclude Include="parser.h" />
+    <ClInclude Include="prep.h" />
+    <ClInclude Include="presence.h" />
+    <ClInclude Include="presencehandler.h" />
+    <ClInclude Include="privacyitem.h" />
+    <ClInclude Include="privacylisthandler.h" />
+    <ClInclude Include="privacymanager.h" />
+    <ClInclude Include="privatexml.h" />
+    <ClInclude Include="privatexmlhandler.h" />
+    <ClInclude Include="pubsub.h" />
+    <ClInclude Include="pubsubevent.h" />
+    <ClInclude Include="pubsubitem.h" />
+    <ClInclude Include="pubsubmanager.h" />
+    <ClInclude Include="pubsubresulthandler.h" />
+    <ClInclude Include="receipt.h" />
+    <ClInclude Include="registration.h" />
+    <ClInclude Include="registrationhandler.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="rosteritem.h" />
+    <ClInclude Include="rosteritemdata.h" />
+    <ClInclude Include="rosterlistener.h" />
+    <ClInclude Include="rostermanager.h" />
+    <ClInclude Include="search.h" />
+    <ClInclude Include="searchhandler.h" />
+    <ClInclude Include="sha.h" />
+    <ClInclude Include="shim.h" />
+    <ClInclude Include="sihandler.h" />
+    <ClInclude Include="simanager.h" />
+    <ClInclude Include="siprofileft.h" />
+    <ClInclude Include="siprofilefthandler.h" />
+    <ClInclude Include="siprofilehandler.h" />
+    <ClInclude Include="socks5bytestream.h" />
+    <ClInclude Include="socks5bytestreammanager.h" />
+    <ClInclude Include="socks5bytestreamserver.h" />
+    <ClInclude Include="softwareversion.h" />
+    <ClInclude Include="stanza.h" />
+    <ClInclude Include="stanzaextension.h" />
+    <ClInclude Include="stanzaextensionfactory.h" />
+    <ClInclude Include="statisticshandler.h" />
+    <ClInclude Include="subscription.h" />
+    <ClInclude Include="subscriptionhandler.h" />
+    <ClInclude Include="tag.h" />
+    <ClInclude Include="taghandler.h" />
+    <ClInclude Include="tlsbase.h" />
+    <ClInclude Include="tlsdefault.h" />
+    <ClInclude Include="tlsgnutlsbase.h" />
+    <ClInclude Include="tlsgnutlsclient.h" />
+    <ClInclude Include="tlsgnutlsclientanon.h" />
+    <ClInclude Include="tlsgnutlsserveranon.h" />
+    <ClInclude Include="tlshandler.h" />
+    <ClInclude Include="tlsopensslbase.h" />
+    <ClInclude Include="tlsopensslclient.h" />
+    <ClInclude Include="tlsopensslserver.h" />
+    <ClInclude Include="tlsschannel.h" />
+    <ClInclude Include="uniquemucroom.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="vcard.h" />
+    <ClInclude Include="vcardhandler.h" />
+    <ClInclude Include="vcardmanager.h" />
+    <ClInclude Include="vcardupdate.h" />
+    <ClInclude Include="xhtmlim.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.h.win" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

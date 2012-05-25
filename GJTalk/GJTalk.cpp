@@ -21,7 +21,7 @@ END_MESSAGE_MAP()
 
 CGJTalkApp::CGJTalkApp() 
 {
-	 
+
 	// 支持重新启动管理器
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
@@ -66,16 +66,29 @@ BOOL CGJTalkApp::InitInstance()
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
 	// SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
-	
+
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
 	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath()+_T("skin"));
 	GJContext context;
-	CLoginFrame loginFrame(context);
-	loginFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
-	loginFrame.CenterWindow();
-	loginFrame.ShowModal();
 
+
+	while(true)
+	{
+		context.init("localhost");
+		CLoginFrame loginFrame(context);
+		loginFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
+		loginFrame.CenterWindow();
+		loginFrame.ShowModal();
+		if(!context.isSignedIn())
+			break;
+
+		CMainFrame mainFrame(context);
+		mainFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
+		mainFrame.ShowModal();
+		if(context.MainFrameCloseReason!=GJContext::MainFrameCloseReasons::SwitchUser) 
+			break;  
+	}
 	// 删除上面创建的 shell 管理器。
 	if (pShellManager != NULL)
 	{

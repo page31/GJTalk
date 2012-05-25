@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "LoginFrame.h"
-#include "..\XMPP\TestExportClass.h"
- 
- 
+#include "../xmpp/client.h"
+
+
 CLoginFrame::CLoginFrame(GJContext &context)
 	:CGJWnd(context)
-{ 
-	TestExportClass cls;
-	cls.Test();
+{  
+	context.signIn("test","123");
+
 }
 CLoginFrame::~CLoginFrame(void)
 {

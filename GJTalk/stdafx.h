@@ -70,3 +70,6 @@ using namespace DuiLib;
 
 
 #pragma comment(lib,"..\\bin\\XMPP.lib")
+
+
+#include "GJContext.h"

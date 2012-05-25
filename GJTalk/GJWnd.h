@@ -1,5 +1,6 @@
-#pragma once
-#include "GJContext.h"
+#pragma once 
+
+class GJContext;
 class CGJWnd:public CWindowWnd
 {
 protected:
@@ -11,8 +12,7 @@ public:
 	LRESULT OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled);
 	CGJWnd(GJContext &context);
 	GJContext &GetContext();
-
-	CGJWnd(void);
+ 
 
 	~CGJWnd(void);
 };
