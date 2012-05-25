@@ -37,3 +37,43 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 
+#pragma warning(disable : 4995)
+
+
+#define SECURITY_WIN32
+// Windows
+#include <winsock2.h>
+#include <windows.h>
+#include <psapi.h>
+#include <sspi.h>
+#include <WinCrypt.h>
+#include <MSTcpIP.h>
+//#include <Security.h> 
+#pragma comment(lib,"Dnsapi.lib")
+#pragma comment(lib,"Secur32.lib")
+#pragma comment(lib,"Crypt32.lib")
+#include <strsafe.h>
+
+//com
+#include <comutil.h>
+
+//xml
+#import <msxml3.dll>
+
+
+// STL
+#include <vector>
+#include <queue>
+#include <map>
+#include <algorithm>
+#include <memory>
+#include <sstream>
+#include <iomanip>
+#include <utility>
+
+#include <schannel.h>
+
+//zlib
+#define ZLIB_WINAPI
+#include "../zlib/include/zlib.h"
+
