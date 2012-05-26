@@ -14,21 +14,22 @@ using namespace std;
 using namespace gloox;
 
 
-
+namespace  MainFrameCloseReasons
+{
+	enum
+	{
+		SignOut,
+		Exit,
+		SwitchUser
+	};
+};
 class GJContext:public ConnectionListener, LogHandler,
 	MessageSessionHandler, TLSHandler
 {
 public:
 
-	enum MainFrameCloseReasons
-	{
-		SignOut=0x01,
-		Exit=0x02,
-		SwitchUser=0x03
-	};
-
-
-	MainFrameCloseReasons MainFrameCloseReason;
+	 
+	int MainFrameCloseReason;
 private:
 	JID *m_pSelf; 
 	Client *m_pClient;
@@ -51,7 +52,7 @@ public:
 	void handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ );
 	void handleMessageSession( MessageSession *session );
 	void handleLog( LogLevel level, LogArea area, const std::string& message );
-	
+
 
 	~GJContext(void);
 };

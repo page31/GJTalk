@@ -82,11 +82,11 @@ BOOL CGJTalkApp::InitInstance()
 		loginFrame.ShowModal();
 		if(!context.isSignedIn())
 			break;
-
+		
 		CMainFrame mainFrame(context);
 		mainFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
 		mainFrame.ShowModal();
-		if(context.MainFrameCloseReason!=GJContext::MainFrameCloseReasons::SwitchUser) 
+		if(context.MainFrameCloseReason!=MainFrameCloseReasons::SwitchUser) 
 			break;  
 	}
 	// 删除上面创建的 shell 管理器。
