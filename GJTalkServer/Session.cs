@@ -26,8 +26,7 @@ namespace GJTalkServer
     {
         public User SessionUser { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
-
-        bool stoped = false;
+         
         GJTalkServer server;
         XmppStreamParser streamParser;
         Socket socket;

@@ -34,6 +34,7 @@ string encryptPassword(const string& password)
 }
 bool GJContext::signIn(const string& username,const string& password)
 { 
+	 
 	bool bOk=true;
 	JID *nSelf=new JID();
 	if(!nSelf)

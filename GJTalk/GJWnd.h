@@ -26,7 +26,7 @@ public:
 	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	void Notify(TNotifyUI& msg);
+	virtual	void Notify(TNotifyUI& msg);
 	void OnPrepare();
 protected:
 	CControlUI *m_pBtnClose,*m_pBtnMax,*m_pBtnResotre,
