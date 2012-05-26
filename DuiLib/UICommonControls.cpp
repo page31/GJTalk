@@ -302,7 +302,7 @@ void CButtonUI::DoEvent(TEventUI& event)
         return;
     }
     if( event.Type == UIEVENT_SETCURSOR ) {
-        ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+        ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
         return;
     }
     CLabelUI::DoEvent(event);

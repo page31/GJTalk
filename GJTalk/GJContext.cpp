@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GJContext.h"
-
+#include "../xmpp/md5.h"
 
 GJContext::GJContext(void)
 	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL)
@@ -19,6 +19,19 @@ bool GJContext::init(const string& server,int port)
 	m_Port=port;
 	return true;
 }
+string encryptPassword(const string& password)
+{
+	string temp;
+	gloox::MD5 md5;
+	md5.reset();
+	md5.feed(password); 
+	md5.finalize();
+	temp=md5.hex()+password;
+	md5.reset();
+	md5.feed(temp);
+	md5.finalize();
+	return md5.hex();
+}
 bool GJContext::signIn(const string& username,const string& password)
 { 
 	bool bOk=true;
@@ -32,16 +45,14 @@ bool GJContext::signIn(const string& username,const string& password)
 	}else { 
 		if(m_pClient) 
 			m_pClient->disconnect();  
-		m_pClient=new Client(*nSelf,password,m_Port); 
+		m_pClient=new Client(*nSelf,encryptPassword(password),m_Port); 
 
 		if(!m_pClient)
 			bOk=false;
 		else
 		{
 			m_pClient->registerConnectionListener(this);
-			m_pClient->registerMessageSessionHandler(this);
-			//m_pClient->registerTagHandler(this);
-			//m_pClient->logInstance().registerLogHandler(this);
+			m_pClient->registerMessageSessionHandler(this); 
 			bOk= m_pClient->connect(true);
 		}
 	}
@@ -52,7 +63,7 @@ bool GJContext::signIn(const string& username,const string& password)
 		if(m_pSelf)
 			delete m_pSelf;
 		m_pSelf=nSelf; 
-		 
+
 	}
 
 	return bOk;
@@ -76,44 +87,44 @@ GJContext::~GJContext(void)
 
 
 // handlers
-  void GJContext::onConnect()
-    {
-     
-      //m_tls->handshake();
-    
-    }
+void GJContext::onConnect()
+{
 
-     void GJContext::onDisconnect( ConnectionError e )
-    {
-    
-    }
+	//m_tls->handshake();
 
-     bool GJContext::onTLSConnect( const CertInfo& info )
-    {
-      
-      return true;
-    }
-  void GJContext::handleEncryptedData( const TLSBase* /*base*/, const std::string& data )
-    {
-     
-    }
+}
 
-     void GJContext::handleDecryptedData( const TLSBase* /*base*/, const std::string& data )
-    {
-    
-    }
+void GJContext::onDisconnect( ConnectionError e )
+{
 
-     void GJContext::handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ )
-    {
-   
-    }
+}
 
-     void GJContext::handleMessageSession( MessageSession *session )
-    {
-		 
-		m_pClient->disposeMessageSession(session);
-    }
+bool GJContext::onTLSConnect( const CertInfo& info )
+{
 
-     void GJContext::handleLog( LogLevel level, LogArea area, const std::string& message )
-    { 
-    }
+	return true;
+}
+void GJContext::handleEncryptedData( const TLSBase* /*base*/, const std::string& data )
+{
+
+}
+
+void GJContext::handleDecryptedData( const TLSBase* /*base*/, const std::string& data )
+{
+
+}
+
+void GJContext::handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ )
+{
+
+}
+
+void GJContext::handleMessageSession( MessageSession *session )
+{
+
+	m_pClient->disposeMessageSession(session);
+}
+
+void GJContext::handleLog( LogLevel level, LogArea area, const std::string& message )
+{ 
+}

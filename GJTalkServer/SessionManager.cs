@@ -8,34 +8,45 @@ namespace GJTalkServer
     class SessionManager
     {
         Dictionary<string, Session> onlineUsers;
-        LinkedList<Session> connectingUsers;
         GJTalkServer server;
+        object objLock = new object();
         public SessionManager(GJTalkServer server)
         {
             onlineUsers = new Dictionary<string, Session>();
-            connectingUsers = new LinkedList<Session>();
             this.server = server;
         }
-        public Session Add(Session session)
+        public Session GetSession(string username)
         {
-            connectingUsers.AddFirst(session);
-            return session;
+            lock (objLock)
+            {
+                Session session;
+                if (onlineUsers.TryGetValue(username.ToLower(), out session))
+                    return session;
+                else
+                    return null;
+            }
         }
         public bool IsOnline(string username)
         {
-            return onlineUsers.ContainsKey(username.ToLower());
+            lock (objLock)
+            {
+                return onlineUsers.ContainsKey(username.ToLower());
+            }
         }
-        public Session AddConnected(Session session)
+        public Session Add(Session session)
         {
-            try
+            lock (objLock)
             {
-                connectingUsers.Remove(session);
+                onlineUsers.Add(session.SessionUser.Username.ToLower(), session);
+                return session;
             }
-            finally
+        }
+        public void Remove(Session session)
+        {
+            lock (objLock)
             {
+                onlineUsers.Remove(session.SessionUser.Username.ToLower());
             }
-            onlineUsers.Add(session.SessionUser.Username.ToLower(), session);
-            return session;
         }
     }
 }

@@ -6,8 +6,17 @@
 CLoginFrame::CLoginFrame(GJContext &context)
 	:CGJWnd(context)
 {  
-	context.signIn("test","123");
+	 
 
+}
+
+
+void CLoginFrame::OnPostCreate()
+{
+	CDialogBuilder builder;
+	CControlUI* pRoot=builder.Create(_T("LoginFrame.xml"),
+		0,NULL,&m_pm);
+	m_pm.AttachDialog(pRoot); 
 }
 CLoginFrame::~CLoginFrame(void)
 {

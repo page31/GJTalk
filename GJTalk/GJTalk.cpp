@@ -69,7 +69,7 @@ BOOL CGJTalkApp::InitInstance()
 
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
-	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath()+_T("skin"));
+	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\xdd\\Desktop\\GJTalkSkin\\GJTalk"));
 	GJContext context;
 
 

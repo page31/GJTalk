@@ -8,7 +8,10 @@ CChatFrame::CChatFrame(GJContext &context)
 
 }
 
+void CChatFrame::OnPostCreate()
+{
 
+}
 CChatFrame::~CChatFrame(void)
 {
 }

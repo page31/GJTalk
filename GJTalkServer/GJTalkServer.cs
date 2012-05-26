@@ -13,6 +13,7 @@ namespace GJTalkServer
         public SessionManager SessionManager { get; private set; }
         public PacketManager PacketManager { get; private set; }
         public MessageMangaer MessageManager { get;private set; }
+        public UserAuth AuthManager { get;private set; }
         public int Port { get; set; }
         public IPAddress ListenAddress { get; set; }
         public string Domain { get; private set; }
@@ -49,12 +50,13 @@ namespace GJTalkServer
         public void Start()
         {
             this.SessionManager = new SessionManager(this);
+            this.MessageManager = new MessageMangaer(this);
+            this.AuthManager = new UserAuth();
             this.PacketManager = new PacketManager()
             {
                 ThreadCount = Environment.ProcessorCount * 2 
             };
-            this.MessageManager = new MessageMangaer(this);
-
+           
             thListen = new Thread(ListenEntry);
             thListen.IsBackground = true;
             thListen.Start();

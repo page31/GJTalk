@@ -8,7 +8,10 @@ CMainFrame::CMainFrame(GJContext &context)
 	context.setMainFrame(this);
 }
 
+void CMainFrame::OnPostCreate()
+{
 
+}
 CMainFrame::~CMainFrame(void)
 {
 }
