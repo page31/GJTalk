@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GJTalk", "GJTalk\GJTalk.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmpp", "xmpp\gloox.vcxproj", "{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJTalkServer", "GJTalkServer\GJTalkServer.csproj", "{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,26 +23,6 @@ Global
 		UnicodeRelease|Win32 = UnicodeRelease|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Win32.ActiveCfg = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeDebug|Any CPU.Build.0 = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeDebug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeDebug|Win32.ActiveCfg = Debug|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeRelease|Any CPU.Build.0 = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeRelease|Mixed Platforms.Build.0 = Release|Any CPU
-		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.UnicodeRelease|Win32.ActiveCfg = Release|Any CPU
 		{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}.Debug|Mixed Platforms.Build.0 = Debug|Win32
