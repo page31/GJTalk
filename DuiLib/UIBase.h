@@ -3,7 +3,7 @@
 
 
 #pragma once
-
+#include <string>
 namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -192,6 +192,8 @@ public:
     const CStdString& operator=(const CStdString& src);
     const CStdString& operator=(const TCHAR ch);
     const CStdString& operator=(LPCTSTR pstr);
+	
+	std::string& ToUTF8() const;
 #ifdef _UNICODE
     const CStdString& CStdString::operator=(LPCSTR lpStr);
     const CStdString& CStdString::operator+=(LPCSTR lpStr);
@@ -204,7 +206,7 @@ public:
     const CStdString& operator+=(const CStdString& src);
     const CStdString& operator+=(LPCTSTR pstr);
     const CStdString& operator+=(const TCHAR ch);
-
+	
     bool operator == (LPCTSTR str) const;
     bool operator != (LPCTSTR str) const;
     bool operator <= (LPCTSTR str) const;
@@ -221,7 +223,7 @@ public:
     CStdString Left(int nLength) const;
     CStdString Mid(int iPos, int nLength = -1) const;
     CStdString Right(int nLength) const;
-
+ 
     int Find(TCHAR ch, int iPos = 0) const;
     int Find(LPCTSTR pstr, int iPos = 0) const;
     int ReverseFind(TCHAR ch) const;

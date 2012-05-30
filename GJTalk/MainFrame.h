@@ -1,14 +1,14 @@
 #pragma once
 #include <string>
-#include "GJWnd.h"
+#include "GJContextWnd.h"
 using namespace std;
-class CMainFrame:public CGJWnd
+class CMainFrame:public CGJContextWnd
 {
 private: 
 protected:
 	void OnPostCreate();
 public:
-	CMainFrame(GJContext &context);
+	CMainFrame(GJContext *context);
 	~CMainFrame(void);
 };
 

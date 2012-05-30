@@ -45,7 +45,8 @@ namespace GJTalkServer
         {
             lock (objLock)
             {
-                onlineUsers.Remove(session.SessionUser.Username.ToLower());
+                if (session.SessionUser != null)
+                    onlineUsers.Remove(session.SessionUser.Username.ToLower());
             }
         }
     }

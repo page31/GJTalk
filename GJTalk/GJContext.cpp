@@ -2,8 +2,23 @@
 #include "GJContext.h"
 #include "../xmpp/md5.h"
 
+UINT RecvProc(LPVOID data)
+{
+	GJContext *context=static_cast<GJContext*>(data);
+	while (context->IsReceiving())
+	{
+		if(context->GetClient())
+			context->GetClient()->recv(100);
+		else
+			Sleep(100);
+	}
+	return 0;
+}
+
+
 GJContext::GJContext(void)
-	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL)
+	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL),
+	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL)
 {
 
 }
@@ -11,6 +26,34 @@ GJContext::GJContext(void)
 void GJContext::setMainFrame(CMainFrame *frame)
 {
 	m_pMainFrame=frame;
+}
+
+
+Client* GJContext::GetClient() const
+{
+	return m_pClient;
+}
+
+bool GJContext::IsReceiving() const
+{
+	return m_bRecvData;
+}
+void GJContext::StartRecv()
+{
+	if(IsReceiving())
+		StopRecv(); 
+	m_bRecvData=true;
+	m_pRecvThread=AfxBeginThread(RecvProc,this);
+
+}
+void GJContext::StopRecv()
+{
+	if(!IsReceiving())
+		return;
+	m_bRecvData=false;
+	if(m_pRecvThread)
+		WaitForSingleObject(m_pRecvThread->m_hThread,INFINITE);
+	m_pRecvThread=NULL;
 }
 
 bool GJContext::init(const string& server,int port)
@@ -32,9 +75,14 @@ string encryptPassword(const string& password)
 	md5.finalize();
 	return md5.hex();
 }
-bool GJContext::signIn(const string& username,const string& password)
+bool GJContext::SignIn(const string& username,const string& password,CLoginFrame *loginFrame)
 { 
-	 
+	if(IsCrossThread())
+	{
+
+	}
+	StopRecv();
+	this->m_pLoginFrame=loginFrame;
 	bool bOk=true;
 	JID *nSelf=new JID();
 	if(!nSelf)
@@ -54,7 +102,8 @@ bool GJContext::signIn(const string& username,const string& password)
 		{
 			m_pClient->registerConnectionListener(this);
 			m_pClient->registerMessageSessionHandler(this); 
-			bOk= m_pClient->connect(true);
+			bOk= m_pClient->connect(false);
+
 		}
 	}
 	if(!bOk&&nSelf) 
@@ -64,7 +113,7 @@ bool GJContext::signIn(const string& username,const string& password)
 		if(m_pSelf)
 			delete m_pSelf;
 		m_pSelf=nSelf; 
-
+		StartRecv();
 	}
 
 	return bOk;
@@ -87,17 +136,31 @@ GJContext::~GJContext(void)
 }
 
 
+
 // handlers
 void GJContext::onConnect()
 {
 
+	if(IsCrossThread())
+	{
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,1,NULL);
+		return;
+	}
+	if(m_pLoginFrame)
+		m_pLoginFrame->OnConnected();
 	//m_tls->handshake();
 
 }
 
 void GJContext::onDisconnect( ConnectionError e )
 {
-
+	if(IsCrossThread())
+	{
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,2,e);
+		return;
+	}
+	if(m_pLoginFrame)
+		m_pLoginFrame->OnDisconnected(e);
 }
 
 bool GJContext::onTLSConnect( const CertInfo& info )

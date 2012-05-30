@@ -1355,6 +1355,7 @@ LRESULT CEditWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     else if( uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN ) {
         m_pOwner->GetManager()->SendNotify(m_pOwner, _T("return"));
+		 
     }
     else if( uMsg == OCM__BASE + WM_CTLCOLOREDIT  || uMsg == OCM__BASE + WM_CTLCOLORSTATIC ) {
         if( m_pOwner->GetNativeEditBkColor() == 0xFFFFFFFF ) return NULL;

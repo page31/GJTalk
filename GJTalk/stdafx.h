@@ -36,7 +36,7 @@
 
 
 #include "..\DuiLib\UIlib.h"
- 
+
 using namespace DuiLib;
 
 
@@ -73,3 +73,11 @@ using namespace DuiLib;
 
 
 #include "GJContext.h"
+#include "MsgBox.h"
+
+#define DM_CROSSTHREAD_NOTIFY WM_USER+0x10
+
+
+bool IsCrossThread();
+
+using namespace msgbox;

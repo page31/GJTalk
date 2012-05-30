@@ -8,12 +8,13 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#include "MessageFilterHelper.h"
 
 // CGJTalkApp
 
 BEGIN_MESSAGE_MAP(CGJTalkApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	ON_THREAD_MESSAGE(DM_CROSSTHREAD_NOTIFY,&CGJTalkApp::OnCrossThreadNotify)
 END_MESSAGE_MAP()
 
 
@@ -70,25 +71,36 @@ BOOL CGJTalkApp::InitInstance()
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
 	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\xdd\\Desktop\\GJTalkSkin\\GJTalk"));
-	GJContext context;
+	m_pContext=new  GJContext;
+	m_pContext->init("localhost");
+	CLoginFrame *loginFrame=new CLoginFrame(m_pContext);
+	loginFrame->Create(NULL,_T("¸ÌéÙÍø"),UI_WNDSTYLE_DIALOG,0L);
+	loginFrame->CenterWindow();
+	loginFrame->ShowWindow(); 
 
+	MessageFilterHelper *msgFilter=new MessageFilterHelper();
 
-	while(true)
+	CPaintManagerUI::AddExternalMessageFilter(msgFilter);
+	CPaintManagerUI::MessageLoop();
+	return TRUE;
+	/*while(true)
 	{
-		context.init("localhost");
-		CLoginFrame loginFrame(context);
-		loginFrame.Create(NULL,_T("¸ÌéÙÍø"),UI_WNDSTYLE_FRAME,0L);
-		loginFrame.CenterWindow();
-		loginFrame.ShowModal();
-		if(!context.isSignedIn())
-			break;
-		
-		CMainFrame mainFrame(context);
-		mainFrame.Create(NULL,_T("¸ÌéÙÍø"),UI_WNDSTYLE_FRAME,0L);
-		mainFrame.ShowModal();
-		if(context.MainFrameCloseReason!=MainFrameCloseReasons::SwitchUser) 
-			break;  
-	}
+	context.init("localhost");
+	CLoginFrame loginFrame(&context);
+	loginFrame.Create(NULL,_T("¸ÌéÙÍø"),UI_WNDSTYLE_FRAME,0L);
+	loginFrame.CenterWindow();
+	loginFrame.ShowWindow();
+	return TRUE;
+	if(!context.isSignedIn())
+	break;
+
+	CMainFrame mainFrame(&context);
+	mainFrame.Create(NULL,_T("¸ÌéÙÍø"),UI_WNDSTYLE_FRAME,0L);
+	mainFrame.ShowModal();
+	if(context.MainFrameCloseReason!=MainFrameCloseReasons::SwitchUser) 
+	break; 
+
+	}*/
 	// É¾³ýÉÏÃæ´´½¨µÄ shell ¹ÜÀíÆ÷¡£
 	if (pShellManager != NULL)
 	{
@@ -100,3 +112,18 @@ BOOL CGJTalkApp::InitInstance()
 	return FALSE;
 }
 
+void CGJTalkApp::OnCrossThreadNotify(WPARAM wParam,LPARAM lParam)
+{
+	switch (wParam)
+	{
+	case 1:
+		m_pContext->onConnect();
+		break;
+	case 2:
+		m_pContext->onDisconnect((gloox::ConnectionError)lParam);
+		break;
+	default:
+		break;
+	}
+
+}

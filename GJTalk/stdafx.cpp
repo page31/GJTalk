@@ -6,3 +6,12 @@
 #include "stdafx.h"
 
 
+bool IsCrossThread()
+{
+#ifdef _DEBUG
+	bool res=AfxGetThread()->m_hThread!=AfxGetApp()->m_hThread;
+	return res;
+#else
+	return AfxGetThread()->m_hThread!=AfxGetApp()->m_hThread;
+#endif 
+}

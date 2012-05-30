@@ -2,8 +2,8 @@
 #include "ChatFrame.h"
 
 
-CChatFrame::CChatFrame(GJContext &context)
-	:CGJWnd(context)
+CChatFrame::CChatFrame(GJContext *context)
+	:CGJContextWnd(context)
 {
 
 }

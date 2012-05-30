@@ -1,7 +1,9 @@
 #pragma once
 #include "GJContext.h"
-#include "GJWnd.h"
-class CLoginFrame:public CGJWnd
+#include "GJContextWnd.h"
+#include "../xmpp/client.h"
+using namespace gloox;
+class CLoginFrame:public CGJContextWnd
 {
 private:
 	CEditUI *m_pEditUser,
@@ -9,9 +11,10 @@ private:
 protected:
 	virtual	void OnPostCreate();
 public: 
-
+	void OnConnected();
+	void OnDisconnected( ConnectionError error);
 	void Notify(TNotifyUI& msg);
-	CLoginFrame(GJContext &context);
+	CLoginFrame(GJContext *context);
 	~CLoginFrame(void); 
 
 };

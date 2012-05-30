@@ -109,11 +109,15 @@
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="GJContext.h" />
+    <ClInclude Include="GJContextWnd.h" />
     <ClInclude Include="GJTalk.h" />
     <ClInclude Include="GJUser.h" />
     <ClInclude Include="GJWnd.h" />
     <ClInclude Include="LoginFrame.h" />
     <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="MessageFilterHelper.h" />
+    <ClInclude Include="MsgBox.h" />
+    <ClInclude Include="MsgBoxFrame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -121,11 +125,15 @@
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="GJContext.cpp" />
+    <ClCompile Include="GJContextWnd.cpp" />
     <ClCompile Include="GJTalk.cpp" />
     <ClCompile Include="GJUser.cpp" />
     <ClCompile Include="GJWnd.cpp" />
     <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
+    <ClCompile Include="MessageFilterHelper.cpp" />
+    <ClCompile Include="MsgBox.cpp" />
+    <ClCompile Include="MsgBoxFrame.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

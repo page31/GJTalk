@@ -7,15 +7,18 @@ LPCTSTR CGJWnd::GetWindowClassName() const
 }
 UINT CGJWnd::GetClassStyle() const
 {
-	return CS_DBLCLKS;
+	return CS_DBLCLKS|CS_SAVEBITS;
 }
 LRESULT CGJWnd::OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled)
 {
 	long styleValue=::GetWindowLong(m_hWnd,GWL_STYLE);
-	styleValue&=~WS_CAPTION;
-	::SetWindowLong(m_hWnd,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN); 
+	styleValue&=~(WS_CAPTION|WS_OVERLAPPED);
+	::SetWindowLong(m_hWnd,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_POPUP); 
 	m_pm.Init(m_hWnd); 
-	this->OnPostCreate();
+	HICON icon=::LoadIcon(m_pm.GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
+	if(icon)
+		SendMessage(WM_SETICON,ICON_SMALL,(LPARAM) icon);
+	this->OnPostCreate(); 
 	m_pm.AddNotifier(this);
 	return 0;
 }
@@ -25,7 +28,7 @@ LRESULT CGJWnd::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHan
 {
 	if(wParam==SC_CLOSE)
 	{
-		::PostQuitMessage(0L);
+		SendMessage(WM_CLOSE,0L,0L);
 		bHandled=true;
 		return 0;
 	}
@@ -133,13 +136,20 @@ LRESULT CGJWnd::OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHan
 }
 LRESULT CGJWnd::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
-	::PostQuitMessage(0L);
+	//::PostQuitMessage(0L);
 	bHandled=FALSE;
 	return 0;
 }
 LRESULT CGJWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
 	bHandled=FALSE;
+	TNotifyUI msg;
+	msg.sType=_T("close");
+	msg.wParam=wParam;
+	msg.lParam=lParam;
+	msg.dwTimestamp=::GetTickCount();
+	msg.pSender=NULL;
+	this->Notify(msg);
 	return 0;
 }
 LRESULT CGJWnd::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
@@ -206,6 +216,18 @@ LRESULT CGJWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 }
 
+bool CGJWnd::InitFromXmlFile(LPCTSTR lpszFilename)
+{
+	CDialogBuilder builder;
+	CControlUI* pRoot=builder.Create(lpszFilename,
+		0,NULL,&m_pm);
+	if(!pRoot)
+		return false;
+
+	m_pm.AttachDialog(pRoot); 
+	return true;
+}
+
 void CGJWnd::OnPrepare()
 {
 	m_pBtnClose=m_pm.FindControl(_T("wnd_closebtn"));
@@ -223,8 +245,9 @@ void CGJWnd::Notify(TNotifyUI& msg)
 	{ 
 		if(msg.pSender==m_pBtnClose)
 		{
+			this->Close();
 			//SendMessage(WM_SYSCOMMAND,SC_CLOSE,0L);
-			PostQuitMessage(0L); 
+			//PostQuitMessage(0L); 
 		}
 		else if(msg.pSender==m_pBtnMax)
 		{
@@ -241,17 +264,14 @@ void CGJWnd::Notify(TNotifyUI& msg)
 	}
 }
 
-CGJWnd::CGJWnd(GJContext &context) 
-	:context(context),m_pBtnClose(NULL),
+CGJWnd::CGJWnd(void) 
+	:m_pBtnClose(NULL),
 	m_pBtnMax(NULL),m_pBtnResotre(NULL),
 	m_pBtnMin(NULL)
 {
 }
-GJContext &CGJWnd::GetContext() const
-{
-	return context;
-}
 
 CGJWnd::~CGJWnd(void)
 {
+
 }

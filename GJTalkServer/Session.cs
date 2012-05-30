@@ -26,7 +26,7 @@ namespace GJTalkServer
     {
         public User SessionUser { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
-         
+
         GJTalkServer server;
         XmppStreamParser streamParser;
         Socket socket;
@@ -38,7 +38,7 @@ namespace GJTalkServer
         {
             this.server = server;
             this.socket = socket;
-            server.SessionManager.Add(this);
+            // server.SessionManager.Add(this);
             readCallback = new AsyncCallback(OnRead);
 
             buffer = new byte[buff_size];
@@ -54,6 +54,8 @@ namespace GJTalkServer
 
         void BeginRead()
         {
+            if (socket == null)
+                return;
             socket.BeginReceive(buffer, 0, buff_size, SocketFlags.None, readCallback, null);
         }
         public void Send(string data)
@@ -66,11 +68,14 @@ namespace GJTalkServer
         }
         public void Send(string data, object userState)
         {
-            if (string.IsNullOrEmpty(data))
+            if (string.IsNullOrEmpty(data) || socket == null)
                 return;
             byte[] buffer = Encoding.UTF8.GetBytes(data);
-            socket.BeginSend(buffer, 0, buffer.Length,
-               SocketFlags.None, OnSent, userState);
+            lock (socket)
+            {
+                socket.BeginSend(buffer, 0, buffer.Length,
+                   SocketFlags.None, OnSent, userState);
+            }
         }
         public void Send(XmppXElement element)
         {
@@ -86,24 +91,25 @@ namespace GJTalkServer
         }
         void OnRead(IAsyncResult result)
         {
+            int size = 0;
             try
             {
-                int size = socket.EndReceive(result);
-                if (size > 0)
-                {
-                    streamParser.Write(buffer, 0, size);
-                    BeginRead();
-                }
-                else
-                {
-                    Close();
-                }
-
+                size = socket.EndReceive(result); 
             }
-            catch
+            catch { }
+            if (size > 0)
+            {
+                string str = Encoding.UTF8.GetString(buffer, 0, size);
+                Console.WriteLine(str);
+                streamParser.Write(buffer, 0, size);
+
+                BeginRead();
+            }
+            else
             {
                 Close();
             }
+
         }
         void OnSent(IAsyncResult result)
         {
@@ -145,8 +151,12 @@ namespace GJTalkServer
         }
         public void Close()
         {
+            if (socket == null)
+                return;
+           server.SessionManager.Remove(this);
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            socket = null;
         }
         void streamParser_OnStreamStart(object sender, Matrix.StanzaEventArgs e)
         {

@@ -1,13 +1,13 @@
 #pragma once
-#include "gjwnd.h"
+#include "GJContextWnd.h"
 class CChatFrame :
-	public CGJWnd
+	public CGJContextWnd
 {
 
 protected:
 	void OnPostCreate();
 public:
-	CChatFrame(GJContext &context);
+	CChatFrame(GJContext *context);
 	~CChatFrame(void);
 };
 

@@ -12,25 +12,15 @@ namespace GJTalkServer
     {
         public SessionManager SessionManager { get; private set; }
         public PacketManager PacketManager { get; private set; }
-        public MessageMangaer MessageManager { get;private set; }
-        public UserAuth AuthManager { get;private set; }
+        public MessageMangaer MessageManager { get; private set; }
+        public UserAuth AuthManager { get; private set; }
         public int Port { get; set; }
         public IPAddress ListenAddress { get; set; }
         public string Domain { get; private set; }
 
         AsyncCallback acceptCallback;
-        Socket listenSocket;
-        Thread thListen;
+        Socket listenSocket; 
 
-        void ListenEntry()
-        {
-            listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            listenSocket.Bind(new IPEndPoint(ListenAddress, Port));
-            listenSocket.Listen(8);
-            if (acceptCallback == null)
-                acceptCallback = new AsyncCallback(OnAccept);
-            BeginAccept(listenSocket);
-        }
         void BeginAccept(Socket socket)
         {
             listenSocket.BeginAccept(acceptCallback, socket);
@@ -38,13 +28,13 @@ namespace GJTalkServer
         void OnAccept(IAsyncResult result)
         {
             Socket socket = result.AsyncState as Socket;
-            try
-            {
+            //try
+            //{
                 new Session(this, socket.EndAccept(result));
-            }
-            catch
-            {
-            }
+            //}
+            //catch
+            //{
+            //}
             BeginAccept(socket);
         }
         public void Start()
@@ -54,14 +44,23 @@ namespace GJTalkServer
             this.AuthManager = new UserAuth();
             this.PacketManager = new PacketManager()
             {
-                ThreadCount = Environment.ProcessorCount * 2 
+                ThreadCount = Environment.ProcessorCount * 2
             };
-           
-            thListen = new Thread(ListenEntry);
-            thListen.IsBackground = true;
-            thListen.Start();
+
+            listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listenSocket.Bind(new IPEndPoint(ListenAddress, Port));
+            listenSocket.Listen(8);
+            if (acceptCallback == null)
+                acceptCallback = new AsyncCallback(OnAccept);
+            BeginAccept(listenSocket);
             PacketManager.StartHandle();
             Domain = "GJTalk.com";
+
+        }
+        public GJTalkServer()
+        {
+            ListenAddress = IPAddress.Any;
+            Port = 5222;
         }
         public void Stop()
         {

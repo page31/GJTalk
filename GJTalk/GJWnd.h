@@ -1,19 +1,23 @@
 #pragma once 
-
-class GJContext;
+#include "stdafx.h"
+namespace CGJWndError
+{
+	enum WNDERROR
+	{
+		LOAD_ERROR
+	};
+}
 class CGJWnd:public CWindowWnd,public INotifyUI
 {
-protected:
-	GJContext &context;
 
 public:  
 	CPaintManagerUI m_pm;
 	LPCTSTR GetWindowClassName() const;
 	UINT GetClassStyle() const;
 	LRESULT OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled);
-	CGJWnd(GJContext &context);
-	GJContext &GetContext() const;
+	CGJWnd(void);
 
+	bool InitFromXmlFile( LPCTSTR lpszFilename);
 	LRESULT  HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
@@ -27,6 +31,7 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	virtual	void Notify(TNotifyUI& msg);
+ 
 	void OnPrepare();
 protected:
 	CControlUI *m_pBtnClose,*m_pBtnMax,*m_pBtnResotre,

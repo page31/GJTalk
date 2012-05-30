@@ -41,9 +41,8 @@ namespace GJTalkServer
                 if (!waitHandle.WaitOne(1000))
                     continue;
                 Packet packet = Dequeue();
-                if (packet == null)
-                    continue;
-                packet.Handle();
+                if (packet != null)
+                    packet.Handle();
             }
         }
 

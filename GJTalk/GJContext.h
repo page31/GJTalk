@@ -3,6 +3,7 @@
 #include "GJTalk.h"
 #include "GJUser.h"
 #include "MainFrame.h"
+#include "LoginFrame.h"
 #include <string>
 #include "../xmpp/client.h"
 #include "../xmpp/connectionlistener.h"
@@ -23,24 +24,33 @@ namespace  MainFrameCloseReasons
 		SwitchUser
 	};
 };
+
+
 class GJContext:public ConnectionListener, LogHandler,
 	MessageSessionHandler, TLSHandler
 {
 public:
 
-	 
 	int MainFrameCloseReason;
 private:
+	
+	bool m_bRecvData;
 	JID *m_pSelf; 
 	Client *m_pClient;
 	CMainFrame *m_pMainFrame;
+	CLoginFrame *m_pLoginFrame;
 	string m_Server;
-	int m_Port;
+	int m_Port;  
+	CWinThread *m_pRecvThread;
 public: 
 	GJContext(void);
 	void setMainFrame(CMainFrame* frame);
+	Client *GetClient() const;
+	bool IsReceiving() const;
+	void StartRecv();
+	void StopRecv();
 	bool init(const string& sever,int port=-1);
-	bool signIn(const string& username,const string& password);
+	bool SignIn(const string& username,const string& password,CLoginFrame *loginFrame);
 	bool isSignedIn() const;
 	JID *getSelf() const;
 

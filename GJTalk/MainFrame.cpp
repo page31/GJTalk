@@ -2,10 +2,9 @@
 #include "MainFrame.h"
 
 
-CMainFrame::CMainFrame(GJContext &context)
-	:CGJWnd(context)
-{
-	context.setMainFrame(this);
+CMainFrame::CMainFrame(GJContext *context)
+	:CGJContextWnd(context)
+{ 
 }
 
 void CMainFrame::OnPostCreate()
