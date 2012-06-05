@@ -22,6 +22,7 @@ namespace GJTalkServer
         {
             var db = GetDatabase();
             var collection = db.GetCollection("offline_msg");
+           
             return null;
 
         }
