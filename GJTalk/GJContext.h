@@ -43,6 +43,7 @@ private:
 	int m_Port;  
 	CWinThread *m_pRecvThread;
 public: 
+	CString &GetAppName() const;
 	GJContext(void);
 	void setMainFrame(CMainFrame* frame);
 	Client *GetClient() const;
@@ -51,8 +52,8 @@ public:
 	void StopRecv();
 	bool init(const string& sever,int port=-1);
 	bool SignIn(const string& username,const string& password,CLoginFrame *loginFrame);
-	bool isSignedIn() const;
-	JID *getSelf() const;
+	bool IsSignedIn() const;
+	JID *GetSelf() const;
 
 	void onConnect() ;
 	void onDisconnect( ConnectionError e );

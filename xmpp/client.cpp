@@ -293,6 +293,7 @@ namespace gloox
         logInstance().dbg( LogAreaClassClient, "SASL authentication successful" );
         processSASLSuccess();
         setAuthed( true );
+		notifyOnConnect();
         header();
       }
       else

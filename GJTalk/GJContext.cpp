@@ -75,6 +75,15 @@ string encryptPassword(const string& password)
 	md5.finalize();
 	return md5.hex();
 }
+
+
+CString &GJContext::GetAppName() const
+{
+	TCHAR buffer[1024];
+	::LoadString(AfxGetInstanceHandle(),IDS_APPNAME,buffer,1023);
+	return *(new CString(buffer));
+}
+
 bool GJContext::SignIn(const string& username,const string& password,CLoginFrame *loginFrame)
 { 
 	if(IsCrossThread())
@@ -101,6 +110,7 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 		else
 		{
 			m_pClient->registerConnectionListener(this);
+			
 			m_pClient->registerMessageSessionHandler(this); 
 			bOk= m_pClient->connect(false);
 
@@ -118,13 +128,13 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 
 	return bOk;
 }
-JID *GJContext::getSelf() const
+JID *GJContext::GetSelf() const
 {
-	if(!isSignedIn())
+	if(!IsSignedIn())
 		return NULL;
 	return m_pSelf;
 }
-bool GJContext::isSignedIn() const
+bool GJContext::IsSignedIn() const
 {
 	return m_pClient&&m_pClient->authed();
 }

@@ -311,7 +311,7 @@ namespace gloox
       strncpy( d + pos, m_server.c_str(), m_server.length() );
       pos += m_server.length();
     }
-    int nport = htons( port );
+    int nport = htons( static_cast<u_short>( port) );
     d[pos++] = static_cast<char>( nport );
     d[pos++] = static_cast<char>( nport >> 8 );
 

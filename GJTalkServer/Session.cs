@@ -27,10 +27,15 @@ namespace GJTalkServer
         public User SessionUser { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
 
+        public List<BuddyGroup> Groups { get;private set; }
+
         GJTalkServer server;
         XmppStreamParser streamParser;
         Socket socket;
         AsyncCallback readCallback;
+
+      
+
         byte[] buffer;
         const int buff_size = 1024;
 
@@ -221,9 +226,13 @@ namespace GJTalkServer
             if (oldSession != null)
                 oldSession.Offline(SessionOfflineReason.MultiLogin);
 
-            this.SessionUser = server.AuthManager.GetUser(username);
-
+            this.SessionUser = server.AuthManager.GetUser(username); 
             server.SessionManager.Add(this);
+            Groups = new List<BuddyGroup>();
+            lock (Groups)
+            {
+
+            }
         }
 
     }

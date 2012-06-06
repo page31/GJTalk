@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using Matrix.Xml;
 using Matrix.Xmpp;
-using Matrix.Xmpp.Base;
+using Matrix.Xmpp.Roster;
 using Matrix.Xmpp.Sasl;
 using Matrix.Xmpp.Stream;
+using XmppBase = Matrix.Xmpp.Base;
 using MxAuth = Matrix.Xmpp.Sasl.Auth;
 namespace GJTalkServer
 {
@@ -21,11 +22,38 @@ namespace GJTalkServer
         {
             Time = DateTime.Now;
         }
-        void ProcessIq(Iq iq)
+
+        void ProcessRosterIq(XmppBase.Iq iq)
+        {
+            if (iq.Type == IqType.get)
+            {
+                iq.SwitchDirection();
+                iq.Type = IqType.result;
+                foreach (var group in Session.Groups)
+                {
+                    foreach (var buddy in group.Buddies)
+                    {
+                        var ri = new RosterItem(buddy.Username, buddy.Nickname, group.GroupName);
+                        ri.Subscription = Subscription.both;
+                        ri.SetAttribute("remark", buddy.Remark);
+                        iq.Query.Add(ri);
+                    }
+                }
+            }
+            Session.Send(iq);
+        }
+        void ProcessSessionIq(XmppBase.Iq iq)
         {
 
         }
-        void ProcessMessage(Message msg)
+        void ProcessIq(XmppBase.Iq iq)
+        {
+            if (iq.Query is Roster)
+                ProcessRosterIq(iq);
+            else if (iq.Query is Matrix.Xmpp.Session.Session)
+                ProcessSessionIq(iq);
+        }
+        void ProcessMessage(XmppBase.Message msg)
         {
             Server.MessageManager.HandleMessage(this.Session, msg);
         }
@@ -57,7 +85,7 @@ namespace GJTalkServer
             {
                 failure = new Failure(FailureCondition.invalid_mechanism);
             }
-            if (failure == null && !Server.AuthManager.Auth(user, pass, true))
+            if (failure == null && !Server.AuthManager.Auth(user, pass, pass.Length==32))
                 failure = new Failure(FailureCondition.not_authorized);
             if (failure == null)
             {
@@ -67,22 +95,22 @@ namespace GJTalkServer
             else
                 Session.Send(failure);
         }
-        void ProcessPresence(Presence presence)
+        void ProcessPresence(XmppBase.Presence presence)
         {
         }
         public void Handle()
         {
-            if (Stanza is Iq)
+            if (Stanza is XmppBase.Iq)
             {
-                ProcessIq(Stanza as Iq);
+                ProcessIq(Stanza as XmppBase.Iq);
             }
-            else if (Stanza is Message)
+            else if (Stanza is XmppBase.Message)
             {
-                ProcessMessage(Stanza as Message);
+                ProcessMessage(Stanza as XmppBase.Message);
             }
-            else if (Stanza is Presence)
+            else if (Stanza is XmppBase.Presence)
             {
-                ProcessPresence(Stanza as Presence);
+                ProcessPresence(Stanza as XmppBase.Presence);
             }
             else if (Stanza is MxAuth)
             {

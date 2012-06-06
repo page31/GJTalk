@@ -13,7 +13,7 @@ LRESULT CGJWnd::OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled)
 {
 	long styleValue=::GetWindowLong(m_hWnd,GWL_STYLE);
 	styleValue&=~(WS_CAPTION|WS_OVERLAPPED);
-	::SetWindowLong(m_hWnd,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_POPUP); 
+	::SetWindowLong(m_hWnd,GWL_STYLE,styleValue|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|WS_POPUP|WS_MINIMIZEBOX); 
 	m_pm.Init(m_hWnd); 
 	HICON icon=::LoadIcon(m_pm.GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
 	if(icon)

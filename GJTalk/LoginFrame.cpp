@@ -15,7 +15,7 @@ CLoginFrame::CLoginFrame(GJContext *context)
 void CLoginFrame::OnPostCreate()
 {
 	long style=::GetWindowLong(m_hWnd,GWL_STYLE);
-	style^=WS_THICKFRAME;
+	style^=WS_THICKFRAME; 
 	::SetWindowLong(m_hWnd,GWL_STYLE,style);
 
 	if(!this->InitFromXmlFile(_T("LoginFrame.xml")))
@@ -85,12 +85,22 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 		{  
 			if(strName==_T("btnLogin"))
 			{
-				if(!GetContext()->SignIn(
+				if(m_pEditUser->GetText().GetLength()==0)
+				{
+					m_pEditUser->SetFocus();
+					return;
+				}
+				else if(m_pEditPassword->GetText().GetLength()==0)
+				{
+					m_pEditPassword->SetFocus();
+					return;
+				}
+				else if(!GetContext()->SignIn(
 					m_pEditUser->GetText().ToUTF8(),
 					m_pEditPassword->GetText().ToUTF8(),
 					this))
 				{
-
+					 return;
 				}
 
 			}
@@ -115,7 +125,7 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 	{
 		if(msg.sType==_T("close"))
 		{
-			if(!m_pContext->isSignedIn())
+			if(!m_pContext->IsSignedIn())
 				::PostQuitMessage(0);
 		}
 	}

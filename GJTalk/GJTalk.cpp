@@ -70,45 +70,23 @@ BOOL CGJTalkApp::InitInstance()
 
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
-	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\xdd\\Desktop\\GJTalkSkin\\GJTalk"));
+	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\Dong\\Desktop\\GJTalkSkin\\GJTalk"));
 	m_pContext=new  GJContext;
 	m_pContext->init("localhost");
-	CLoginFrame *loginFrame=new CLoginFrame(m_pContext);
-	loginFrame->Create(NULL,_T("柑橘网"),UI_WNDSTYLE_DIALOG,0L);
+	CLoginFrame *loginFrame=new CLoginFrame(m_pContext); 
+	loginFrame->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_DIALOG,0L);
 	loginFrame->CenterWindow();
-	loginFrame->ShowWindow(); 
-
+	loginFrame->ShowWindow();  
 	MessageFilterHelper *msgFilter=new MessageFilterHelper();
 
 	CPaintManagerUI::AddExternalMessageFilter(msgFilter);
 	CPaintManagerUI::MessageLoop();
-	return TRUE;
-	/*while(true)
-	{
-	context.init("localhost");
-	CLoginFrame loginFrame(&context);
-	loginFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
-	loginFrame.CenterWindow();
-	loginFrame.ShowWindow();
-	return TRUE;
-	if(!context.isSignedIn())
-	break;
-
-	CMainFrame mainFrame(&context);
-	mainFrame.Create(NULL,_T("柑橘网"),UI_WNDSTYLE_FRAME,0L);
-	mainFrame.ShowModal();
-	if(context.MainFrameCloseReason!=MainFrameCloseReasons::SwitchUser) 
-	break; 
-
-	}*/
-	// 删除上面创建的 shell 管理器。
+ 
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
 	}
-
-	// 由于对话框已关闭，所以将返回 FALSE 以便退出应用程序，
-	//  而不是启动应用程序的消息泵。
+	 
 	return FALSE;
 }
 

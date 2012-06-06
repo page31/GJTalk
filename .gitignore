@@ -6,7 +6,6 @@
 *.pydevproject
 .project
 .metadata
-.*log
 bin/**
 tmp/**
 tmp/**/*
@@ -64,9 +63,11 @@ local.properties
 *.tmp
 *.vspscc
 .builds
-**/*.dotCover
+**/*.dotCover 
+*.tlog
 *.log
-*.*log
+*.idb
+*.lastbuildstate
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #**/packages/ 

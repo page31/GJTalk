@@ -15,7 +15,7 @@ namespace DuiLib {
 	public:
 		CControlUI();
 		virtual ~CControlUI();
-
+		
 	public:
 		virtual CStdString GetName() const;
 		virtual void SetName(LPCTSTR pstrName);
