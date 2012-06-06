@@ -114,6 +114,7 @@
     <ClInclude Include="GJTalk.h" />
     <ClInclude Include="GJUser.h" />
     <ClInclude Include="GJWnd.h" />
+    <ClInclude Include="ITrayIconListenner.h" />
     <ClInclude Include="LoginFrame.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="MessageFilterHelper.h" />
@@ -122,6 +123,8 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TrayIcon.h" />
+    <ClInclude Include="TrayIconMessage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
@@ -139,6 +142,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TrayIcon.cpp" />
+    <ClCompile Include="TrayIconMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GJTalk.rc" />
@@ -152,4 +157,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="GJTalk.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

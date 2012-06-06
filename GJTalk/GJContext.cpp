@@ -178,17 +178,22 @@ bool GJContext::onTLSConnect( const CertInfo& info )
 
 	return true;
 }
-void GJContext::handleEncryptedData( const TLSBase* /*base*/, const std::string& data )
+void GJContext::handleEncryptedData( const TLSBase* base, const std::string& data )
 {
 
 }
 
-void GJContext::handleDecryptedData( const TLSBase* /*base*/, const std::string& data )
+void GJContext::handleDecryptedData( const TLSBase* base, const std::string& data )
 {
 
 }
 
-void GJContext::handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ )
+void GJContext::handleHandshakeResult( const TLSBase* base, bool success, CertInfo& certinfo )
+{
+	
+}
+
+void GJContext::OnTrayIconMessage(CTrayIconMessage &msg)
 {
 
 }

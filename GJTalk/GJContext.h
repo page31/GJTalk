@@ -11,6 +11,7 @@
 #include "../xmpp/tlshandler.h"
 #include "../xmpp/message.h"
 #include "../xmpp/messagesessionhandler.h"
+#include "TrayIcon.h"
 using namespace std;
 using namespace gloox;
 
@@ -27,7 +28,7 @@ namespace  MainFrameCloseReasons
 
 
 class GJContext:public ConnectionListener, LogHandler,
-	MessageSessionHandler, TLSHandler
+	MessageSessionHandler, TLSHandler,public ITrayIconListener
 {
 public:
 
@@ -43,6 +44,8 @@ private:
 	int m_Port;  
 	CWinThread *m_pRecvThread;
 public: 
+
+	
 	CString &GetAppName() const;
 	GJContext(void);
 	void setMainFrame(CMainFrame* frame);
@@ -64,6 +67,7 @@ public:
 	void handleMessageSession( MessageSession *session );
 	void handleLog( LogLevel level, LogArea area, const std::string& message );
 
+	 virtual void  OnTrayIconMessage(CTrayIconMessage &msg);
 
 	~GJContext(void);
 };
