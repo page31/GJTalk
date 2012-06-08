@@ -30,6 +30,10 @@ public:
 	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+
+	void GetWorkArea(LPRECT pRect);
+
 	virtual	void Notify(TNotifyUI& msg);
  
 	void OnPrepare();

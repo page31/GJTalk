@@ -20,13 +20,12 @@ GJContext::GJContext(void)
 	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL),
 	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL)
 {
-
+	m_pTrayIcon=new CTrayIcon();
+	m_pTrayIcon->AddListener(this);
+	m_pTrayIcon->SetTooltipText(this->GetAppName()); 
 }
 
-void GJContext::setMainFrame(CMainFrame *frame)
-{
-	m_pMainFrame=frame;
-}
+
 
 
 Client* GJContext::GetClient() const
@@ -110,7 +109,7 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 		else
 		{
 			m_pClient->registerConnectionListener(this);
-			
+
 			m_pClient->registerMessageSessionHandler(this); 
 			bOk= m_pClient->connect(false);
 
@@ -143,6 +142,8 @@ GJContext::~GJContext(void)
 {
 	if(m_pClient)
 		m_pClient->disconnect();
+	if(m_pTrayIcon)
+		delete m_pTrayIcon;
 }
 
 
@@ -156,8 +157,8 @@ void GJContext::onConnect()
 		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,1,NULL);
 		return;
 	}
-	if(m_pLoginFrame)
-		m_pLoginFrame->OnConnected();
+	if(m_pLoginFrame) 
+		m_pLoginFrame->OnConnected(); 
 	//m_tls->handshake();
 
 }
@@ -190,7 +191,7 @@ void GJContext::handleDecryptedData( const TLSBase* base, const std::string& dat
 
 void GJContext::handleHandshakeResult( const TLSBase* base, bool success, CertInfo& certinfo )
 {
-	
+
 }
 
 void GJContext::OnTrayIconMessage(CTrayIconMessage &msg)

@@ -7,8 +7,10 @@ CLoginFrame::CLoginFrame(GJContext *context)
 	:CGJContextWnd(context),m_pEditPassword(NULL),
 	m_pEditUser(NULL)
 {  
-
-
+	context->m_pLoginFrame=this;
+	m_pContext->m_pTrayIcon->ShowIcon();
+	m_pContext->m_pTrayIcon->SetIcon(IDR_MAINFRAME);
+	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_DIALOG,0L);
 }
 
 
@@ -23,15 +25,25 @@ void CLoginFrame::OnPostCreate()
 
 	m_pEditUser=static_cast<CEditUI*>(m_pm.FindControl(_T("editUser")));
 	m_pEditPassword=static_cast<CEditUI*>(m_pm.FindControl(_T("editPassword")));
+	m_pLnkReg=static_cast<CLabelUI*>(m_pm.FindControl(_T("lnkReg")));
+	m_pLnkForgotPwd=static_cast<CLabelUI*>(m_pm.FindControl(_T("lnkForgotPwd")));
+	if(m_pLnkReg)
+		m_pLnkReg->SetTextColor(m_pm.GetDefaultLinkFontColor());
+	if(m_pLnkForgotPwd)
+		m_pLnkForgotPwd->SetTextColor(m_pm.GetDefaultLinkFontColor());
 }
 void CLoginFrame::OnConnected()
 {
-	this->Close();
+	if(m_pContext->m_pMainFrame==NULL)
+		m_pContext->m_pMainFrame=new CMainFrame(m_pContext);
+	m_pContext->m_pMainFrame->ShowWindow(); 
+	m_pContext->m_pMainFrame->LoadUser();
+	this->Close(); 
 }
 void CLoginFrame::OnDisconnected(ConnectionError error)
 {
 	switch (error)
-	{
+{	
 	case gloox::ConnNoError:
 		break; 
 	case gloox::ConnProxyAuthRequired:
@@ -81,6 +93,20 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 	{
 		CGJWnd::Notify(msg);
 		CStdString strName=msg.pSender->GetName();
+		if(msg.pSender==m_pLnkReg||msg.pSender==m_pLnkForgotPwd)
+		{
+			CLabelUI* label= static_cast<CLabelUI*>(msg.pSender);
+			if(msg.sType==_T("mouseenter"))
+			{
+				label->SetFont(2);
+				label->SetTextColor(m_pm.GetDefaultLinkHoverFontColor());
+			}
+			else if(msg.sType==_T("mouseleave"))
+			{
+				label->SetFont(0);
+				label->SetTextColor(m_pm.GetDefaultLinkFontColor());
+			}
+		}
 		if(msg.sType==_T("click"))
 		{  
 			if(strName==_T("btnLogin"))
@@ -100,7 +126,7 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 					m_pEditPassword->GetText().ToUTF8(),
 					this))
 				{
-					 return;
+					return;
 				}
 
 			}

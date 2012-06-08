@@ -8,6 +8,8 @@ class CLoginFrame:public CGJContextWnd
 private:
 	CEditUI *m_pEditUser,
 		*m_pEditPassword;
+	CLabelUI* m_pLnkReg,*m_pLnkForgotPwd;
+
 protected:
 	virtual	void OnPostCreate();
 public: 

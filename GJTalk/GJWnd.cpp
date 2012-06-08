@@ -80,7 +80,6 @@ LRESULT CGJWnd::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 			,szRoundCorner.cx,szRoundCorner.cy);
 		::SetWindowRgn(*this,hRgn,TRUE);
 		::DeleteObject(hRgn);
-
 	}
 	bHandled=false;
 	return 0;
@@ -152,6 +151,9 @@ LRESULT CGJWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 	this->Notify(msg);
 	return 0;
 }
+
+
+
 LRESULT CGJWnd::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
 
@@ -235,6 +237,16 @@ void CGJWnd::OnPrepare()
 	m_pBtnMin=m_pm.FindControl(_T("wnd_minbtn"));
 	m_pBtnResotre=m_pm.FindControl(_T("wnd_resbtn"));
 }
+
+void CGJWnd::GetWorkArea(LPRECT pRect)
+{
+	MONITORINFO oMonitor={};
+	oMonitor.cbSize=sizeof(oMonitor);
+	::GetMonitorInfo(::MonitorFromWindow(*this,
+		MONITOR_DEFAULTTOPRIMARY),&oMonitor);
+	*pRect=oMonitor.rcWork;
+}
+
 void CGJWnd::Notify(TNotifyUI& msg)
 {
 	if(msg.sType==_T("windowinit"))
@@ -255,7 +267,11 @@ void CGJWnd::Notify(TNotifyUI& msg)
 		}
 		else if(msg.pSender==m_pBtnMin)
 		{
-			SendMessage(WM_SYSCOMMAND,SC_MINIMIZE,0L); 
+			LONG exStyle=::GetWindowLong(this->m_hWnd,GWL_EXSTYLE);
+			if(exStyle&WS_EX_NOACTIVATE)
+				::ShowWindow(this->m_hWnd,SW_HIDE);
+			else 
+				SendMessage(WM_SYSCOMMAND,SC_MINIMIZE,0L); 
 		}
 		else if(msg.pSender==m_pBtnResotre)
 		{

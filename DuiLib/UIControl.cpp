@@ -663,30 +663,37 @@ namespace DuiLib {
 		{
 			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
 			return;
-		}
-		if( event.Type == UIEVENT_SETFOCUS ) 
+		} 
+		else if( event.Type == UIEVENT_SETFOCUS ) 
 		{
 			m_bFocused = true;
 			Invalidate();
 			return;
 		}
-		if( event.Type == UIEVENT_KILLFOCUS ) 
+		else if( event.Type == UIEVENT_KILLFOCUS ) 
 		{
 			m_bFocused = false;
 			Invalidate();
 			return;
 		}
-		if( event.Type == UIEVENT_TIMER )
+		else if( event.Type == UIEVENT_TIMER )
 		{
 			m_pManager->SendNotify(this, _T("timer"), event.wParam, event.lParam);
 			return;
 		}
-		if( event.Type == UIEVENT_CONTEXTMENU )
+		else if( event.Type == UIEVENT_CONTEXTMENU )
 		{
 			if( IsContextMenuUsed() ) {
 				m_pManager->SendNotify(this, _T("menu"), event.wParam, event.lParam);
 				return;
 			}
+		}else if(event.Type==UIEVENT_MOUSEENTER)
+		{
+			m_pManager->SendNotify(this,_T("mouseenter"));
+		}
+		else if(event.Type==UIEVENT_MOUSELEAVE)
+		{
+			m_pManager->SendNotify(this,_T("mouseleave"));
 		}
 		if( m_pParent != NULL ) m_pParent->DoEvent(event);
 	}

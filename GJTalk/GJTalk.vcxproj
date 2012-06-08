@@ -125,6 +125,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TrayIconMessage.h" />
+    <ClInclude Include="UIBuddyList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
@@ -144,6 +145,7 @@
     </ClCompile>
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TrayIconMessage.cpp" />
+    <ClCompile Include="UIBuddyList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GJTalk.rc" />

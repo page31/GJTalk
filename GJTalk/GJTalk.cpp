@@ -76,13 +76,8 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->init("localhost");
 
-	trayIcon.AddListener(m_pContext);
-	trayIcon.SetTooltipText(m_pContext->GetAppName()); 
-	trayIcon.ShowIcon();
-	trayIcon.SetIcon(IDR_MAINFRAME);
-	trayIcon.ShowBalloon(_T("test"),m_pContext->GetAppName());
 	CLoginFrame *loginFrame=new CLoginFrame(m_pContext); 
-	loginFrame->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_DIALOG,0L);
+
 	loginFrame->CenterWindow();
 	loginFrame->ShowWindow();  
 	MessageFilterHelper *msgFilter=new MessageFilterHelper();

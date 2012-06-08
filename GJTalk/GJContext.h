@@ -31,24 +31,25 @@ class GJContext:public ConnectionListener, LogHandler,
 	MessageSessionHandler, TLSHandler,public ITrayIconListener
 {
 public:
-
+	CTrayIcon* m_pTrayIcon;
 	int MainFrameCloseReason;
+	CMainFrame *m_pMainFrame;
+	CLoginFrame *m_pLoginFrame;
+
 private:
-	
+
 	bool m_bRecvData;
 	JID *m_pSelf; 
 	Client *m_pClient;
-	CMainFrame *m_pMainFrame;
-	CLoginFrame *m_pLoginFrame;
+
 	string m_Server;
 	int m_Port;  
 	CWinThread *m_pRecvThread;
 public: 
 
-	
+
 	CString &GetAppName() const;
-	GJContext(void);
-	void setMainFrame(CMainFrame* frame);
+	 
 	Client *GetClient() const;
 	bool IsReceiving() const;
 	void StartRecv();
@@ -67,8 +68,9 @@ public:
 	void handleMessageSession( MessageSession *session );
 	void handleLog( LogLevel level, LogArea area, const std::string& message );
 
-	 virtual void  OnTrayIconMessage(CTrayIconMessage &msg);
+	virtual void  OnTrayIconMessage(CTrayIconMessage &msg);
 
+	GJContext(void);
 	~GJContext(void);
 };
 

@@ -162,7 +162,6 @@ public:
 
     void DoEvent(TEventUI& event);
     SIZE EstimateSize(SIZE szAvailable);
-
     void PaintText(HDC hDC);
 
 protected:

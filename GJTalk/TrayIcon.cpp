@@ -247,49 +247,49 @@ bool CTrayIcon::SetIconList(HICON* pHIconList, UINT nNumIcons)
 		return TRUE;
 }
 bool CTrayIcon::ShowBalloon(LPCTSTR szText,
-                              LPCTSTR szTitle  /*=NULL*/,
-                              DWORD   dwIcon   /*=NIIF_NONE*/,
-                              UINT    uTimeout /*=10*/ )
+							LPCTSTR szTitle  /*=NULL*/,
+							DWORD   dwIcon   /*=NIIF_NONE*/,
+							UINT    uTimeout /*=10*/ )
 {
- 
- 
-    // Verify input parameters.
-
-    // The balloon tooltip text can be up to 255 chars long.
-    ASSERT(AfxIsValidString(szText));
-    ASSERT(lstrlen(szText) < 256);
-
-    // The balloon title text can be up to 63 chars long.
-    if (szTitle)
-    {
-        ASSERT(AfxIsValidString( szTitle));
-        ASSERT(lstrlen(szTitle) < 64);
-    }
-
-    // dwBalloonIcon must be valid.
-    ASSERT(NIIF_NONE == dwIcon    || NIIF_INFO == dwIcon ||
-           NIIF_WARNING == dwIcon || NIIF_ERROR == dwIcon);
-
-    // The timeout must be between 10 and 30 seconds.
-    ASSERT(uTimeout >= 10 && uTimeout <= 30);
 
 
-    m_tnd.uFlags = NIF_INFO;
-    _tcsncpy(m_tnd.szInfo, szText, 256);
-    if (szTitle)
-        _tcsncpy(m_tnd.szInfoTitle, szTitle, 64);
-    else
-        m_tnd.szInfoTitle[0] = _T('\0');
-    m_tnd.dwInfoFlags = dwIcon;
-    m_tnd.uTimeout = uTimeout * 1000;   // convert time to ms
+	// Verify input parameters.
 
-    BOOL bSuccess = Shell_NotifyIcon (NIM_MODIFY, &m_tnd);
+	// The balloon tooltip text can be up to 255 chars long.
+	ASSERT(AfxIsValidString(szText));
+	ASSERT(lstrlen(szText) < 256);
 
-    // Zero out the balloon text string so that later operations won't redisplay
-    // the balloon.
-    m_tnd.szInfo[0] = _T('\0');
+	// The balloon title text can be up to 63 chars long.
+	if (szTitle)
+	{
+		ASSERT(AfxIsValidString( szTitle));
+		ASSERT(lstrlen(szTitle) < 64);
+	}
 
-    return bSuccess; 
+	// dwBalloonIcon must be valid.
+	ASSERT(NIIF_NONE == dwIcon    || NIIF_INFO == dwIcon ||
+		NIIF_WARNING == dwIcon || NIIF_ERROR == dwIcon);
+
+	// The timeout must be between 10 and 30 seconds.
+	ASSERT(uTimeout >= 10 && uTimeout <= 30);
+
+
+	m_tnd.uFlags = NIF_INFO;
+	_tcsncpy_s(m_tnd.szInfo,sizeof(m_tnd.szInfo), szText, 256);
+	if (szTitle)
+		_tcsncpy_s(m_tnd.szInfoTitle,sizeof(m_tnd.szInfoTitle), szTitle, 64);
+	else
+		m_tnd.szInfoTitle[0] = _T('\0');
+	m_tnd.dwInfoFlags = dwIcon;
+	m_tnd.uTimeout = uTimeout * 1000;   // convert time to ms
+
+	BOOL bSuccess = Shell_NotifyIcon (NIM_MODIFY, &m_tnd);
+
+	// Zero out the balloon text string so that later operations won't redisplay
+	// the balloon.
+	m_tnd.szInfo[0] = _T('\0');
+
+	return bSuccess==TRUE; 
 }
 bool CTrayIcon::Animate(UINT nDelayMilliSeconds, int nNumSeconds /*=-1*/)
 {
