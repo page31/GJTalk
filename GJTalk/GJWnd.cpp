@@ -218,11 +218,11 @@ LRESULT CGJWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 }
 
-bool CGJWnd::InitFromXmlFile(LPCTSTR lpszFilename)
+bool CGJWnd::InitFromXmlFile(LPCTSTR lpszFilename,IDialogBuilderCallback* callback)
 {
-	CDialogBuilder builder;
+	CDialogBuilder builder; 
 	CControlUI* pRoot=builder.Create(lpszFilename,
-		0,NULL,&m_pm);
+		0,callback,&m_pm);
 	if(!pRoot)
 		return false;
 

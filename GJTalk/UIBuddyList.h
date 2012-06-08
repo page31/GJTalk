@@ -3,35 +3,51 @@
 using namespace std;
 namespace DuiLib
 {
-	class CUIBuddyListItem
+
+
+	class CBuddyListUI;
+	class CBuddyListItem
 	{
-		friend class CUIBuddyListGroup;
+		friend class CBuddyListGroupUI;
 	};
-	class CUIBuddyListGroup
+	class CBuddyListGroupUI:public CListContainerElementUI
 	{
 	private:
-		CUIBuddyList *m_pList;
+		CPaintManagerUI* m_pPaintManager;
+		CBuddyListUI *m_pList;
+		CLabelUI* m_pGroupLabel;
 		CContainerUI *m_pContainer;
 		LPCTSTR m_sGroupName;
 	public:
+		~CBuddyListGroupUI();
+		CBuddyListGroupUI( CPaintManagerUI* pPaintManager);
 		int Count() const;
 		bool IsExpaned() const;
 		void Expand();
 		void Collapse();
-		void Add(CUIBuddyListItem &item);
-		void Remove(CUIBuddyListItem &item);
-		bool ContainsItem(const CUIBuddyListItem &item) const;
-		friend class CUIBuddyList;
+		void Add(CBuddyListItem &item);
+		void Remove(CBuddyListItem &item);
+		bool ContainsItem(const CBuddyListItem &item) const;
+		friend class CBuddyListUI;
 	};
-	class CUIBuddyList:public CListUI
+
+
+#define CBuddyListGroupUIs 
+
+	class CBuddyListUI:public CListUI
 	{
 	private:
-		vector<CUIBuddyListGroup> m_vGroups;
+		vector<CBuddyListGroupUI> m_vGroups;
+		CPaintManagerUI* m_pPaintManager;
 	public:
-		void AddGroup(CUIBuddyListGroup &group);
-		void RemoveGroup(CUIBuddyListGroup &group);
-		void ContainsGroup(const CUIBuddyListGroup &group) const;
-		CUIBuddyListGroup &GetGroup(int index);
+		~CBuddyListUI();
+		CBuddyListUI( CPaintManagerUI* pPaintManager);
+		void AddGroup(CBuddyListGroupUI &group);
+		CBuddyListGroupUI& AddGroup(LPCTSTR pstrGroupName);
+		void RemoveGroup(CBuddyListGroupUI &group);
+		bool ContainsGroup(const CBuddyListGroupUI &group) const;
+		bool ContainsGroup(LPCTSTR pstrGroupName) const;
+		CBuddyListGroupUI &GetGroup(int index);
 		int Count() const;
 	};
 }

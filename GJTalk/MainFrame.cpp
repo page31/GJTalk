@@ -5,6 +5,21 @@
 #define FIX_DOCK_N(d) { if(d<-DOCK_MOVE_STEP) d=-DOCK_MOVE_STEP;}
 
 
+CControlUI* CMainFrame::CreateControl(LPCTSTR pstrClass)
+{
+	CControlUI* pControl=NULL;
+	if(_tcsicmp(pstrClass,_T("Friends"))==0)
+	{
+		pControl= new CBuddyListUI(&m_pm);
+	}
+	else if(_tcsicmp(pstrClass,_T("FriendGroup"))==0)
+	{
+		pControl= new CBuddyListGroupUI(&m_pm);
+	}
+	return pControl;
+}
+
+
 void CMainFrame::OnTrayIconMessage(CTrayIconMessage &msg)
 {
 	if(msg.pMsg==_T("ldown"))
@@ -55,8 +70,13 @@ CMainFrame::CMainFrame(GJContext *context)
 
 void CMainFrame::OnPostCreate()
 {
-	if(!this->InitFromXmlFile(_T("MainFrame.xml")))
+	if(!this->InitFromXmlFile(_T("MainFrame.xml"),this))
 		throw CGJWndError::LOAD_ERROR;  
+	m_pBuddyList= static_cast<CBuddyListUI*>(m_pm.FindControl(pstrBuddyListName));
+	m_pRecentList=static_cast<CBuddyListUI*>(m_pm.FindControl(pstrRecentBuddyListName));
+	ASSERT(m_pBuddyList);
+	ASSERT(m_pRecentList);
+	m_pBuddyList->AddGroup(_T("test"));
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)
@@ -190,7 +210,7 @@ LRESULT CMainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	if(uMsg==WM_MOUSELEAVE||uMsg==WM_MOUSEHOVER
-		||uMsg==WM_NCMOUSELEAVE||uMsg==WM_NCMOUSEHOVER)
+		||uMsg==WM_NCMOUSELEAVE||uMsg==WM_NCMOUSEMOVE)
 	{
 		StartAnimateDock();
 	}
@@ -201,6 +221,19 @@ void CMainFrame::LoadUser()
 {
 
 }
+
+
+
+void CMainFrame::AddContactGroup(LPCTSTR pstrGroupName)
+{
+
+}
+void CMainFrame::AddContactItem(CBuddyListItem& item)
+{
+
+}
+
+
 CMainFrame::~CMainFrame(void)
 {
 }

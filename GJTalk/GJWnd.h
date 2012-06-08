@@ -17,7 +17,7 @@ public:
 	LRESULT OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled);
 	CGJWnd(void);
 
-	bool InitFromXmlFile( LPCTSTR lpszFilename);
+	bool InitFromXmlFile( LPCTSTR lpszFilename,IDialogBuilderCallback* builderCallback=NULL);
 	LRESULT  HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);

@@ -2,7 +2,7 @@
 #include <string>
 #include "GJContextWnd.h"
 #include "TrayIcon.h"
-
+#include "UIBuddyList.h"
 
 #define DOCK_MOVE_STEP (50)
 #define DOCK_MOVE_INTERVAL (10)
@@ -17,7 +17,12 @@ enum DOCK_STYLE
 	DOCK_LEFT,
 	DOCK_RIGHT
 };
-class CMainFrame:public CGJContextWnd,public ITrayIconListener
+
+
+LPCTSTR const pstrBuddyListName=_T("listContact");
+LPCTSTR const pstrRecentBuddyListName=_T("listRecent"); 
+
+class CMainFrame:public CGJContextWnd,public ITrayIconListener,public IDialogBuilderCallback
 {
 
 private: 
@@ -26,17 +31,30 @@ private:
 	static const UINT m_uDockOutCheckTimer=0x124;
 	bool m_bMoving;
 
+	CBuddyListUI* m_pBuddyList;
+	CBuddyListUI* m_pRecentList;
+public:
+
+
 protected:
 	void OnPostCreate();
 public:
-	void DoAnimateDock();
-	void StartAnimateDock();
-	void StopAnimateDock();
+
+	virtual CControlUI* CreateControl(LPCTSTR pstrClass);
+
+
 	void Notify(TNotifyUI& msg);
 	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void OnTrayIconMessage(CTrayIconMessage &msg);
 	void LoadUser();
+
+	void AddContactGroup(LPCTSTR pstrGroupName);
+	void AddContactItem(CBuddyListItem& item);
+
 	void UpdateDock(LPRECT pRect=NULL);
+	void DoAnimateDock();
+	void StartAnimateDock();
+	void StopAnimateDock();
 	CMainFrame(GJContext *context);
 	~CMainFrame(void);
 };
