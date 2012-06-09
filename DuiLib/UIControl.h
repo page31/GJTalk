@@ -53,6 +53,7 @@ namespace DuiLib {
 		void SetBorderRound(SIZE cxyRound);
 		bool DrawImage(HDC hDC, LPCTSTR pStrImage, LPCTSTR pStrModify = NULL);
 
+		bool IsMouseOver() const;
 		// 位置相关
 		virtual const RECT& GetPos() const;
 		virtual void SetPos(RECT rc);
@@ -175,6 +176,7 @@ namespace DuiLib {
 		bool m_bFloat;
 		bool m_bSetPos; // 防止SetPos循环调用
 		bool m_bFocusable;
+		bool m_bIsMouseOver;
 
 		TRelativePosUI m_tRelativePos;
 

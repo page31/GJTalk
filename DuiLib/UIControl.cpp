@@ -550,10 +550,17 @@ namespace DuiLib {
 	{
 		return m_bFocused;
 	}
+
+	bool CControlUI::IsMouseOver() const
+	{
+		return m_bIsMouseOver;
+	}
+
 	bool CControlUI::IsFocusable() const
 	{
 		return m_bFocusable;
 	}
+
 	void CControlUI::SetFocusable(bool bValue)
 	{
 		m_bFocusable=bValue;
@@ -585,7 +592,11 @@ namespace DuiLib {
 	}
 	void CControlUI::SetCursor(HCURSOR hCursor)
 	{
-		m_hCursor=hCursor;
+		m_hCursor=hCursor; 
+		if(IsMouseOver())
+		{
+			::SetCursor(m_hCursor);
+		}
 	}
 	HCURSOR CControlUI::GetCursor() const
 	{
@@ -705,11 +716,13 @@ namespace DuiLib {
 		}
 		if(event.Type==UIEVENT_MOUSEENTER)
 		{
+			m_bIsMouseOver=true;
 			m_pManager->SendNotify(this,_T("mouseenter"));
 			return;
 		}
 		if(event.Type==UIEVENT_MOUSELEAVE)
 		{
+			m_bIsMouseOver=false;
 			m_pManager->SendNotify(this,_T("mouseleave"));
 			return;
 		}

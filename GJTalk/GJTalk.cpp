@@ -82,14 +82,14 @@ BOOL CGJTalkApp::InitInstance()
 	loginFrame->ShowWindow();  
 	MessageFilterHelper *msgFilter=new MessageFilterHelper();
 
-	CPaintManagerUI::AddExternalMessageFilter(msgFilter);
+	CPaintManagerUI::AddGlobalMessageFilter(msgFilter);
 	CPaintManagerUI::MessageLoop();
- 
+
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
 	}
-	 
+
 	return FALSE;
 }
 

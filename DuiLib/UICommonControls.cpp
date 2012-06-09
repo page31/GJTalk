@@ -109,14 +109,7 @@ namespace DuiLib {
 			m_bFocused = false;
 			return;
 		}
-		if( event.Type == UIEVENT_MOUSEENTER )
-		{
-			return;
-		}
-		if( event.Type == UIEVENT_MOUSELEAVE )
-		{
-			return;
-		}
+
 		CControlUI::DoEvent(event);
 	}
 
@@ -308,9 +301,9 @@ namespace DuiLib {
 			}
 			return;
 		}
-	/*	if( event.Type == UIEVENT_SETCURSOR ) {
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
-			return;
+		/*	if( event.Type == UIEVENT_SETCURSOR ) {
+		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+		return;
 		}*/
 		CLabelUI::DoEvent(event);
 	}
@@ -1464,8 +1457,16 @@ Label_ForeImage:
 
 		if( event.Type == UIEVENT_SETCURSOR && IsEnabled() )
 		{
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
-			return;
+			POINT &mp=event.ptMouse; 
+		 
+			if(mp.x>m_rcItem.left+ m_rcTextPadding.left&&mp.x<m_rcItem.right- m_rcTextPadding.right&&
+				mp.y>m_rcItem.top+ m_rcTextPadding.top&&
+				mp.y<m_rcItem.bottom-m_rcTextPadding.bottom)
+			{
+
+				::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM))); 
+				return;
+			}
 		}
 		if( event.Type == UIEVENT_WINDOWSIZE )
 		{

@@ -99,12 +99,12 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 			if(msg.sType==_T("mouseenter"))
 			{
 				label->SetFont(2);
-				label->SetTextColor(m_pm.GetDefaultLinkHoverFontColor());
+				label->SetTextColor(m_pm.GetDefaultLinkHoverFontColor()); 
 			}
 			else if(msg.sType==_T("mouseleave"))
 			{
 				label->SetFont(0);
-				label->SetTextColor(m_pm.GetDefaultLinkFontColor());
+				label->SetTextColor(m_pm.GetDefaultLinkFontColor()); 
 			}
 		}
 		if(msg.sType==_T("click"))
