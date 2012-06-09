@@ -1015,6 +1015,7 @@ namespace DuiLib {
 		if( m_OldWndProc == NULL ) return NULL;
 		m_bSubclassed = true;
 		m_hWnd = hWnd;
+		::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(this));
 		return m_hWnd;
 	}
 
@@ -1044,7 +1045,6 @@ namespace DuiLib {
 		::EnableWindow(hWndParent, FALSE);
 		MSG msg = { 0 };
 		while( ::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0) ) {
-			
 			if( msg.message == WM_CLOSE && msg.hwnd == m_hWnd ) {
 				nRet = msg.wParam;
 				::EnableWindow(hWndParent, TRUE);
@@ -1197,8 +1197,7 @@ namespace DuiLib {
 		if( pThis != NULL ) {
 			return pThis->HandleMessage(uMsg, wParam, lParam);
 		} 
-		else 
-		{
+		else {
 			return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 		}
 	}

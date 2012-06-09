@@ -27,10 +27,18 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifdef UILIB_EXPORTS
+#if defined(UILIB_EXPORTS)
+#if defined(_MSC_VER)
 #define UILIB_API __declspec(dllexport)
 #else
+#define UILIB_API 
+#endif
+#else
+#if defined(_MSC_VER)
 #define UILIB_API __declspec(dllimport)
+#else
+#define UILIB_API 
+#endif
 #endif
 
 #include <windows.h>
@@ -48,13 +56,15 @@
 #include "UIDelegate.h"
 #include "UIControl.h"
 #include "UIContainer.h"
-#include "UICommonControls.h"
 #include "UIList.h"
 #include "UICombo.h"
+#include "UICommonControls.h"
 #include "UIActiveX.h"
+#include "UIWebBrowser.h"
 #include "UIRichEdit.h"
 
 #include "UIMarkup.h"
 #include "UIDlgBuilder.h"
 #include "UIRender.h"
 
+#include "WebBrowserEventHandler.h"

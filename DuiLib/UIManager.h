@@ -188,6 +188,7 @@ namespace DuiLib {
 		void SetMinInfo(int cx, int cy);
 		SIZE GetMaxInfo() const;
 		void SetMaxInfo(int cx, int cy);
+		int GetTransparent() const;
 		void SetTransparent(int nOpacity);
 		void SetBackgroundTransparent(bool bTrans);
 		bool IsShowUpdateRect() const;
@@ -285,12 +286,16 @@ namespace DuiLib {
 		bool RemoveNotifier(INotifyUI* pControl);   
 		void SendNotify(TNotifyUI& Msg, bool bAsync = false);
 		void SendNotify(CControlUI* pControl, LPCTSTR pstrMessage, WPARAM wParam = 0, LPARAM lParam = 0, bool bAsync = false);
-		static bool AddExternalMessageFilter(IMessageFilterUI* pFilter);
+
+
 		bool AddPreMessageFilter(IMessageFilterUI* pFilter);
 		bool RemovePreMessageFilter(IMessageFilterUI* pFilter);
 
 		bool AddMessageFilter(IMessageFilterUI* pFilter);
 		bool RemoveMessageFilter(IMessageFilterUI* pFilter);
+
+		static bool AddGlobalMessageFilter(IMessageFilterUI* pFilter);
+		static bool RemoveGlobalMessageFilter(IMessageFilterUI* pFilter);
 
 		int GetPostPaintCount() const;
 		bool AddPostPaint(CControlUI* pControl);
@@ -328,6 +333,7 @@ namespace DuiLib {
 
 	private:
 		HWND m_hWndPaint;
+		int m_nOpacity;
 		HDC m_hDcPaint;
 		HDC m_hDcOffscreen;
 		HDC m_hDcBackground;
@@ -361,7 +367,7 @@ namespace DuiLib {
 		//
 		CStdPtrArray m_aNotifiers;
 		CStdPtrArray m_aTimers;
-		static	CStdPtrArray m_aExternalMessageFilters;
+		static	CStdPtrArray m_aGlobalMessageFilters;
 		CStdPtrArray m_aPreMessageFilters;
 		CStdPtrArray m_aMessageFilters;
 		CStdPtrArray m_aPostPaintControls;

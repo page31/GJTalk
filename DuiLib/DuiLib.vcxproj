@@ -33,7 +33,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v100</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -70,10 +70,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>11.0.50214.1</_ProjectFileVersion>
+    <_ProjectFileVersion>11.0.50522.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
     <IntDir>.\Release\</IntDir>
     <TargetName>DuiLib</TargetName>
     <TargetExt>.dll</TargetExt>
@@ -82,16 +82,16 @@
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
     <IntDir>.\Debug\</IntDir>
     <TargetName>DuiLib_d</TargetName>
     <TargetExt>.dll</TargetExt>
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'">
-    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
     <IntDir>.\Debug_u\</IntDir>
     <TargetName>DuiLib_ud</TargetName>
     <TargetExt>.dll</TargetExt>
@@ -100,7 +100,7 @@
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'">
-    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
     <IntDir>.\Release_u\</IntDir>
     <TargetName>DuiLib_u</TargetName>
     <TargetExt>.dll</TargetExt>
@@ -180,7 +180,7 @@
       <AdditionalDependencies>Riched20.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/DuiLib.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug/DuiLib_d.pdb</ProgramDatabaseFile>
       <BaseAddress>0x11000000</BaseAddress>
       <ImportLibrary>../bin/DuiLib_d.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
@@ -223,7 +223,7 @@
       <AdditionalDependencies>Riched20.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug_u/DuiLib_ud.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug_u\DuiLib_ud.pdb</ProgramDatabaseFile>
       <BaseAddress>0x11000000</BaseAddress>
       <ImportLibrary>../bin/DuiLib_ud.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
@@ -273,7 +273,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="stb_image.c">
+    <ClCompile Include=".\stb_image.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -305,6 +305,7 @@
     <ClCompile Include="UIMarkup.cpp" />
     <ClCompile Include="UIRender.cpp" />
     <ClCompile Include="UIRichEdit.cpp" />
+    <ClCompile Include=".\UIWebBrowser.cpp" />
     <ClCompile Include="XUnzip.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -317,6 +318,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include=".\downloadmgr.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="UIActiveX.h" />
     <ClInclude Include="UIBase.h" />
@@ -332,6 +334,8 @@
     <ClInclude Include="UIMarkup.h" />
     <ClInclude Include="UIRender.h" />
     <ClInclude Include="UIRichEdit.h" />
+    <ClInclude Include=".\UIWebBrowser.h" />
+    <ClInclude Include=".\WebBrowserEventHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

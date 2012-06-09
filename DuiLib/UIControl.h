@@ -15,7 +15,7 @@ namespace DuiLib {
 	public:
 		CControlUI();
 		virtual ~CControlUI();
-		
+
 	public:
 		virtual CStdString GetName() const;
 		virtual void SetName(LPCTSTR pstrName);
@@ -110,12 +110,15 @@ namespace DuiLib {
 		virtual bool IsKeyboardEnabled() const;
 		virtual void SetKeyboardEnabled(bool bEnable = true);
 		virtual bool IsFocused() const;
-		virtual void SetFocus();
 		virtual bool IsFocusable() const;
 		virtual void SetFocusable(bool bValue=true);
+		virtual void SetFocus();
 		virtual bool IsFloat() const;
 		virtual void SetFloat(bool bFloat = true);
-
+		virtual void SetCursor(LPCTSTR pstrCursor=IDC_ARROW);
+		virtual void SetCursor(UINT uResId);
+		virtual void SetCursor(HCURSOR hCursor);
+		virtual HCURSOR GetCursor() const;
 		virtual CControlUI* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);
 
 		void Invalidate();
@@ -172,6 +175,7 @@ namespace DuiLib {
 		bool m_bFloat;
 		bool m_bSetPos; // ∑¿÷πSetPos—≠ª∑µ˜”√
 		bool m_bFocusable;
+
 		TRelativePosUI m_tRelativePos;
 
 		CStdString m_sText;
@@ -186,6 +190,9 @@ namespace DuiLib {
 		CStdString m_sBkImage;
 		DWORD m_dwBorderColor;
 		DWORD m_dwFocusBorderColor;
+
+		HCURSOR m_hCursor;
+
 		bool m_bColorHSL;
 		int m_nBorderSize;
 		SIZE m_cxyBorderRound;

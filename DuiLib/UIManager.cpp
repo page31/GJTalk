@@ -63,8 +63,7 @@ namespace DuiLib {
 	short CPaintManagerUI::m_L = 100;
 	CStdPtrArray CPaintManagerUI::m_aPreMessages;
 	CStdPtrArray CPaintManagerUI::m_aPlugins;
-
-	CStdPtrArray CPaintManagerUI::m_aExternalMessageFilters;
+	CStdPtrArray CPaintManagerUI::m_aGlobalMessageFilters;
 
 	CPaintManagerUI::CPaintManagerUI() :
 		m_hWndPaint(NULL),
@@ -88,6 +87,7 @@ namespace DuiLib {
 		m_bMouseCapture(false),
 		m_bOffscreenPaint(true),
 		m_bAlphaBackground(false),
+		m_nOpacity(255),
 		m_pParentResourcePM(NULL)
 	{
 		m_dwDefaultDisabledColor = 0xFFA7A6AA;
@@ -408,8 +408,18 @@ namespace DuiLib {
 		m_szMaxWindow.cy = cy;
 	}
 
+	int CPaintManagerUI::GetTransparent() const
+	{
+		return m_nOpacity;
+	}
 	void CPaintManagerUI::SetTransparent(int nOpacity)
 	{
+		if (nOpacity<0)
+			m_nOpacity = 0;
+		else if (nOpacity>255)
+			m_nOpacity = 255;
+		else
+			m_nOpacity = nOpacity;
 		if( m_hWndPaint != NULL ) {
 			typedef BOOL (__stdcall *PFUNCSETLAYEREDWINDOWATTR)(HWND, COLORREF, BYTE, DWORD);
 			PFUNCSETLAYEREDWINDOWATTR fSetLayeredWindowAttributes;
@@ -445,7 +455,16 @@ namespace DuiLib {
 	{
 		m_bShowUpdateRect = show;
 	}
-
+	bool CPaintManagerUI::AddGlobalMessageFilter(IMessageFilterUI* pFilter)
+	{
+		ASSERT(m_aGlobalMessageFilters.Find(pFilter)<0);
+		return m_aGlobalMessageFilters.Add(pFilter);
+	}
+	bool CPaintManagerUI::RemoveGlobalMessageFilter(IMessageFilterUI* pFilter)
+	{
+		ASSERT(m_aGlobalMessageFilters.Find(pFilter)>=0);
+		return m_aGlobalMessageFilters.Add(pFilter);
+	}
 	bool CPaintManagerUI::PreMessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& /*lRes*/)
 	{
 		for( int i = 0; i < m_aPreMessageFilters.GetSize(); i++ ) 
@@ -556,7 +575,6 @@ namespace DuiLib {
 					event.pSender = m_pEventHover;
 					m_pEventHover->Event(event);
 				}
-
 				if( m_pEventClick != NULL ) {
 					event.Type = UIEVENT_BUTTONUP;
 					event.pSender = m_pEventClick;
@@ -1197,7 +1215,6 @@ namespace DuiLib {
 	{
 		MSG msg = { 0 };
 		while( ::GetMessage(&msg, NULL, 0, 0) ) {
-
 			if( !CPaintManagerUI::TranslateMessage(&msg) ) {
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
@@ -1212,13 +1229,13 @@ namespace DuiLib {
 		// each window and any child control attached.
 		HWND hwndParent = ::GetParent(pMsg->hwnd);
 		UINT uStyle = GetWindowStyle(pMsg->hwnd);
-		bool bHandled=false;
 		LRESULT lRes = 0;
 		if(hwndParent==NULL)
 		{
-			for (int i = 0; i < m_aExternalMessageFilters.GetSize(); i++)
+			bool bHandled=false;
+			for (int i = 0; i < m_aGlobalMessageFilters.GetSize(); i++)
 			{
-				IMessageFilterUI * filter=static_cast<IMessageFilterUI*>(m_aExternalMessageFilters[i]);
+				IMessageFilterUI * filter=static_cast<IMessageFilterUI*>(m_aGlobalMessageFilters[i]);
 				lRes= filter->MessageHandler(pMsg->message,pMsg->wParam,pMsg->lParam,bHandled);
 				if(bHandled)
 					return true;
@@ -1250,9 +1267,6 @@ namespace DuiLib {
 
 	void CPaintManagerUI::SetFocus(CControlUI* pControl)
 	{
-		// cannot set focus
-		if(pControl&&!pControl->IsFocusable())
-			return;
 		// Paint manager window has focus?
 		HWND hFocusWnd = ::GetFocus();
 		if( hFocusWnd != m_hWndPaint && pControl != m_pFocus ) ::SetFocus(m_hWndPaint);
@@ -1451,11 +1465,7 @@ namespace DuiLib {
 		}
 		return false;
 	}
-	bool CPaintManagerUI::AddExternalMessageFilter(IMessageFilterUI* pFilter)
-	{
-		ASSERT(m_aExternalMessageFilters.Find(pFilter)<0);
-		return m_aExternalMessageFilters.Add(pFilter);
-	}
+
 	bool CPaintManagerUI::AddPreMessageFilter(IMessageFilterUI* pFilter)
 	{
 		ASSERT(m_aPreMessageFilters.Find(pFilter)<0);

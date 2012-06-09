@@ -191,11 +191,15 @@ void CContainerUI::SetVisible(bool bVisible)
     }
 }
 
+// 逻辑上，对于Container控件不公开此方法
+// 调用此方法的结果是，内部子控件隐藏，控件本身依然显示，背景等效果存在
 void CContainerUI::SetInternVisible(bool bVisible)
 {
     CControlUI::SetInternVisible(bVisible);
     if( m_items.IsEmpty() ) return;
     for( int it = 0; it < m_items.GetSize(); it++ ) {
+		// 控制子控件显示状态
+		// InternVisible状态应由子控件自己控制
         static_cast<CControlUI*>(m_items[it])->SetInternVisible(IsVisible());
     }
 }
@@ -799,6 +803,105 @@ void CContainerUI::ProcessScrollBar(RECT rc, int cxRequired, int cyRequired)
             }
         }
     }
+}
+
+bool CContainerUI::SetSubControlText( LPCTSTR pstrSubControlName,LPCTSTR pstrText )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl!=NULL)
+	{
+		pSubControl->SetText(pstrText);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+bool CContainerUI::SetSubControlFixedHeight( LPCTSTR pstrSubControlName,int cy )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl!=NULL)
+	{
+		pSubControl->SetFixedHeight(cy);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+bool CContainerUI::SetSubControlFixedWdith( LPCTSTR pstrSubControlName,int cx )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl!=NULL)
+	{
+		pSubControl->SetFixedWidth(cx);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+bool CContainerUI::SetSubControlUserData( LPCTSTR pstrSubControlName,LPCTSTR pstrText )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl!=NULL)
+	{
+		pSubControl->SetUserData(pstrText);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+DuiLib::CStdString CContainerUI::GetSubControlText( LPCTSTR pstrSubControlName )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl==NULL)
+		return _T("");
+	else
+		return pSubControl->GetText();
+}
+
+int CContainerUI::GetSubControlFixedHeight( LPCTSTR pstrSubControlName )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl==NULL)
+		return -1;
+	else
+		return pSubControl->GetFixedHeight();
+}
+
+int CContainerUI::GetSubControlFixedWdith( LPCTSTR pstrSubControlName )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl==NULL)
+		return -1;
+	else
+		return pSubControl->GetFixedWidth();
+}
+
+const CStdString CContainerUI::GetSubControlUserData( LPCTSTR pstrSubControlName )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=this->FindSubControl(pstrSubControlName);
+	if (pSubControl==NULL)
+		return _T("");
+	else
+		return pSubControl->GetUserData();
+}
+
+CControlUI* CContainerUI::FindSubControl( LPCTSTR pstrSubControlName )
+{
+	CControlUI* pSubControl=NULL;
+	pSubControl=static_cast<CControlUI*>(GetManager()->FindSubControlByName(this,pstrSubControlName));
+	return pSubControl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1625,6 +1728,7 @@ bool CTabLayoutUI::SelectItem(int iIndex)
         if( it == iIndex ) {
             GetItemAt(it)->SetVisible(true);
             GetItemAt(it)->SetFocus();
+			SetPos(m_rcItem);
         }
         else GetItemAt(it)->SetVisible(false);
     }
@@ -1688,6 +1792,61 @@ void CTabLayoutUI::SetPos(RECT rc)
         RECT rcCtrl = { rc.left, rc.top, rc.left + sz.cx, rc.top + sz.cy};
         pControl->SetPos(rcCtrl);
     }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+//
+
+CChildWindowUI::CChildWindowUI()
+{
+
+}
+
+void CChildWindowUI::Init()
+{
+	if (!m_pstrXMLFile.IsEmpty())
+	{
+		CDialogBuilder builder;
+		CContainerUI* pChildWindow = static_cast<CContainerUI*>(builder.Create(m_pstrXMLFile.GetData(), (UINT)0));
+		if (pChildWindow)
+		{
+			this->Add(pChildWindow);
+		}
+		else
+		{
+			this->RemoveAll();
+		}
+	}
+}
+
+void CChildWindowUI::SetAttribute( LPCTSTR pstrName, LPCTSTR pstrValue )
+{
+	if( _tcscmp(pstrName, _T("xmlfile")) == 0 )
+		SetChildWindowXML(pstrValue);
+	else
+		CContainerUI::SetAttribute(pstrName,pstrValue);
+}
+
+void CChildWindowUI::SetChildWindowXML( DuiLib::CStdString pXML )
+{
+	m_pstrXMLFile=pXML;
+}
+
+DuiLib::CStdString CChildWindowUI::GetChildWindowXML()
+{
+	return m_pstrXMLFile;
+}
+
+LPVOID CChildWindowUI::GetInterface( LPCTSTR pstrName )
+{
+	if( _tcscmp(pstrName, _T("ChildWindow")) == 0 ) return static_cast<CChildWindowUI*>(this);
+	return CControlUI::GetInterface(pstrName);
+}
+
+LPCTSTR CChildWindowUI::GetClass() const
+{
+	return _T("ChildWindowUI");
 }
 
 } // namespace DuiLib

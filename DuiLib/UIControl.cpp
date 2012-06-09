@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-
+#define tstr_equal(str1,str2) (_tcscmp((str1),(str2))==0)
 namespace DuiLib {
 
 	CControlUI::CControlUI() : 
@@ -23,8 +23,7 @@ namespace DuiLib {
 		m_dwBorderColor(0),
 		m_dwFocusBorderColor(0),
 		m_bColorHSL(false),
-		m_nBorderSize(1),
-		m_bFocusable(true)
+		m_nBorderSize(0)
 	{
 		m_cXY.cx = m_cXY.cy = 0;
 		m_cxyFixed.cx = m_cxyFixed.cy = 0;
@@ -36,6 +35,7 @@ namespace DuiLib {
 		::ZeroMemory(&m_rcItem, sizeof(RECT));
 		::ZeroMemory(&m_rcPaint, sizeof(RECT));
 		::ZeroMemory(&m_tRelativePos, sizeof(TRelativePosUI));
+		SetCursor();
 	}
 
 	CControlUI::~CControlUI()
@@ -487,6 +487,7 @@ namespace DuiLib {
 
 	bool CControlUI::IsVisible() const
 	{
+
 		return m_bVisible && m_bInternVisible;
 	}
 
@@ -559,8 +560,7 @@ namespace DuiLib {
 	}
 	void CControlUI::SetFocus()
 	{
-		if(IsFocusable() && m_pManager != NULL ) 
-			m_pManager->SetFocus(this);
+		if(IsFocusable()&& m_pManager != NULL ) m_pManager->SetFocus(this);
 	}
 
 	bool CControlUI::IsFloat() const
@@ -575,7 +575,22 @@ namespace DuiLib {
 		m_bFloat = bFloat;
 		NeedParentUpdate();
 	}
-
+	void CControlUI::SetCursor(LPCTSTR pstrCursor)
+	{
+		SetCursor(::LoadCursor(NULL,pstrCursor));
+	}
+	void CControlUI::SetCursor(UINT uResId)
+	{
+		SetCursor(MAKEINTRESOURCE(uResId));
+	}
+	void CControlUI::SetCursor(HCURSOR hCursor)
+	{
+		m_hCursor=hCursor;
+	}
+	HCURSOR CControlUI::GetCursor() const
+	{
+		return m_hCursor;
+	}
 	CControlUI* CControlUI::FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags)
 	{
 		if( (uFlags & UIFIND_VISIBLE) != 0 && !IsVisible() ) return NULL;
@@ -661,39 +676,42 @@ namespace DuiLib {
 	{
 		if( event.Type == UIEVENT_SETCURSOR )
 		{
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+			::SetCursor(m_hCursor);
 			return;
-		} 
-		else if( event.Type == UIEVENT_SETFOCUS ) 
+		}
+		if( event.Type == UIEVENT_SETFOCUS ) 
 		{
 			m_bFocused = true;
 			Invalidate();
 			return;
 		}
-		else if( event.Type == UIEVENT_KILLFOCUS ) 
+		if( event.Type == UIEVENT_KILLFOCUS ) 
 		{
 			m_bFocused = false;
 			Invalidate();
 			return;
 		}
-		else if( event.Type == UIEVENT_TIMER )
+		if( event.Type == UIEVENT_TIMER )
 		{
 			m_pManager->SendNotify(this, _T("timer"), event.wParam, event.lParam);
 			return;
 		}
-		else if( event.Type == UIEVENT_CONTEXTMENU )
+		if( event.Type == UIEVENT_CONTEXTMENU )
 		{
 			if( IsContextMenuUsed() ) {
 				m_pManager->SendNotify(this, _T("menu"), event.wParam, event.lParam);
 				return;
 			}
-		}else if(event.Type==UIEVENT_MOUSEENTER)
+		}
+		if(event.Type==UIEVENT_MOUSEENTER)
 		{
 			m_pManager->SendNotify(this,_T("mouseenter"));
+			return;
 		}
-		else if(event.Type==UIEVENT_MOUSELEAVE)
+		if(event.Type==UIEVENT_MOUSELEAVE)
 		{
 			m_pManager->SendNotify(this,_T("mouseleave"));
+			return;
 		}
 		if( m_pParent != NULL ) m_pParent->DoEvent(event);
 	}
@@ -772,6 +790,26 @@ namespace DuiLib {
 			cxyRound.cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);     
 			SetBorderRound(cxyRound);
 		}
+		else if(_tcscmp(pstrName,_T("cursor"))==0)
+		{
+			LPCTSTR pstrIDC; 
+			if(tstr_equal(pstrValue,_T("hand"))) pstrIDC=IDC_HAND; 
+			else if(tstr_equal(pstrValue,_T("arrow")))  pstrIDC=IDC_ARROW;  
+			else if(tstr_equal(pstrValue,_T("cross")))  pstrIDC=IDC_CROSS; 
+			else if(tstr_equal(pstrValue,_T("help")))  pstrIDC=IDC_HELP;  
+			else if(tstr_equal(pstrValue,_T("appstarting")))  pstrIDC=IDC_APPSTARTING; 
+			else if(tstr_equal(pstrValue,_T("ibeam"))) pstrIDC=IDC_IBEAM;
+			else if(tstr_equal(pstrValue,_T("default")))
+			{
+				SetCursor();
+				return;
+			}
+			else
+			{
+				return;
+			}
+			SetCursor(pstrIDC);
+		}
 		else if( _tcscmp(pstrName, _T("bkimage")) == 0 ) SetBkImage(pstrValue);
 		else if( _tcscmp(pstrName, _T("width")) == 0 ) SetFixedWidth(_ttoi(pstrValue));
 		else if( _tcscmp(pstrName, _T("height")) == 0 ) SetFixedHeight(_ttoi(pstrValue));
@@ -786,7 +824,6 @@ namespace DuiLib {
 		else if( _tcscmp(pstrName, _T("enabled")) == 0 ) SetEnabled(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("mouse")) == 0 ) SetMouseEnabled(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("keyboard")) == 0 ) SetKeyboardEnabled(_tcscmp(pstrValue, _T("true")) == 0);
-		else if(_tcscmp(pstrName,_T("focusable"))==0) SetFocusable(_tcscmp(pstrValue,_T("true"))==0);
 		else if( _tcscmp(pstrName, _T("visible")) == 0 ) SetVisible(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("float")) == 0 ) SetFloat(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("shortcut")) == 0 ) SetShortcut(pstrValue[0]);
@@ -892,7 +929,7 @@ namespace DuiLib {
 	{
 		if( m_nBorderSize > 0 )
 		{
-			if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 )
+			if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 )//»­Ô²½Ç±ß¿ò
 			{
 				if (IsFocused() && m_dwFocusBorderColor != 0)
 					CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_nBorderSize, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwFocusBorderColor));
@@ -903,7 +940,7 @@ namespace DuiLib {
 			{
 				if (IsFocused() && m_dwFocusBorderColor != 0)
 					CRenderEngine::DrawRect(hDC, m_rcItem, m_nBorderSize, GetAdjustColor(m_dwFocusBorderColor));
-				else if (m_dwBorderColor != 0)
+				else
 					CRenderEngine::DrawRect(hDC, m_rcItem, m_nBorderSize, GetAdjustColor(m_dwBorderColor));
 			}
 		}

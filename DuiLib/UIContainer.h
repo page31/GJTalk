@@ -72,6 +72,17 @@ public:
     void SetManager(CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
     CControlUI* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);
 
+	bool SetSubControlText(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
+	bool SetSubControlFixedHeight(LPCTSTR pstrSubControlName,int cy);
+	bool SetSubControlFixedWdith(LPCTSTR pstrSubControlName,int cx);
+	bool SetSubControlUserData(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
+
+	CStdString GetSubControlText(LPCTSTR pstrSubControlName);
+	int GetSubControlFixedHeight(LPCTSTR pstrSubControlName);
+	int GetSubControlFixedWdith(LPCTSTR pstrSubControlName);
+	const CStdString GetSubControlUserData(LPCTSTR pstrSubControlName);
+	CControlUI* FindSubControl(LPCTSTR pstrSubControlName);
+
     virtual SIZE GetScrollPos() const;
     virtual SIZE GetScrollRange() const;
     virtual void SetScrollPos(SIZE szPos);
@@ -224,6 +235,26 @@ public:
 
 protected:
     int m_iCurSel;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+//
+
+class UILIB_API CChildWindowUI : public CContainerUI
+{
+public:
+	CChildWindowUI();
+
+	void Init();
+	void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
+	void SetChildWindowXML(CStdString pXML);
+	DuiLib::CStdString GetChildWindowXML();
+	virtual LPVOID GetInterface(LPCTSTR pstrName);
+	virtual LPCTSTR GetClass() const;
+
+private:
+	DuiLib::CStdString m_pstrXMLFile;
 };
 
 } // namespace DuiLib

@@ -8,6 +8,16 @@
 
 #pragma once
 
+#ifdef __GNUC__
+// 怎么都没找到min，max的头文件-_-
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+#endif
+
 #define _CRT_SECURE_NO_DEPRECATE
 
 // Remove pointless warning messages
@@ -43,4 +53,3 @@
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_STDAFX_H__E30B2003_188B_4EB4_AB99_3F3734D6CE6C__INCLUDED_)
-

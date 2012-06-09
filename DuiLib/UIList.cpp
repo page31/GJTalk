@@ -855,7 +855,6 @@ CScrollBarUI* CListUI::GetHorizontalScrollBar() const
 CListBodyUI::CListBodyUI(CListUI* pOwner) : m_pOwner(pOwner)
 {
     ASSERT(m_pOwner);
-    SetInset(CRect(0,0,0,0));
 }
 
 void CListBodyUI::SetScrollPos(SIZE szPos)
