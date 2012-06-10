@@ -20,7 +20,7 @@ namespace GJTalkServer
             return new User()
             {
                 UserId = 0,
-                Username = "cpage31@gmail.com",
+                Username = username,
                 Nickname = "Test",
                 HeaderPic = "test.png",
                 Signature = "this is a test",

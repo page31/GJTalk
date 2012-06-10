@@ -60,7 +60,7 @@ namespace GJTalkServer
             foreach (var item in messages)
             {
 
-                collection.Insert<OfflineMessageItem>(new OfflineMessageItem()
+                OfflineMessageItem msg = new OfflineMessageItem()
                 {
                     Id = user + "|" + item.Id,
                     MessageType = item.Type.ToString(),
@@ -68,7 +68,8 @@ namespace GJTalkServer
                     From = item.From,
                     Time = DateTime.Now,
                     To = item.To.ToString()
-                });
+                };
+                collection.Insert<OfflineMessageItem>(msg);
             }
         }
     }

@@ -27,14 +27,14 @@ namespace GJTalkServer
         public User SessionUser { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
 
-        public List<BuddyGroup> Groups { get;private set; }
+        public List<BuddyGroup> Groups { get; private set; }
 
         GJTalkServer server;
         XmppStreamParser streamParser;
         Socket socket;
         AsyncCallback readCallback;
 
-      
+
 
         byte[] buffer;
         const int buff_size = 1024;
@@ -53,6 +53,7 @@ namespace GJTalkServer
             streamParser.OnStreamEnd += streamParser_OnStreamEnd;
             streamParser.OnStreamStart += streamParser_OnStreamStart;
             BeginRead();
+            Console.WriteLine("New Session");
 
         }
 
@@ -99,15 +100,14 @@ namespace GJTalkServer
             int size = 0;
             try
             {
-                size = socket.EndReceive(result); 
+                size = socket.EndReceive(result);
             }
             catch { }
             if (size > 0)
             {
-                string str = Encoding.UTF8.GetString(buffer, 0, size);
-                Console.WriteLine(str);
-                streamParser.Write(buffer, 0, size);
-
+                //string str = Encoding.UTF8.GetString(buffer, 0, size);
+                //Console.WriteLine(str);
+                streamParser.Write(buffer, 0, size); 
                 BeginRead();
             }
             else
@@ -158,7 +158,7 @@ namespace GJTalkServer
         {
             if (socket == null)
                 return;
-           server.SessionManager.Remove(this);
+            server.SessionManager.Remove(this);
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             socket = null;
@@ -222,11 +222,14 @@ namespace GJTalkServer
         }
         public void SetOnline(string username)
         {
-            Session oldSession = server.SessionManager.GetSession(username);
-            if (oldSession != null)
-                oldSession.Offline(SessionOfflineReason.MultiLogin);
+            lock (server.SessionManager)
+            {
 
-            this.SessionUser = server.AuthManager.GetUser(username); 
+                Session oldSession = server.SessionManager.GetSession(username);
+                if (oldSession != null)
+                    oldSession.Offline(SessionOfflineReason.MultiLogin); 
+            }
+            this.SessionUser = server.AuthManager.GetUser(username);
             server.SessionManager.Add(this);
             Groups = new List<BuddyGroup>();
             lock (Groups)

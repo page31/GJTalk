@@ -85,21 +85,26 @@ namespace GJTalkServer
             {
                 failure = new Failure(FailureCondition.invalid_mechanism);
             }
-            if (failure == null && !Server.AuthManager.Auth(user, pass, pass.Length==32))
-                failure = new Failure(FailureCondition.not_authorized);
+            if (failure == null)
+            {
+                user = user.Replace("\\40", "@");
+                if (!Server.AuthManager.Auth(user, pass, pass.Length == 32))
+                    failure = new Failure(FailureCondition.not_authorized);
+            }
             if (failure == null)
             {
                 Session.Send(new Success());
                 Session.SetOnline(user);
             }
             else
-                Session.Send(failure);
+                Session.Send(failure, DataSentAction.Close);
         }
         void ProcessPresence(XmppBase.Presence presence)
         {
         }
         public void Handle()
         {
+            Console.WriteLine("Handle " + Stanza.GetType().ToString());
             if (Stanza is XmppBase.Iq)
             {
                 ProcessIq(Stanza as XmppBase.Iq);

@@ -15,7 +15,10 @@ namespace GJTalkServer
         }
         public bool HandleMessage(Session session, Message message)
         {
-            var destSession = server.SessionManager.GetSession(message.To.User);
+            string destUser = message.To.Bare;
+            if (string.IsNullOrEmpty(destUser))
+                return false;
+            var destSession = server.SessionManager.GetSession(destUser);
             if (destSession != null)
             {
                 try
@@ -25,7 +28,7 @@ namespace GJTalkServer
                 }
                 catch { }
             } //destuser not online or send failed.
-            server.OfflineMessageManager.Put(message.To.User, new Message[] { message }); //put to offline message 
+            server.OfflineMessageManager.Put(destUser, new Message[] { message }); //put to offline message 
             return true;
         }
     }

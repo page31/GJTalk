@@ -726,7 +726,7 @@ namespace DuiLib {
 			m_pManager->SendNotify(this,_T("mouseleave"));
 			return;
 		}
-		if( m_pParent != NULL ) m_pParent->DoEvent(event);
+		if(!event.bPassDown&&m_pParent != NULL ) m_pParent->DoEvent(event);
 	}
 
 	void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)

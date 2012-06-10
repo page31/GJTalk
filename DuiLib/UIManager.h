@@ -108,6 +108,7 @@ namespace DuiLib {
 	typedef struct tagTEventUI
 	{
 		int Type;
+		bool bPassDown;
 		CControlUI* pSender;
 		DWORD dwTimestamp;
 		POINT ptMouse;

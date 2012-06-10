@@ -14,7 +14,7 @@ CControlUI* CMainFrame::CreateControl(LPCTSTR pstrClass)
 	}
 	else if(_tcsicmp(pstrClass,_T("FriendGroup"))==0)
 	{
-		pControl= new CBuddyListGroupUI(&m_pm);
+		pControl= new CBuddyListUI(&m_pm);
 	}
 	return pControl;
 }
@@ -74,9 +74,19 @@ void CMainFrame::OnPostCreate()
 		throw CGJWndError::LOAD_ERROR;  
 	m_pBuddyList= static_cast<CBuddyListUI*>(m_pm.FindControl(pstrBuddyListName));
 	m_pRecentList=static_cast<CBuddyListUI*>(m_pm.FindControl(pstrRecentBuddyListName));
+	m_pOptTabBuddyList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabBuddyListName));
+	m_pOptTabRecentList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabRecentListName));
+	m_pListTable=static_cast<CTabLayoutUI*>(m_pm.FindControl(pstrListTableName));
+	ASSERT(m_pOptTabBuddyList);
+	ASSERT(m_pOptTabRecentList);
+	ASSERT(m_pListTable);
 	ASSERT(m_pBuddyList);
 	ASSERT(m_pRecentList);
 	m_pBuddyList->AddGroup(_T("test"));
+	m_pBuddyList->AddGroup(_T("test2"));
+	CBuddyListItem *item=new CBuddyListItem(); 
+	m_pBuddyList->GetGroup(0).Add(*item);
+
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)
@@ -116,6 +126,14 @@ void CMainFrame::UpdateDock(LPRECT pRect)
 }
 void CMainFrame::Notify(TNotifyUI& msg)
 {
+	if(msg.sType==_T("selectchanged"))
+	{
+		if(msg.pSender==m_pOptTabBuddyList)
+			m_pListTable->SelectItem(0);
+		else if(msg.pSender==m_pOptTabRecentList)
+			m_pListTable->SelectItem(1);
+
+	}
 	CGJContextWnd::Notify(msg);
 }
 

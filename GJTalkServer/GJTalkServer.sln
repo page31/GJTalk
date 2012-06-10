@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJTalkServer", "GJTalkServer.csproj", "{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJTalkServerPressureTest", "..\GJTalkServerPressureTest\GJTalkServerPressureTest.csproj", "{5AAB8D4E-5201-407B-852E-2AF92432F307}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F063FE2-B7CF-4499-BCC1-4078DB0D60D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

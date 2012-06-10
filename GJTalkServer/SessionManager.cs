@@ -17,6 +17,8 @@ namespace GJTalkServer
         }
         public Session GetSession(string username)
         {
+            if (username == null)
+                return null;
             lock (objLock)
             {
                 Session session;

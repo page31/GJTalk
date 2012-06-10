@@ -291,7 +291,7 @@ namespace DuiLib {
 				m_uButtonState |= UISTATE_HOT;
 				Invalidate();
 			}
-			return;
+			//return;
 		}
 		if( event.Type == UIEVENT_MOUSELEAVE )
 		{
@@ -299,7 +299,7 @@ namespace DuiLib {
 				m_uButtonState &= ~UISTATE_HOT;
 				Invalidate();
 			}
-			return;
+			//return;
 		}
 		/*	if( event.Type == UIEVENT_SETCURSOR ) {
 		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
@@ -1207,7 +1207,7 @@ Label_ForeImage:
 				m_uButtonState |= UISTATE_HOT;
 				Invalidate();
 			}
-			return;
+			//return;
 		}
 		if( event.Type == UIEVENT_MOUSELEAVE )
 		{
@@ -1215,7 +1215,7 @@ Label_ForeImage:
 				m_uButtonState &= ~UISTATE_HOT;
 				Invalidate();
 			}
-			return;
+			//return;
 		}
 		CControlUI::DoEvent(event);
 	}

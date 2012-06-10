@@ -841,9 +841,23 @@ namespace DuiLib {
 				event.ptMouse = pt;
 				event.dwTimestamp = ::GetTickCount();
 				if( pNewHover != m_pEventHover && m_pEventHover != NULL ) {
-					event.Type = UIEVENT_MOUSELEAVE;
-					event.pSender = m_pEventHover;
-					m_pEventHover->Event(event);
+
+					CControlUI* m_pParent=NULL;
+					if(pNewHover)
+						pNewHover->GetParent();
+					while (m_pParent)
+					{
+						if(m_pEventHover==m_pParent)
+							break;
+						m_pParent=m_pParent->GetParent();
+					}
+					if(m_pEventHover!=m_pParent)
+					{
+						event.Type = UIEVENT_MOUSELEAVE;
+						event.pSender = m_pEventHover;
+						m_pEventHover->Event(event);
+					}
+
 					m_pEventHover = NULL;
 					if( m_hwndTooltip != NULL ) ::SendMessage(m_hwndTooltip, TTM_TRACKACTIVATE, FALSE, (LPARAM) &m_ToolTip);
 				}
@@ -1549,7 +1563,8 @@ namespace DuiLib {
 		if( !bAsync ) {
 			// Send to all listeners
 			if( Msg.pSender != NULL ) {
-				if( Msg.pSender->OnNotify ) Msg.pSender->OnNotify(&Msg);
+				if( Msg.pSender->OnNotify )
+					Msg.pSender->OnNotify(&Msg);
 			}
 			for( int i = 0; i < m_aNotifiers.GetSize(); i++ ) {
 				static_cast<INotifyUI*>(m_aNotifiers[i])->Notify(Msg);

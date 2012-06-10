@@ -21,6 +21,9 @@ enum DOCK_STYLE
 
 LPCTSTR const pstrBuddyListName=_T("listContact");
 LPCTSTR const pstrRecentBuddyListName=_T("listRecent"); 
+LPCTSTR const pstrOptTabBuddyListName=_T("optContactTab"); 
+LPCTSTR const pstrOptTabRecentListName=_T("optRecentTab"); 
+LPCTSTR const pstrListTableName=_T("tabContactList");  
 
 class CMainFrame:public CGJContextWnd,public ITrayIconListener,public IDialogBuilderCallback
 {
@@ -33,6 +36,10 @@ private:
 
 	CBuddyListUI* m_pBuddyList;
 	CBuddyListUI* m_pRecentList;
+
+	COptionUI* m_pOptTabBuddyList;
+	COptionUI* m_pOptTabRecentList;
+	CTabLayoutUI* m_pListTable;
 public:
 
 
