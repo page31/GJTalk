@@ -257,7 +257,7 @@ namespace DuiLib {
 	void CListUI::DoEvent(TEventUI& event)
 	{
 		if( !IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND ) {
-			if(!event.bPassDown&& m_pParent != NULL ) m_pParent->DoEvent(event);
+			if( m_pParent != NULL ) m_pParent->DoEvent(event);
 			else CVerticalLayoutUI::DoEvent(event);
 			return;
 		}
@@ -1318,7 +1318,7 @@ namespace DuiLib {
 	void CListHeaderItemUI::DoEvent(TEventUI& event)
 	{
 		if( !IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND ) {
-			if(!event.bPassDown&& m_pParent != NULL ) m_pParent->DoEvent(event);
+			if( m_pParent != NULL ) m_pParent->DoEvent(event);
 			else CControlUI::DoEvent(event);
 			return;
 		}

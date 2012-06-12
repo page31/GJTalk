@@ -227,7 +227,7 @@ int CBuddyListUI::Count() const
 bool CBuddyListUI::OnGroupNotify(void* pMsg)
 {
 	TNotifyUI& msg=*static_cast<TNotifyUI*>(pMsg);
-
+ 
 	for(auto iter=m_vGroups.begin();iter!=m_vGroups.end();++iter)
 	{
 		if(msg.pSender==(*iter)->m_pGroupLabel)
