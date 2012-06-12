@@ -23,7 +23,8 @@ namespace DuiLib {
 		m_dwBorderColor(0),
 		m_dwFocusBorderColor(0),
 		m_bColorHSL(false),
-		m_nBorderSize(0)
+		m_nBorderSize(0),
+		m_bIsMouseOver(false)
 	{
 		m_cXY.cx = m_cXY.cy = 0;
 		m_cxyFixed.cx = m_cxyFixed.cy = 0;
@@ -718,13 +719,19 @@ namespace DuiLib {
 		{
 			m_bIsMouseOver=true;
 			m_pManager->SendNotify(this,_T("mouseenter"));
-			return;
+			if(m_pParent&&m_pParent->m_bIsMouseOver)
+				return;
 		}
 		if(event.Type==UIEVENT_MOUSELEAVE)
 		{
 			m_bIsMouseOver=false;
 			m_pManager->SendNotify(this,_T("mouseleave"));
-			return;
+			if(m_pParent)
+			{
+				if(PtInRect(&m_pParent->m_rcItem,event.ptMouse))
+					return;
+			}
+			//return;
 		}
 		if(m_pParent != NULL ) m_pParent->DoEvent(event);
 	}
