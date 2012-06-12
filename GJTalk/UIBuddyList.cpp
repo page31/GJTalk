@@ -5,6 +5,51 @@
 #pragma region CBuddyListItem
 
 
+bool CBuddyListItem::IsSelected()
+{
+	return m_bSelected;
+}
+
+void CBuddyListItem::MouseEnter()
+{
+	if(!IsSelected())
+		this->m_pContainer->SetBkImage(_T("buddy_hover.png"));
+}
+void CBuddyListItem::MouseLeave()
+{
+	if(!IsSelected())
+		this->m_pContainer->SetBkImage(_T(""));
+}
+void CBuddyListItem::CancelSelect()
+{
+	m_bSelected=false;
+	if(m_pContainer->IsMouseOver())
+		MouseEnter();
+	else
+		MouseLeave();
+}
+void CBuddyListItem::Select()
+{
+	if(m_pGroup&&m_pGroup->m_pList)
+	{
+		for(auto iter1=m_pGroup->m_pList->m_vGroups.begin();
+			iter1!=m_pGroup->m_pList->m_vGroups.end();
+			++iter1)
+		{
+			for(auto iter=(*iter1)->m_vItems.begin();iter!=(*iter1)->m_vItems.end();++iter)
+			{
+				if(*iter!=this)
+				{
+					(*iter)->CancelSelect();
+				}
+			}
+		}
+	} 
+	m_bSelected=true;
+	this->m_pContainer->SetBkImage(_T("buddy_focus.png"));
+}
+
+
 void CBuddyListItem::BindUI()
 {
 	if(!m_pControl)
@@ -19,7 +64,7 @@ void CBuddyListItem::BindUI()
 }
 
 CBuddyListItem::CBuddyListItem():
-	m_pControl(NULL),m_pPaintManager(NULL),m_pGroup(NULL),m_pContainer(NULL)
+	m_pControl(NULL),m_pPaintManager(NULL),m_pGroup(NULL),m_pContainer(NULL),m_bSelected(false)
 {
 
 }
@@ -227,7 +272,7 @@ int CBuddyListUI::Count() const
 bool CBuddyListUI::OnGroupNotify(void* pMsg)
 {
 	TNotifyUI& msg=*static_cast<TNotifyUI*>(pMsg);
- 
+
 	for(auto iter=m_vGroups.begin();iter!=m_vGroups.end();++iter)
 	{
 		if(msg.pSender==(*iter)->m_pGroupLabel)
@@ -248,12 +293,16 @@ bool CBuddyListUI::OnGroupNotify(void* pMsg)
 			{
 				if(msg.sType==_T("mouseenter"))
 				{
-					msg.pSender->SetBkColor(0xFFFF0000);
+					(*iter_item)->MouseEnter();
 				}
 				else if(msg.sType==_T("mouseleave"))
 				{
-					msg.pSender->SetBkColor(0xFF00FF00);
+					(*iter_item)->MouseLeave();
+				}else if(msg.sType==_T("click"))
+				{
+					(*iter_item)->Select();
 				}
+				break;
 			}
 		}
 	} 

@@ -733,6 +733,15 @@ namespace DuiLib {
 			}
 			//return;
 		}
+		if(event.Type==UIEVENT_BUTTONUP)
+		{
+			if(::PtInRect(&m_rcItem, event.ptMouse)&&this->IsMouseEnabled()) 
+			{ 
+				if( m_pManager != NULL ) m_pManager->SendNotify(this, _T("click"));
+			}
+			if(this->IsMouseEnabled())
+				return;
+		}
 		if(m_pParent != NULL ) m_pParent->DoEvent(event);
 	}
 

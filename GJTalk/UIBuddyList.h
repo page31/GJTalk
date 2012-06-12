@@ -14,11 +14,17 @@ namespace DuiLib
 		CPaintManagerUI* m_pPaintManager;
 		CBuddyListGroup *m_pGroup;
 		CContainerUI* m_pContainer;
-
+		bool m_bSelected;
 		void BindUI();
+		void CancelSelect();
 	public:
 		CBuddyListItem();
 		~CBuddyListItem();
+		
+		void Select(); 
+		void MouseEnter();
+		void MouseLeave();
+		bool IsSelected();
 
 		friend class CBuddyListGroup;
 		friend class CBuddyListUI;
