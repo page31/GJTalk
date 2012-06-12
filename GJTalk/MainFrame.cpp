@@ -84,9 +84,14 @@ void CMainFrame::OnPostCreate()
 	ASSERT(m_pRecentList);
 	m_pBuddyList->AddGroup(_T("test"));
 	m_pBuddyList->AddGroup(_T("test2"));
-	CBuddyListItem *item=new CBuddyListItem(); 
-	m_pBuddyList->GetGroup(0).Add(*item);
-
+	CBuddyListItem *item;
+	
+	for (int i = 0; i < 10; i++)
+	{
+		item=new CBuddyListItem(); 
+		m_pBuddyList->GetGroup(i%m_pBuddyList->GetCount()).Add(*item);
+	}
+  
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)

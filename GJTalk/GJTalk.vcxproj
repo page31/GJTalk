@@ -126,6 +126,7 @@
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TrayIconMessage.h" />
     <ClInclude Include="UIBuddyList.h" />
+    <ClInclude Include="WebFrame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
@@ -146,11 +147,14 @@
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TrayIconMessage.cpp" />
     <ClCompile Include="UIBuddyList.cpp" />
+    <ClCompile Include="WebFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GJTalk.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\Program Files (x86)\DBank\ClickUp\directui license.txt" />
+    <None Include="..\..\..\..\..\..\Program Files (x86)\DBank\ClickUp\duilib license.txt" />
     <None Include="res\GJTalk.rc2" />
   </ItemGroup>
   <ItemGroup>
