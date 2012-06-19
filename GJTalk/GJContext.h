@@ -9,9 +9,14 @@
 #include "../xmpp/connectionlistener.h"
 #include "../xmpp/loghandler.h" 
 #include "../xmpp/tlshandler.h"
-#include "../xmpp/message.h"
+#include "../xmpp/messageeventhandler.h"
+#include "../xmpp/messagehandler.h"
 #include "../xmpp/messagesessionhandler.h"
+
 #include "TrayIcon.h"
+#include "UIBuddyList.h"
+#include "SessionManager.h"
+
 using namespace std;
 using namespace gloox;
 
@@ -27,14 +32,22 @@ namespace  MainFrameCloseReasons
 };
 
 
-class GJContext:public ConnectionListener, LogHandler,
-	MessageSessionHandler, TLSHandler,public ITrayIconListener
+class GJContext:
+	public ConnectionListener,
+	public LogHandler,
+	public MessageSessionHandler,
+	public MessageHandler,
+	public TLSHandler,
+	public ITrayIconListener,
+	public IqHandler
+
 {
 public:
 	CTrayIcon* m_pTrayIcon;
 	int MainFrameCloseReason;
 	CMainFrame *m_pMainFrame;
 	CLoginFrame *m_pLoginFrame;
+	CSessionManager m_SessionManager;
 
 private:
 
@@ -45,11 +58,20 @@ private:
 	string m_Server;
 	int m_Port;  
 	CWinThread *m_pRecvThread;
-public: 
+public:  
+	virtual void handleMessage( const Message& msg, MessageSession* session = 0 );
+	void OnWindowDestroyed(const CGJContextWnd* pWnd);
+
+	CBuddyListUI *GetBuddyList() const;
+	CLoginFrame& GetLoginFrame();
+	CMainFrame& GetMainFrame();
+
+	CBuddyListItem *GetBuddyItemByJid(const JID& jid) const;
+
 
 
 	CString &GetAppName() const;
-	 
+
 	Client *GetClient() const;
 	bool IsReceiving() const;
 	void StartRecv();
@@ -67,7 +89,8 @@ public:
 	void handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ );
 	void handleMessageSession( MessageSession *session );
 	void handleLog( LogLevel level, LogArea area, const std::string& message );
-
+	virtual bool handleIq( const IQ& iq );
+	virtual void handleIqID( const IQ& iq, int context );
 	virtual void  OnTrayIconMessage(CTrayIconMessage &msg);
 
 	GJContext(void);

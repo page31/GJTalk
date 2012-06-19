@@ -18,6 +18,6 @@ public:
 	void Notify(TNotifyUI& msg);
 	CLoginFrame(GJContext *context);
 	~CLoginFrame(void); 
-
+	friend class GJContext;
 };
 

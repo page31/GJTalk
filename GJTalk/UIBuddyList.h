@@ -1,8 +1,18 @@
+
+#pragma once
 #include "stdafx.h"
 #include <vector>
+#include "../xmpp/client.h"
 using namespace std;
 namespace DuiLib
 {
+
+	enum BuddyItemPos
+	{
+		BIP_BLANK,
+		BIP_AVATAR,
+		BIP_APP
+	};
 
 
 	class CBuddyListUI;
@@ -10,21 +20,47 @@ namespace DuiLib
 	class CBuddyListItem
 	{
 	private:
+		gloox::JID m_jid;
 		CControlUI* m_pControl;
 		CPaintManagerUI* m_pPaintManager;
 		CBuddyListGroup *m_pGroup;
 		CContainerUI* m_pContainer;
+		CButtonUI* m_pBtnHeader;
+		CLabelUI* m_pNameLabel;
+		CLabelUI* m_pSignatureLabel;
+
+		CStdString m_sName;
+		CStdString m_sSignature;
+		CStdString m_sHeaderPath;
+
+	private:
 		bool m_bSelected;
 		void BindUI();
 		void CancelSelect();
+
+
 	public:
 		CBuddyListItem();
 		~CBuddyListItem();
-		
+
 		void Select(); 
 		void MouseEnter();
 		void MouseLeave();
 		bool IsSelected();
+
+
+		void SetName(LPCTSTR pstrName);
+		void SetSignature(LPCTSTR pstrSignature);
+		void SetHeader(LPCTSTR pstrFile);
+		void SetJid(const gloox::JID& jid);
+		const gloox::JID& GetJid() const;
+		CStdString GetName()const;
+		CStdString GetSignature() const;
+		CStdString GetHeaderPath() const;
+
+
+		BuddyItemPos GetMousePoint(int x,int y)const;
+		BuddyItemPos GetMousePoint()const;
 
 		friend class CBuddyListGroup;
 		friend class CBuddyListUI;
@@ -59,12 +95,23 @@ namespace DuiLib
 
 		void BindUI();
 
+		CBuddyListItem* FindBuddyItem(const gloox::JID& jid) const;
+
 		friend class CBuddyListUI;
 		friend class CBuddyListItem;
 	};
 
 
-#define CBuddyListGroups 
+#define CBuddyListGroups  
+
+	typedef struct  
+	{ 
+		CBuddyListItem* pSender;
+		LPCTSTR sType;
+		BuddyItemPos pos;
+		WPARAM wParam;
+		LPARAM lParam;
+	} CBuddyItemEvent;
 
 	class CBuddyListUI:public CListUI
 	{
@@ -72,6 +119,9 @@ namespace DuiLib
 		vector<CBuddyListGroup*> m_vGroups;
 		CPaintManagerUI* m_pPaintManager;
 		CDelegate<CBuddyListUI,CBuddyListUI> *m_pChildDelegate;
+	public: 
+		CEventSource OnItemAction;
+
 	public:
 		~CBuddyListUI();
 		CBuddyListUI( CPaintManagerUI* pPaintManager); 
@@ -82,6 +132,8 @@ namespace DuiLib
 		bool ContainsGroup(LPCTSTR pstrGroupName) const;
 		CBuddyListGroup &GetGroup(int index);
 		int Count() const;
+
+		CBuddyListItem* FindBuddyItem(const gloox::JID& jid) const;
 
 		bool OnGroupNotify(void* msg);
 		friend class CBuddyListGroup;

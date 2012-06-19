@@ -81,3 +81,5 @@ using namespace DuiLib;
 bool IsCrossThread();
 
 using namespace msgbox;
+
+string cstr_str(CString &cstr);

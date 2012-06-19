@@ -75,6 +75,9 @@
     <ClInclude Include="WebFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GJTalk.cpp">
@@ -125,6 +128,9 @@
     <ClCompile Include="WebFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GJTalk.rc">
@@ -135,8 +141,8 @@
     <None Include="res\GJTalk.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\Program Files (x86)\DBank\ClickUp\directui license.txt" />
-    <None Include="..\..\..\..\..\..\Program Files (x86)\DBank\ClickUp\duilib license.txt" />
+    <None Include="duilib license.txt" />
+    <None Include="directui license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\GJTalk.ico">

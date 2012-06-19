@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Matrix.Xml;
 using Matrix.Xmpp.Base;
 
 namespace GJTalkServer
@@ -15,20 +16,29 @@ namespace GJTalkServer
         }
         public bool HandleMessage(Session session, Message message)
         {
-            string destUser = message.To.Bare;
+            string destUser = message.To.User;
             if (string.IsNullOrEmpty(destUser))
                 return false;
-            var destSession = server.SessionManager.GetSession(destUser);
-            if (destSession != null)
-            {
-                try
-                {
-                    destSession.Send(message);
-                    return true;
-                }
-                catch { }
-            } //destuser not online or send failed.
-            server.OfflineMessageManager.Put(destUser, new Message[] { message }); //put to offline message 
+            if (!DeliverMessage(destUser, message))
+                server.OfflineMessageManager.Put(destUser, new Message[] { message }); //put to offline message 
+            return true;
+        }
+        public bool DeliverMessage(long to, XmppXElement element)
+        {
+            var session = server.SessionManager.GetSession(to);
+            if (session != null)
+                session.Send(element);
+            else
+                return false;
+            return true;
+        }
+        public bool DeliverMessage(string to, XmppXElement element)
+        {
+            var session = server.SessionManager.GetSession(to);
+            if (session != null)
+                session.Send(element);
+            else
+                return false;
             return true;
         }
     }

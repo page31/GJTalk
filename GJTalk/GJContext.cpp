@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GJContext.h"
 #include "../xmpp/md5.h"
-
+#include "../xmpp/rostermanager.h"
 UINT RecvProc(LPVOID data)
 {
 	GJContext *context=static_cast<GJContext*>(data);
@@ -15,19 +15,56 @@ UINT RecvProc(LPVOID data)
 	return 0;
 }
 
+CLoginFrame& GJContext::GetLoginFrame()
+{
+	if(!m_pLoginFrame)
+	{
+		m_pLoginFrame=new CLoginFrame(this);
 
+	}
+	return *m_pLoginFrame;
+}
+CMainFrame& GJContext::GetMainFrame()
+{
+	if(!m_pMainFrame)
+	{
+		m_pMainFrame=new CMainFrame(this);
+	}
+	return *m_pMainFrame;
+}
 GJContext::GJContext(void)
 	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL),
 	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL)
 {
+
+	m_SessionManager.SetContext(this);
 	m_pTrayIcon=new CTrayIcon();
 	m_pTrayIcon->AddListener(this);
 	m_pTrayIcon->SetTooltipText(this->GetAppName()); 
 }
 
+void GJContext::OnWindowDestroyed(const CGJContextWnd* pWnd)
+{
+	if(pWnd==m_pLoginFrame)
+	{
+		m_pLoginFrame=NULL;
+	}
+	else if(pWnd==m_pMainFrame)
+	{
+		m_pMainFrame=NULL;
+	}
+	delete pWnd;
+}
 
-
-
+CBuddyListUI *GJContext::GetBuddyList() const
+{
+	return m_pMainFrame?NULL:m_pMainFrame->m_pBuddyList;  
+}
+CBuddyListItem *GJContext::GetBuddyItemByJid(const JID& jid) const
+{
+	CBuddyListUI* pList=GetBuddyList();
+	return pList?pList->FindBuddyItem(jid):NULL;
+}
 Client* GJContext::GetClient() const
 {
 	return m_pClient;
@@ -42,8 +79,7 @@ void GJContext::StartRecv()
 	if(IsReceiving())
 		StopRecv(); 
 	m_bRecvData=true;
-	m_pRecvThread=AfxBeginThread(RecvProc,this);
-
+	m_pRecvThread=AfxBeginThread(RecvProc,this); 
 }
 void GJContext::StopRecv()
 {
@@ -84,11 +120,7 @@ CString &GJContext::GetAppName() const
 }
 
 bool GJContext::SignIn(const string& username,const string& password,CLoginFrame *loginFrame)
-{ 
-	if(IsCrossThread())
-	{
-
-	}
+{
 	StopRecv();
 	this->m_pLoginFrame=loginFrame;
 	bool bOk=true;
@@ -109,8 +141,8 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 		else
 		{
 			m_pClient->registerConnectionListener(this);
-
-			m_pClient->registerMessageSessionHandler(this); 
+			m_pClient->registerIqHandler(this,0);
+			m_pClient->registerMessageHandler(this);
 			bOk= m_pClient->connect(false);
 
 		}
@@ -144,6 +176,10 @@ GJContext::~GJContext(void)
 		m_pClient->disconnect();
 	if(m_pTrayIcon)
 		delete m_pTrayIcon;
+	if(m_pLoginFrame)
+		delete m_pLoginFrame;
+	if(m_pMainFrame)
+		delete m_pMainFrame;
 }
 
 
@@ -158,7 +194,9 @@ void GJContext::onConnect()
 		return;
 	}
 	if(m_pLoginFrame) 
-		m_pLoginFrame->OnConnected(); 
+		m_pLoginFrame->OnConnected();
+	 
+	m_pClient->rosterManager()->fill();
 	//m_tls->handshake();
 
 }
@@ -205,6 +243,18 @@ void GJContext::handleMessageSession( MessageSession *session )
 	m_pClient->disposeMessageSession(session);
 }
 
+void GJContext::handleMessage( const Message& msg, MessageSession* session )
+{
+	m_SessionManager.HandleMessage(msg);
+}
+bool GJContext::handleIq( const IQ& iq )
+{
+	return true;
+}
+void GJContext::handleIqID( const IQ& iq, int context )
+{
+
+}
 void GJContext::handleLog( LogLevel level, LogArea area, const std::string& message )
 { 
 }

@@ -20,6 +20,7 @@ CControlUI* CMainFrame::CreateControl(LPCTSTR pstrClass)
 }
 
 
+
 void CMainFrame::OnTrayIconMessage(CTrayIconMessage &msg)
 {
 	if(msg.pMsg==_T("ldown"))
@@ -65,6 +66,7 @@ CMainFrame::CMainFrame(GJContext *context)
 	context->m_pMainFrame=this;
 	context->m_pTrayIcon->AddListener(this); 
 	m_bMoving=false;
+	this->SetCaptionText(m_pContext->GetAppName());
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_EX_FRAME,WS_EX_OVERLAPPEDWINDOW|WS_EX_TOPMOST);
 }
 
@@ -82,16 +84,26 @@ void CMainFrame::OnPostCreate()
 	ASSERT(m_pListTable);
 	ASSERT(m_pBuddyList);
 	ASSERT(m_pRecentList);
+	m_pBuddyList->OnItemAction+= CDelegate<CMainFrame,CMainFrame>(this,&CMainFrame::OnBuddyItemAction);
 	m_pBuddyList->AddGroup(_T("test"));
 	m_pBuddyList->AddGroup(_T("test2"));
 	CBuddyListItem *item;
-	
+
 	for (int i = 0; i < 10; i++)
 	{
 		item=new CBuddyListItem(); 
+		CString str;
+		str.Format(_T("item %d"),i);
+		item->SetName(str);
+		item->SetHeader(_T("header.jpg"));
+		str.Format(_T("signature %d"),i);
+		item->SetSignature(str);
+		JID jid;
+		jid.setUsername(cstr_str(str));
+		item->SetJid(jid);
+
 		m_pBuddyList->GetGroup(i%m_pBuddyList->GetCount()).Add(*item);
 	}
-  
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)
@@ -137,6 +149,10 @@ void CMainFrame::Notify(TNotifyUI& msg)
 			m_pListTable->SelectItem(0);
 		else if(msg.pSender==m_pOptTabRecentList)
 			m_pListTable->SelectItem(1);
+
+	}
+	else if(msg.sType==_T("windowinit"))
+	{
 
 	}
 	CGJContextWnd::Notify(msg);
@@ -251,6 +267,30 @@ void CMainFrame::AddContactGroup(LPCTSTR pstrGroupName)
 {
 
 }
+bool CMainFrame::OnBuddyItemAction(LPVOID param)
+{
+	CBuddyItemEvent *event=(CBuddyItemEvent*)param;
+	if(event->sType==_T("click"))
+	{
+
+	}
+	else if(event->sType==_T("mouseenter"))
+	{
+
+	}
+	else if(event->sType==_T("mouseleave"))
+	{
+
+	}
+	else if(event->sType==_T("dbclick"))
+	{
+		if(m_pContext)
+			m_pContext->m_SessionManager.OpenChatFrame(*event->pSender);
+	}
+
+	return false;
+}
+
 void CMainFrame::AddContactItem(CBuddyListItem& item)
 {
 

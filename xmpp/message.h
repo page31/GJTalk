@@ -135,7 +135,7 @@ namespace gloox
 
     private:
 #ifdef MESSAGE_TEST
-    public:
+    public: 
 #endif
       /**
        * Creates a message Stanza from the given Tag. The original Tag will be ripped off.

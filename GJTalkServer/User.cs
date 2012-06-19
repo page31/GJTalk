@@ -23,6 +23,7 @@ namespace GJTalkServer
         public string HeaderPic { get; set; }
         public string Signature { get; set; }
         public UserOnlineStatus Status { get; set; }
+        public string Mail { get; set; }
         public Jid GetJid()
         {
             return new Jid(Username, "gjtalk.com", "");

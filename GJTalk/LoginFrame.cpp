@@ -10,6 +10,7 @@ CLoginFrame::CLoginFrame(GJContext *context)
 	context->m_pLoginFrame=this;
 	m_pContext->m_pTrayIcon->ShowIcon();
 	m_pContext->m_pTrayIcon->SetIcon(IDR_MAINFRAME);
+	this->SetCaptionText(m_pContext->GetAppName());
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_DIALOG,0L);
 }
 
@@ -33,17 +34,15 @@ void CLoginFrame::OnPostCreate()
 		m_pLnkForgotPwd->SetTextColor(m_pm.GetDefaultLinkFontColor());
 }
 void CLoginFrame::OnConnected()
-{
-	if(m_pContext->m_pMainFrame==NULL)
-		m_pContext->m_pMainFrame=new CMainFrame(m_pContext);
-	m_pContext->m_pMainFrame->ShowWindow(); 
-	m_pContext->m_pMainFrame->LoadUser();
+{ 
+	m_pContext->GetMainFrame().ShowWindow(); 
+	m_pContext->GetMainFrame().LoadUser();
 	this->Close(); 
 }
 void CLoginFrame::OnDisconnected(ConnectionError error)
 {
 	switch (error)
-{	
+	{	
 	case gloox::ConnNoError:
 		break; 
 	case gloox::ConnProxyAuthRequired:
@@ -153,6 +152,10 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 		{
 			if(!m_pContext->IsSignedIn())
 				::PostQuitMessage(0);
+		}
+		else if(msg.sType==_T("final"))
+		{
+			m_pContext->OnWindowDestroyed(this);
 		}
 	}
 }

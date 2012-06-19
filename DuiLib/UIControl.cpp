@@ -733,11 +733,11 @@ namespace DuiLib {
 			}
 			//return;
 		}
-		if(event.Type==UIEVENT_BUTTONUP)
+		if(event.Type==UIEVENT_BUTTONUP||event.Type==UIEVENT_DBLCLICK)
 		{
 			if(::PtInRect(&m_rcItem, event.ptMouse)&&this->IsMouseEnabled()) 
 			{ 
-				if( m_pManager != NULL ) m_pManager->SendNotify(this, _T("click"));
+				if( m_pManager != NULL ) m_pManager->SendNotify(this, event.Type==UIEVENT_DBLCLICK?_T("dbclick"): _T("click"));
 			}
 			if(this->IsMouseEnabled())
 				return;

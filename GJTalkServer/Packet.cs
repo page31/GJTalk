@@ -52,6 +52,7 @@ namespace GJTalkServer
                 ProcessRosterIq(iq);
             else if (iq.Query is Matrix.Xmpp.Session.Session)
                 ProcessSessionIq(iq);
+           
         }
         void ProcessMessage(XmppBase.Message msg)
         {

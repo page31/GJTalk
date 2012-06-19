@@ -9,6 +9,7 @@ using Matrix.Xmpp.Component;
 using Matrix.Xmpp.Sasl;
 using Matrix.Xmpp.Stream;
 using MxAuth = Matrix.Xmpp.Sasl.Auth;
+using Xmpp = Matrix.Xmpp;
 namespace GJTalkServer
 {
     enum SessionOfflineReason
@@ -25,6 +26,7 @@ namespace GJTalkServer
     class Session
     {
         public User SessionUser { get; private set; }
+        public Xmpp.Roster.Roster Roster { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
 
         public List<BuddyGroup> Groups { get; private set; }
@@ -53,6 +55,9 @@ namespace GJTalkServer
             streamParser.OnStreamEnd += streamParser_OnStreamEnd;
             streamParser.OnStreamStart += streamParser_OnStreamStart;
             BeginRead();
+
+            Roster = new Xmpp.Roster.Roster();
+            Groups = new List<BuddyGroup>();
             Console.WriteLine("New Session");
 
         }
@@ -107,7 +112,7 @@ namespace GJTalkServer
             {
                 //string str = Encoding.UTF8.GetString(buffer, 0, size);
                 //Console.WriteLine(str);
-                streamParser.Write(buffer, 0, size); 
+                streamParser.Write(buffer, 0, size);
                 BeginRead();
             }
             else
@@ -220,24 +225,61 @@ namespace GJTalkServer
             this.SessionUser = null;
             Stop();
         }
-        public void SetOnline(string username)
+        public void UpdateSubscribers(XmppXElement element)
         {
-            lock (server.SessionManager)
+            foreach (var item in Roster.GetRoster())
             {
-
-                Session oldSession = server.SessionManager.GetSession(username);
-                if (oldSession != null)
-                    oldSession.Offline(SessionOfflineReason.MultiLogin); 
-            }
-            this.SessionUser = server.AuthManager.GetUser(username);
-            server.SessionManager.Add(this);
-            Groups = new List<BuddyGroup>();
-            lock (Groups)
-            {
-
+                if (item.Subscription == Xmpp.Roster.Subscription.to
+                    || item.Subscription == Xmpp.Roster.Subscription.both)
+                {
+                    server.MessageManager.DeliverMessage(item.Jid.User, element);
+                }
             }
         }
+        private void AddBuddyGroup(BuddyGroup group)
+        {
+            lock (Groups)
+            {
+                lock (Roster)
+                {
+                    BuddyGroup destGroup = group;
+                    for (int i = 0; i < Groups.Count; i++)
+                    {
+                        if (group.GroupName == Groups[i].GroupName)
+                        {
+                            destGroup = Groups[i];
+                            break;
+                        }
+                    }
+                    foreach (var item in group.Buddies)
+                    {
+                        destGroup.Buddies.Add(item);
+                        Roster.AddRosterItem(
+                            new Xmpp.Roster.RosterItem(item.Username, item.Nickname, destGroup.GroupName));
+                    }
+                }
+            }
+        }
+        public void SetOnline(string username)
+        {
+            var user = server.AuthManager.GetUser(username);
+            lock (server.SessionManager)
+            {
+                Session oldSession = server.SessionManager.GetSession(user.UserId);
+                if (oldSession != null)
+                    oldSession.Offline(SessionOfflineReason.MultiLogin);
+            }
+            this.SessionUser = user;
+            server.SessionManager.Add(this);
+            Send(new Xmpp.Client.Message()
+            {
 
+                From = "localhost",
+                To = user.GetJid(),
+                Subject = "system",
+                Body = "hello"
+            });
+        }
     }
 
 }

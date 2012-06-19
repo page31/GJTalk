@@ -136,9 +136,36 @@ LRESULT CGJWnd::OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHan
 LRESULT CGJWnd::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
 	//::PostQuitMessage(0L);
-	bHandled=FALSE;
-	return 0;
+	LRESULT lRes;
+	bHandled=TRUE; 
+	if(!m_pm.MessageHandler(uMsg, wParam, lParam, lRes) )   
+		lRes=CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+	TNotifyUI msg;
+	msg.sType=_T("destory");
+	msg.wParam=wParam;
+	msg.lParam=lParam;
+	msg.dwTimestamp=::GetTickCount();
+	msg.pSender=NULL;
+	this->Notify(msg);
+	return lRes;
 }
+
+LRESULT CGJWnd::OnNcDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+{ 
+	LRESULT lRes;
+	bHandled=TRUE; 
+	if(!m_pm.MessageHandler(uMsg, wParam, lParam, lRes) )   
+		lRes=CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+	TNotifyUI msg;
+	msg.sType=_T("ncdestory");
+	msg.wParam=wParam;
+	msg.lParam=lParam;
+	msg.dwTimestamp=::GetTickCount();
+	msg.pSender=NULL;
+	this->Notify(msg);
+	return lRes;
+}
+
 LRESULT CGJWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
 	bHandled=FALSE;
@@ -152,7 +179,16 @@ LRESULT CGJWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 	return 0;
 }
 
-
+void  CGJWnd::OnFinalMessage(HWND hWnd)
+{
+	if(hWnd!=m_hWnd)
+		return;
+	TNotifyUI msg;
+	msg.sType=_T("final"); 
+	msg.dwTimestamp=::GetTickCount();
+	msg.pSender=NULL;
+	this->Notify(msg);
+}
 
 LRESULT CGJWnd::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
@@ -182,6 +218,9 @@ LRESULT CGJWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:         
 		lRes = OnClose(uMsg, wParam, lParam, bHandled); 
 		break;
+	case WM_NCDESTROY:
+		lRes=OnNcDestroy(uMsg,wParam,lParam,bHandled);
+		break;
 	case WM_DESTROY:       
 		lRes = OnDestroy(uMsg, wParam, lParam, bHandled);
 		break;
@@ -209,6 +248,7 @@ LRESULT CGJWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:    
 		lRes = OnMouseWheel(uMsg, wParam, lParam, bHandled); 
 		break; 
+
 	default:
 		bHandled = FALSE;
 	}
@@ -235,7 +275,14 @@ void CGJWnd::OnPrepare()
 	m_pBtnClose=m_pm.FindControl(_T("wnd_closebtn"));
 	m_pBtnMax=m_pm.FindControl(_T("wnd_maxbtn"));
 	m_pBtnMin=m_pm.FindControl(_T("wnd_minbtn"));
-	m_pBtnResotre=m_pm.FindControl(_T("wnd_resbtn"));
+	m_pBtnResotre=m_pm.FindControl(_T("wnd_restorebtn"));
+	m_pCaption=m_pm.FindControl(_T("wnd_caption"));
+	if(m_pCaption)
+		m_pCaption->SetText(m_sCaption);
+	if(m_pBtnResotre)
+		m_pBtnResotre->SetVisible(false);
+	if(::IsWindow(m_hWnd))
+		::SetWindowText(m_hWnd,m_sCaption);
 }
 
 void CGJWnd::GetWorkArea(LPRECT pRect)
@@ -279,11 +326,22 @@ void CGJWnd::Notify(TNotifyUI& msg)
 		}
 	}
 }
-
+void CGJWnd::SetCaptionText(LPCTSTR pstrText)
+{
+	m_sCaption=pstrText;
+	if(m_pCaption)
+		m_pCaption->SetText(pstrText);
+	if(::IsWindow(m_hWnd))
+		SetWindowText(m_hWnd,pstrText);
+}
+CStdString CGJWnd::GetCaptionText() const
+{
+	return m_sCaption;
+}
 CGJWnd::CGJWnd(void) 
 	:m_pBtnClose(NULL),
 	m_pBtnMax(NULL),m_pBtnResotre(NULL),
-	m_pBtnMin(NULL)
+	m_pBtnMin(NULL),m_pCaption(NULL)
 {
 }
 

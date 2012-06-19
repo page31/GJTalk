@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Ganju" Class="SqlDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=localhost;Initial Catalog=Ganju;Integrated Security=True" SettingsObjectName="GJTalkServer.Properties.Settings" SettingsPropertyName="GanjuConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Users" Member="DatabaseUserItems">
+    <Type Name="DatabaseUserItem">
+      <Column Name="User_Id" Member="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="User_UserName" Member="Username" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="User_Mail" Member="Mail" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="User_Password" Member="Password" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="User_Nickname" Member="Nickname" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="User_HeadImg" Member="HeaderImage" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="User_Signature" Member="Signature" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

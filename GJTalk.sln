@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 11
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DuiLib", "DuiLib\DuiLib.vcxproj", "{E106ACD7-4E53-4AEE-942B-D0DD426DB34E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GJTalk", "GJTalk\GJTalk.vcxproj", "{5211A128-6E08-2C66-241C-13D61D57CB73}"
@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GJTalk", "GJTalk\GJTalk.vcx
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmpp", "xmpp\gloox.vcxproj", "{4DDB9C8A-C4A7-4518-A470-0B88629D8B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJClientWebFrames", "bin\resources\webpages\GJClientWebFrames.csproj", "{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,26 @@ Global
 		{5211A128-6E08-2C66-241C-13D61D57CB73}.UnicodeRelease|Mixed Platforms.Build.0 = Release|Win32
 		{5211A128-6E08-2C66-241C-13D61D57CB73}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
 		{5211A128-6E08-2C66-241C-13D61D57CB73}.UnicodeRelease|Win32.Build.0 = Release|Win32
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.Release|Win32.ActiveCfg = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeDebug|Any CPU.Build.0 = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeDebug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeDebug|Win32.ActiveCfg = Debug|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeRelease|Any CPU.Build.0 = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{54BF3BB1-DC48-4D4B-AA3A-FE7122EC40C8}.UnicodeRelease|Win32.ActiveCfg = Release|Any CPU
 		{E106ACD7-4E53-4AEE-942B-D0DD426DB34E}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{E106ACD7-4E53-4AEE-942B-D0DD426DB34E}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{E106ACD7-4E53-4AEE-942B-D0DD426DB34E}.Debug|Mixed Platforms.Build.0 = Debug|Win32

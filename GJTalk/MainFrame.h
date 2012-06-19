@@ -58,11 +58,17 @@ public:
 	void AddContactGroup(LPCTSTR pstrGroupName);
 	void AddContactItem(CBuddyListItem& item);
 
+	bool OnBuddyItemAction(LPVOID param);
+
+
+
 	void UpdateDock(LPRECT pRect=NULL);
 	void DoAnimateDock();
 	void StartAnimateDock();
 	void StopAnimateDock();
 	CMainFrame(GJContext *context);
 	~CMainFrame(void);
+
+	friend class GJContext;
 };
 

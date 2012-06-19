@@ -4,6 +4,31 @@
 
 #pragma region CBuddyListItem
 
+void CBuddyListItem::SetJid(const gloox::JID& jid)
+{
+	m_jid=jid;
+}
+const gloox::JID& CBuddyListItem::GetJid() const
+{
+	return m_jid;
+}
+
+BuddyItemPos CBuddyListItem::GetMousePoint(int x,int y)const
+{
+	POINT pt;
+	pt.x=x;
+	pt.y=y;
+	if(m_pBtnHeader&&::PtInRect(& m_pBtnHeader->GetPos(),pt))
+		return BIP_AVATAR;
+	return BIP_BLANK;
+}
+BuddyItemPos CBuddyListItem::GetMousePoint()const
+{
+	if(!m_pPaintManager)
+		return BIP_BLANK;
+	POINT pt=m_pPaintManager->GetMousePos(); 
+	return GetMousePoint(pt.x,pt.y);
+}
 
 bool CBuddyListItem::IsSelected()
 {
@@ -30,21 +55,38 @@ void CBuddyListItem::CancelSelect()
 }
 void CBuddyListItem::Select()
 {
+	int offsetY=0;
+	bool bFoundSelf=false;
 	if(m_pGroup&&m_pGroup->m_pList)
 	{
 		for(auto iter1=m_pGroup->m_pList->m_vGroups.begin();
 			iter1!=m_pGroup->m_pList->m_vGroups.end();
 			++iter1)
 		{
+			if(!bFoundSelf)
+				offsetY+=(*iter1)->m_pGroupLabel->GetFixedHeight();
 			for(auto iter=(*iter1)->m_vItems.begin();iter!=(*iter1)->m_vItems.end();++iter)
-			{
-				if(*iter!=this)
-				{
-					(*iter)->CancelSelect();
-				}
+			{ 
+				if(*iter!=this) 
+					(*iter)->CancelSelect(); 
+				else
+					bFoundSelf=true;
+				if(!bFoundSelf&&(*iter1)->IsExpaned())
+					offsetY+=(*iter)->m_pControl->GetFixedHeight();
 			}
 		}
 	} 
+	if(m_pGroup&&m_pGroup->m_pList)
+	{
+		auto list=m_pGroup->m_pList;
+		auto pos=list->GetScrollPos();
+		if(pos.cy>offsetY)
+		{
+			pos.cy=offsetY;
+			list->SetScrollPos(pos);
+		}
+
+	}
 	m_bSelected=true;
 	this->m_pContainer->SetBkImage(_T("buddy_focus.png"));
 }
@@ -55,7 +97,18 @@ void CBuddyListItem::BindUI()
 	if(!m_pControl)
 		return;
 	m_pContainer=static_cast<CContainerUI*>(m_pPaintManager->FindSubControlByName(m_pControl,_T("item_container")));
+	m_pBtnHeader=static_cast<CButtonUI*>(m_pPaintManager->FindSubControlByName(m_pControl,_T("HeaderPic")));
+	m_pNameLabel=static_cast<CButtonUI*>(m_pPaintManager->FindSubControlByName(m_pControl,_T("NameLabel")));
+	m_pSignatureLabel=static_cast<CButtonUI*>(m_pPaintManager->FindSubControlByName(m_pControl,_T("SignatureLabel")));
+	ASSERT(m_pBtnHeader);
+	ASSERT(m_pNameLabel);
+	ASSERT(m_pSignatureLabel);
 	ASSERT(m_pContainer);
+
+	m_pNameLabel->SetText(m_sName);
+	m_pSignatureLabel->SetText(m_sSignature);
+	m_pBtnHeader->SetBkImage(m_sHeaderPath);
+
 	if(m_pGroup&&m_pGroup->m_pList)
 	{
 		m_pContainer->OnNotify.Clear();
@@ -63,8 +116,47 @@ void CBuddyListItem::BindUI()
 	}
 }
 
+
+void CBuddyListItem::SetName(LPCTSTR pstrName)
+{
+	m_sName=pstrName;
+	if(m_pNameLabel)
+		m_pNameLabel->SetText(pstrName?pstrName:_T(""));
+}
+void CBuddyListItem::SetSignature(LPCTSTR pstrSignature)
+{
+	m_sSignature=pstrSignature;
+	if(m_pSignatureLabel)
+		m_pSignatureLabel->SetText(pstrSignature?pstrSignature:_T(""));
+}
+void CBuddyListItem::SetHeader(LPCTSTR pstrFile)
+{
+	m_sHeaderPath=pstrFile;
+	if(m_pBtnHeader)
+		m_pBtnHeader->SetBkImage(pstrFile?pstrFile:_T(""));
+}
+
+CStdString CBuddyListItem::GetName()const
+{
+	return m_sName;
+}
+CStdString CBuddyListItem::GetSignature() const
+{
+	return m_sSignature;
+}
+CStdString CBuddyListItem::GetHeaderPath() const
+{
+	return m_sHeaderPath;
+}
+
+
+
 CBuddyListItem::CBuddyListItem():
-	m_pControl(NULL),m_pPaintManager(NULL),m_pGroup(NULL),m_pContainer(NULL),m_bSelected(false)
+	m_pControl(NULL),m_pPaintManager(NULL),
+	m_pGroup(NULL),m_pContainer(NULL),m_bSelected(false),
+	m_pBtnHeader(NULL),
+	m_pNameLabel(NULL),
+	m_pSignatureLabel(NULL)
 {
 
 }
@@ -76,6 +168,16 @@ CBuddyListItem::~CBuddyListItem()
 
 
 #pragma region CBuddyListGroup
+
+CBuddyListItem* CBuddyListGroup::FindBuddyItem(const gloox::JID& jid) const
+{
+	for(auto iter=m_vItems.begin();iter!=m_vItems.end();++iter)
+	{
+		if((*iter)->GetJid()==jid)
+			return *iter;
+	}
+	return NULL;
+}
 
 CBuddyListGroup::~CBuddyListGroup()
 {
@@ -213,6 +315,19 @@ CStdString CBuddyListGroup::GetName() const
 
 #pragma region CBuddyListUI
 
+
+
+CBuddyListItem* CBuddyListUI::FindBuddyItem(const gloox::JID& jid) const
+{
+	CBuddyListItem* pItem=NULL;
+	for(auto iter=m_vGroups.begin();iter!=m_vGroups.end();++iter)
+	{
+		if(pItem=(*iter)->FindBuddyItem(jid))
+			break;
+	}
+	return pItem;
+}
+
 CBuddyListUI::~CBuddyListUI()
 {
 	m_vGroups.clear();
@@ -291,16 +406,33 @@ bool CBuddyListUI::OnGroupNotify(void* pMsg)
 		{
 			if(msg.pSender==(*iter_item)->m_pContainer)
 			{
+				CBuddyItemEvent event={0};
+				event.pSender=*iter_item;
+
 				if(msg.sType==_T("mouseenter"))
 				{
-					(*iter_item)->MouseEnter();
+					event.pSender->MouseEnter();
+					event.sType=_T("mouseenter");
 				}
 				else if(msg.sType==_T("mouseleave"))
 				{
-					(*iter_item)->MouseLeave();
-				}else if(msg.sType==_T("click"))
+					event.pSender->MouseLeave();
+					event.sType=_T("mouseleave");
+				}
+				else if(msg.sType==_T("click"))
 				{
-					(*iter_item)->Select();
+					event.pSender->Select();
+					event.sType=_T("click");
+				}
+				else if(msg.sType==_T("dbclick"))
+				{
+					event.sType=_T("dbclick");
+				}
+				if(event.sType&&OnItemAction)
+				{
+					event.pos=(*iter_item)->GetMousePoint(msg.ptMouse.x,msg.ptMouse.y);
+
+					OnItemAction(&event);
 				}
 				break;
 			}

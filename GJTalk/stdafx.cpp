@@ -15,3 +15,16 @@ bool IsCrossThread()
 	return AfxGetThread()->m_hThread!=AfxGetApp()->m_hThread;
 #endif 
 }
+
+string cstr_str(CString &cstr)
+{
+#ifdef _UNICODE
+	CStringA cstrA(cstr.GetBuffer());
+	cstr.ReleaseBuffer();
+	string str=cstrA.GetBuffer();
+	cstrA.ReleaseBuffer();
+	return str;
+#else
+	return cstr;
+#endif
+}

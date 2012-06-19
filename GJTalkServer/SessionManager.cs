@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,19 @@ namespace GJTalkServer
 {
     class SessionManager
     {
-        Dictionary<string, Session> onlineUsers;
+        Hashtable onlineUsers = new Hashtable();
         GJTalkServer server;
         object objLock = new object();
         public SessionManager(GJTalkServer server)
         {
-            onlineUsers = new Dictionary<string, Session>();
             this.server = server;
+        }
+        public Session GetSession(long UserId)
+        {
+            lock (objLock)
+            {
+                return onlineUsers[UserId] as Session;
+            }
         }
         public Session GetSession(string username)
         {
@@ -21,25 +28,28 @@ namespace GJTalkServer
                 return null;
             lock (objLock)
             {
-                Session session;
-                if (onlineUsers.TryGetValue(username.ToLower(), out session))
-                    return session;
-                else
-                    return null;
+                long userId = server.AuthManager.GetUserId(username);
+                return GetSession(userId);
             }
         }
         public bool IsOnline(string username)
         {
             lock (objLock)
             {
-                return onlineUsers.ContainsKey(username.ToLower());
+                return IsOnline(server.AuthManager.GetUserId(username));
             }
+        }
+        public bool IsOnline(long userId)
+        {
+            return onlineUsers.ContainsKey(userId);
         }
         public Session Add(Session session)
         {
+            if (session.SessionUser == null)
+                return null;
             lock (objLock)
             {
-                onlineUsers.Add(session.SessionUser.Username.ToLower(), session);
+                onlineUsers.Add(session.SessionUser.UserId, session);
                 return session;
             }
         }
@@ -48,7 +58,7 @@ namespace GJTalkServer
             lock (objLock)
             {
                 if (session.SessionUser != null)
-                    onlineUsers.Remove(session.SessionUser.Username.ToLower());
+                    onlineUsers.Remove(session.SessionUser.UserId);
             }
         }
     }

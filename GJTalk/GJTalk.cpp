@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GJTalk.h" 
 #include "LoginFrame.h"
+#include "WebFrame.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -76,15 +77,21 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->init("localhost");
 
-	CLoginFrame *loginFrame=new CLoginFrame(m_pContext); 
+	HRESULT hr=::CoInitialize(NULL);
 
-	loginFrame->CenterWindow();
-	loginFrame->ShowWindow();  
-	MessageFilterHelper *msgFilter=new MessageFilterHelper();
 
+
+
+
+	MessageFilterHelper *msgFilter=new MessageFilterHelper(); 
 	CPaintManagerUI::AddGlobalMessageFilter(msgFilter);
-	CPaintManagerUI::MessageLoop();
 
+	m_pContext->GetLoginFrame().CenterWindow();
+	m_pContext->GetLoginFrame().ShowWindow();
+
+	CPaintManagerUI::MessageLoop();
+	if(m_pContext)
+		delete m_pContext;
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
