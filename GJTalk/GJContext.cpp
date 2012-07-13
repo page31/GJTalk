@@ -34,7 +34,8 @@ CMainFrame& GJContext::GetMainFrame()
 }
 GJContext::GJContext(void)
 	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL),
-	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL)
+	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL),
+	m_bConnected(false)
 {
 
 	m_SessionManager.SetContext(this);
@@ -46,19 +47,21 @@ GJContext::GJContext(void)
 void GJContext::OnWindowDestroyed(const CGJContextWnd* pWnd)
 {
 	if(pWnd==m_pLoginFrame)
-	{
+	{ 
 		m_pLoginFrame=NULL;
 	}
 	else if(pWnd==m_pMainFrame)
 	{
 		m_pMainFrame=NULL;
 	}
+	else
+		return;
 	delete pWnd;
 }
 
 CBuddyListUI *GJContext::GetBuddyList() const
 {
-	return m_pMainFrame?NULL:m_pMainFrame->m_pBuddyList;  
+	return m_pMainFrame?m_pMainFrame->m_pBuddyList:NULL;  
 }
 CBuddyListItem *GJContext::GetBuddyItemByJid(const JID& jid) const
 {
@@ -69,7 +72,10 @@ Client* GJContext::GetClient() const
 {
 	return m_pClient;
 }
-
+CSessionManager &GJContext::GetSessionManager()
+{
+	return	m_SessionManager;
+}
 bool GJContext::IsReceiving() const
 {
 	return m_bRecvData;
@@ -193,21 +199,25 @@ void GJContext::onConnect()
 		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,1,NULL);
 		return;
 	}
+	if(m_bConnected)
+		return;
+	m_bConnected=true;
 	if(m_pLoginFrame) 
 		m_pLoginFrame->OnConnected();
-	 
-	m_pClient->rosterManager()->fill();
-	//m_tls->handshake();
+
 
 }
 
 void GJContext::onDisconnect( ConnectionError e )
 {
+
 	if(IsCrossThread())
 	{
 		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,2,e);
 		return;
 	}
+
+	m_bConnected=false;
 	if(m_pLoginFrame)
 		m_pLoginFrame->OnDisconnected(e);
 }

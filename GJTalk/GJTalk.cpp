@@ -72,8 +72,8 @@ BOOL CGJTalkApp::InitInstance()
 	CTrayIcon trayIcon;
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
-	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\Dong\\Desktop\\GJTalkSkin\\GJTalk"));
-	m_pContext=new  GJContext;
+	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\suppo_000\\Desktop\\GJTalkSkin\\GJTalk"));
+	m_pContext=new GJContext;		
 
 	m_pContext->init("localhost");
 

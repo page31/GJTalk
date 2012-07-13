@@ -35,9 +35,8 @@ void CLoginFrame::OnPostCreate()
 }
 void CLoginFrame::OnConnected()
 { 
-	m_pContext->GetMainFrame().ShowWindow(); 
-	m_pContext->GetMainFrame().LoadUser();
-	this->Close(); 
+	m_pContext->GetMainFrame().ShowWindow();  
+	this->Close();
 }
 void CLoginFrame::OnDisconnected(ConnectionError error)
 {

@@ -356,6 +356,8 @@ void CBuddyListUI::AddGroup(CBuddyListGroup &group)
 	CListUI::Add(group.m_pUI);
 	this->Invalidate();
 }
+
+
 void CBuddyListUI::RemoveGroup(CBuddyListGroup &group)
 {
 
@@ -379,6 +381,26 @@ CBuddyListGroup &CBuddyListUI::GetGroup(int index)
 {
 	return *m_vGroups[index];
 }
+CBuddyListGroup *CBuddyListUI::GetGroup(LPCTSTR pstrGroupName)
+{
+	for(auto iter=m_vGroups.begin();iter!=m_vGroups.end();++iter)
+	{
+		if((*iter)->GetName()==pstrGroupName)
+			return *iter;
+	}
+	return NULL;
+}
+
+void CBuddyListUI::AddBuddy(LPCTSTR pstrGroup,CBuddyListItem& item)
+{
+	CBuddyListGroup *group=GetGroup(pstrGroup);
+	if(!group) 
+		group=&AddGroup(pstrGroup); 
+	if(group->ContainsItem(item))
+		group->Remove(item);
+	group->Add(item);
+}
+
 int CBuddyListUI::Count() const
 {
 	return m_vGroups.size();

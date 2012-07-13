@@ -17,11 +17,17 @@ namespace GJTalkServer
         static void HackMatrix()
         {
             var type = typeof(Matrix.License.LicenseManager);
-            var filed = type.GetField("#=qwb4_$yjqjwwNZxtIavQJqQ==", BindingFlags.Static | BindingFlags.NonPublic);
-            filed.SetValue(null, true);
+            var field = type.GetField("#=qwb4_$yjqjwwNZxtIavQJqQ==", BindingFlags.Static | BindingFlags.NonPublic);
+            field.SetValue(null, true);
+        }
+        static void TestFriend()
+        {
+        
+            var groups = FriendshipManager.Instance.GetAllBuddyInGroup("test");
+
         }
         static void Main(string[] args)
-        {
+        { 
             HackMatrix();
             new Test().Start();
             GJTalkServer server = new GJTalkServer();

@@ -88,13 +88,13 @@ namespace GJTalkServer
             }
             if (failure == null)
             {
-                user = user.Replace("\\40", "@");
+                user = JIDEscaping.Unescape(user);
                 if (!Server.AuthManager.Auth(user, pass, pass.Length == 32))
                     failure = new Failure(FailureCondition.not_authorized);
             }
             if (failure == null)
             {
-                Session.Send(new Success());
+                Session.Send(new Success()); 
                 Session.SetOnline(user);
             }
             else

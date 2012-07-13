@@ -54,8 +54,7 @@ namespace GJTalkServer
             streamParser.OnStreamElement += streamParser_OnStreamElement;
             streamParser.OnStreamEnd += streamParser_OnStreamEnd;
             streamParser.OnStreamStart += streamParser_OnStreamStart;
-            BeginRead();
-
+            BeginRead(); 
             Roster = new Xmpp.Roster.Roster();
             Groups = new List<BuddyGroup>();
             Console.WriteLine("New Session");
@@ -67,7 +66,14 @@ namespace GJTalkServer
         {
             if (socket == null)
                 return;
-            socket.BeginReceive(buffer, 0, buff_size, SocketFlags.None, readCallback, null);
+            try
+            {
+                socket.BeginReceive(buffer, 0, buff_size, SocketFlags.None, readCallback, null);
+            }
+            catch
+            {
+                Close();
+            }
         }
         public void Send(string data)
         {
@@ -100,6 +106,10 @@ namespace GJTalkServer
         {
             Send(element.ToString(), userState);
         }
+        public void Reset()
+        {
+            streamParser.Reset();
+        }
         void OnRead(IAsyncResult result)
         {
             int size = 0;
@@ -110,8 +120,8 @@ namespace GJTalkServer
             catch { }
             if (size > 0)
             {
-                //string str = Encoding.UTF8.GetString(buffer, 0, size);
-                //Console.WriteLine(str);
+                string str = Encoding.UTF8.GetString(buffer, 0, size);
+                Console.WriteLine(str);
                 streamParser.Write(buffer, 0, size);
                 BeginRead();
             }
@@ -164,7 +174,11 @@ namespace GJTalkServer
             if (socket == null)
                 return;
             server.SessionManager.Remove(this);
-            socket.Shutdown(SocketShutdown.Both);
+            try
+            {
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch { }
             socket.Close();
             socket = null;
         }
@@ -180,7 +194,7 @@ namespace GJTalkServer
         }
 
         void streamParser_OnStreamElement(object sender, Matrix.StanzaEventArgs e)
-        {
+        { 
             server.PacketManager.Enqueue(new Packet()
             {
                 Session = this,
@@ -262,7 +276,7 @@ namespace GJTalkServer
         }
         public void SetOnline(string username)
         {
-            var user = server.AuthManager.GetUser(username);
+            var user = server.AuthManager.GetUser(username); 
             lock (server.SessionManager)
             {
                 Session oldSession = server.SessionManager.GetSession(user.UserId);
@@ -271,14 +285,15 @@ namespace GJTalkServer
             }
             this.SessionUser = user;
             server.SessionManager.Add(this);
-            Send(new Xmpp.Client.Message()
+            Groups.AddRange(FriendshipManager.Instance.GetAllBuddyInGroup(user.Username));
+            var offlineMsgs = server.OfflineMessageManager.Get(user.Username, true); 
+            if (offlineMsgs != null)
             {
-
-                From = "localhost",
-                To = user.GetJid(),
-                Subject = "system",
-                Body = "hello"
-            });
+                foreach (var msg in offlineMsgs)
+                {
+                    Send(msg);
+                }
+            }
         }
     }
 

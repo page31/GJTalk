@@ -52,12 +52,17 @@ public:
 private:
 
 	bool m_bRecvData;
+
+	bool m_bConnected;
+
 	JID *m_pSelf; 
 	Client *m_pClient;
 
 	string m_Server;
 	int m_Port;  
 	CWinThread *m_pRecvThread;
+
+
 public:  
 	virtual void handleMessage( const Message& msg, MessageSession* session = 0 );
 	void OnWindowDestroyed(const CGJContextWnd* pWnd);
@@ -73,6 +78,8 @@ public:
 	CString &GetAppName() const;
 
 	Client *GetClient() const;
+	CSessionManager &GetSessionManager();
+
 	bool IsReceiving() const;
 	void StartRecv();
 	void StopRecv();
@@ -89,6 +96,7 @@ public:
 	void handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ );
 	void handleMessageSession( MessageSession *session );
 	void handleLog( LogLevel level, LogArea area, const std::string& message );
+
 	virtual bool handleIq( const IQ& iq );
 	virtual void handleIqID( const IQ& iq, int context );
 	virtual void  OnTrayIconMessage(CTrayIconMessage &msg);

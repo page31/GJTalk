@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainFrame.h"
+#include "../xmpp/rostermanager.h"
 
 #define FIX_DOCK_P(d) { if(d>DOCK_MOVE_STEP) d=DOCK_MOVE_STEP;}
 #define FIX_DOCK_N(d) { if(d<-DOCK_MOVE_STEP) d=-DOCK_MOVE_STEP;}
@@ -85,25 +86,29 @@ void CMainFrame::OnPostCreate()
 	ASSERT(m_pBuddyList);
 	ASSERT(m_pRecentList);
 	m_pBuddyList->OnItemAction+= CDelegate<CMainFrame,CMainFrame>(this,&CMainFrame::OnBuddyItemAction);
-	m_pBuddyList->AddGroup(_T("test"));
+
+	/*m_pBuddyList->AddGroup(_T("test"));
 	m_pBuddyList->AddGroup(_T("test2"));
 	CBuddyListItem *item;
 
 	for (int i = 0; i < 10; i++)
 	{
-		item=new CBuddyListItem(); 
-		CString str;
-		str.Format(_T("item %d"),i);
-		item->SetName(str);
-		item->SetHeader(_T("header.jpg"));
-		str.Format(_T("signature %d"),i);
-		item->SetSignature(str);
-		JID jid;
-		jid.setUsername(cstr_str(str));
-		item->SetJid(jid);
+	item=new CBuddyListItem(); 
+	CString str;
+	str.Format(_T("item %d"),i);
+	item->SetName(str);
+	item->SetHeader(_T("header.jpg"));
+	str.Format(_T("signature %d"),i);
+	item->SetSignature(str);
+	JID jid;
+	jid.setUsername(cstr_str(str));
+	item->SetJid(jid);
 
-		m_pBuddyList->GetGroup(i%m_pBuddyList->GetCount()).Add(*item);
-	}
+	m_pBuddyList->GetGroup(i%m_pBuddyList->GetCount()).Add(*item);
+	}*/
+
+	LoadUser();
+	GetContext()->GetClient()->rosterManager()->registerRosterListener(this);  
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)
@@ -257,7 +262,14 @@ LRESULT CMainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void CMainFrame::LoadUser()
-{
+{ 
+	auto rosterMgr=GetContext()->GetClient()->rosterManager();  
+	for(auto iter=rosterMgr->roster()->begin();iter!=rosterMgr->roster()->end();
+		++iter)
+	{
+		handleItemAdded(iter->second->jid());
+	}
+	rosterMgr->fill();
 
 }
 
@@ -300,3 +312,72 @@ void CMainFrame::AddContactItem(CBuddyListItem& item)
 CMainFrame::~CMainFrame(void)
 {
 }
+
+
+
+////
+void CMainFrame::handleItemAdded( const JID& jid ) 
+{
+	auto roster=GetContext()->GetClient()->rosterManager()->getRosterItem(jid); 
+	CBuddyListItem item;
+	item.SetJid(jid);
+	item.SetName(CString(roster->name().c_str())); 
+	m_pBuddyList->AddBuddy(CString(roster->groups().front().c_str()),item);
+}
+
+void CMainFrame::handleItemSubscribed( const JID& jid ) 
+{
+}
+
+
+void CMainFrame::handleItemRemoved( const JID& jid ) 
+{
+}
+
+
+void CMainFrame::handleItemUpdated( const JID& jid ) 
+{
+}
+
+
+void CMainFrame::handleItemUnsubscribed( const JID& jid ) 
+{
+}
+
+
+void CMainFrame::handleRoster( const Roster& roster ) 
+{
+}
+
+void CMainFrame::handleRosterPresence( const RosterItem& item, const std::string& resource,
+									  Presence::PresenceType presence, const std::string& msg ) 
+{
+}
+
+void CMainFrame::handleSelfPresence( const RosterItem& item, const std::string& resource,
+									Presence::PresenceType presence, const std::string& msg ) 
+{
+}
+
+
+bool CMainFrame::handleSubscriptionRequest( const JID& jid, const std::string& msg ) 
+{
+	return false;
+}
+
+
+bool CMainFrame::handleUnsubscriptionRequest( const JID& jid, const std::string& msg ) 
+{
+	return false;
+}
+
+
+void CMainFrame::handleNonrosterPresence( const Presence& presence ) 
+{
+}
+
+
+void CMainFrame::handleRosterError( const IQ& iq ) 
+{
+}
+////

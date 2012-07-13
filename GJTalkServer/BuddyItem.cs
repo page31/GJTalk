@@ -10,5 +10,6 @@ namespace GJTalkServer
         public string Username { get; set; }
         public string Nickname { get; set; }
         public string Remark { get; set; }
+        public string GroupName { get; set; }
     }
 }

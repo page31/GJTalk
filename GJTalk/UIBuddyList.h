@@ -127,7 +127,10 @@ namespace DuiLib
 		CBuddyListUI( CPaintManagerUI* pPaintManager); 
 		void AddGroup(CBuddyListGroup &group);
 		CBuddyListGroup& AddGroup(LPCTSTR pstrGroupName);
+		CBuddyListGroup *GetGroup(LPCTSTR pstrGroupName);
+
 		void RemoveGroup(CBuddyListGroup &group);
+		void AddBuddy(LPCTSTR pstrGroup,CBuddyListItem& item); 
 		bool ContainsGroup(const CBuddyListGroup &group) const;
 		bool ContainsGroup(LPCTSTR pstrGroupName) const;
 		CBuddyListGroup &GetGroup(int index);

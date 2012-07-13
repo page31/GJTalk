@@ -57,7 +57,9 @@
     <Compile Include="BuddyGroup.cs" />
     <Compile Include="BuddyItem.cs" />
     <Compile Include="Crypto.cs" />
+    <Compile Include="FriendshipManager.cs" />
     <Compile Include="GJTalkServer.cs" />
+    <Compile Include="JIDEscaping.cs" />
     <Compile Include="MessageMangaer.cs" />
     <Compile Include="OfflineMessageItem.cs" />
     <Compile Include="OfflineMessageManager.cs" />
