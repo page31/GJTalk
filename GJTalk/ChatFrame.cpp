@@ -3,15 +3,15 @@
 
 
 CChatFrame::CChatFrame(GJContext *context)
-	:CGJContextWnd(context),m_pBuddy(NULL)
+	:CGJContextWnd(context)
 {
 	ASSERT(context);
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_FRAME,UI_WNDSTYLE_EX_FRAME);
 }
 
-CBuddyListItem *CChatFrame::GetTarget() const
+const JID&CChatFrame::GetTarget() const
 {  
-	return m_pBuddy;
+	return m_jid;
 }
 void CChatFrame::Notify(TNotifyUI& msg)
 {
@@ -21,10 +21,10 @@ void CChatFrame::Notify(TNotifyUI& msg)
 	}
 	CGJContextWnd::Notify(msg);
 }
-void CChatFrame::InitTarget(CBuddyListItem& buddy)
+void CChatFrame::InitTarget(const JID& jid)
 {
-	m_pBuddy=&buddy;
-	this->SetCaptionText(buddy.GetName());
+	m_jid=jid;
+	this->SetCaptionText(utf8dec(jid.username()));
 }
 void CChatFrame::OnPostCreate()
 {
@@ -33,7 +33,7 @@ void CChatFrame::OnPostCreate()
 }
 
 
-void CChatFrame::OnReceiveMessage(const Message& msg)
+void CChatFrame::OnReceiveMessage(const CSessionMessage& msg)
 {
 
 }

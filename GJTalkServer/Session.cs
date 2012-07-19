@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using Matrix;
 using Matrix.Xml;
 using Matrix.Xmpp;
 using Matrix.Xmpp.Component;
@@ -28,14 +29,22 @@ namespace GJTalkServer
         public User SessionUser { get; private set; }
         public Xmpp.Roster.Roster Roster { get; private set; }
         public bool IsOnline { get { return SessionUser != null; } }
-
         public List<BuddyGroup> Groups { get; private set; }
+        public Jid Jid
+        {
+            get
+            {
+                if (SessionUser == null)
+                    return null;
+                return SessionUser.Username + "@gjtalk.com";
+            }
+        }
 
         GJTalkServer server;
         XmppStreamParser streamParser;
         Socket socket;
         AsyncCallback readCallback;
-
+        Xmpp.Client.Presence presence;
 
 
         byte[] buffer;
@@ -54,7 +63,7 @@ namespace GJTalkServer
             streamParser.OnStreamElement += streamParser_OnStreamElement;
             streamParser.OnStreamEnd += streamParser_OnStreamEnd;
             streamParser.OnStreamStart += streamParser_OnStreamStart;
-            BeginRead(); 
+            BeginRead();
             Roster = new Xmpp.Roster.Roster();
             Groups = new List<BuddyGroup>();
             Console.WriteLine("New Session");
@@ -90,14 +99,23 @@ namespace GJTalkServer
             byte[] buffer = Encoding.UTF8.GetBytes(data);
             lock (socket)
             {
-                socket.BeginSend(buffer, 0, buffer.Length,
-                   SocketFlags.None, OnSent, userState);
+                try
+                {
+                    socket.BeginSend(buffer, 0, buffer.Length,
+                         SocketFlags.None, OnSent, userState);
+                }
+                catch (System.Exception ex)
+                {
+                    Close();
+                }
+
             }
         }
         public void Send(XmppXElement element)
         {
             Send(element.ToString());
         }
+
         public void Send(XmppXElement element, DataSentAction action)
         {
             Send(element.ToString(), action);
@@ -171,6 +189,8 @@ namespace GJTalkServer
         }
         public void Close()
         {
+            SetPresence(PresenceType.unavailable, null, 0);
+
             if (socket == null)
                 return;
             server.SessionManager.Remove(this);
@@ -185,6 +205,7 @@ namespace GJTalkServer
         void streamParser_OnStreamStart(object sender, Matrix.StanzaEventArgs e)
         {
             SendStreamHeader();
+            //Send(new Matrix.Xmpp.Tls.StartTls());
             Send(BuildFeatures());
         }
 
@@ -194,7 +215,7 @@ namespace GJTalkServer
         }
 
         void streamParser_OnStreamElement(object sender, Matrix.StanzaEventArgs e)
-        { 
+        {
             server.PacketManager.Enqueue(new Packet()
             {
                 Session = this,
@@ -222,9 +243,18 @@ namespace GJTalkServer
         XmppXElement BuildFeatures()
         {
             var feat = new StreamFeatures();
-            var mechs = new Mechanisms();
-            mechs.AddMechanism(SaslMechanism.PLAIN);
-            feat.Mechanisms = mechs;
+            if (!IsOnline)
+            {
+                var mechs = new Mechanisms();
+                mechs.AddMechanism(SaslMechanism.PLAIN);
+                feat.Mechanisms = mechs;
+            }
+            else
+            {
+                feat.Bind = new Xmpp.Bind.Bind();
+                feat.Session = new Xmpp.Session.Session();
+            }
+
             return feat;
         }
 
@@ -236,7 +266,6 @@ namespace GJTalkServer
                 Subject = "ServerMessage",
                 Body = "Offline:" + reason.ToString()
             });
-            this.SessionUser = null;
             Stop();
         }
         public void UpdateSubscribers(XmppXElement element)
@@ -274,9 +303,33 @@ namespace GJTalkServer
                 }
             }
         }
+        public void SetPresence(Matrix.Xmpp.PresenceType type, string status, int priority)
+        {
+            if (this.Jid == null)
+                return;
+            this.presence = new Xmpp.Client.Presence();
+            presence.Type = type;
+            presence.Status = status;
+            presence.Priority = priority;
+            presence.From = this.Jid;
+            var friends = FriendshipManager.Instance.GetAllBuddy(SessionUser.Username);
+            foreach (var friend in friends)
+            {
+                var session = server.SessionManager.GetSession(friend.Username);
+                if (session != null && session.Jid != null)
+                {
+                    presence.To = session.Jid;
+                    session.Send(presence);
+                }
+            }
+        }
+        public Xmpp.Client.Presence GetPresence()
+        {
+            return presence;
+        }
         public void SetOnline(string username)
         {
-            var user = server.AuthManager.GetUser(username); 
+            var user = server.AuthManager.GetUser(username);
             lock (server.SessionManager)
             {
                 Session oldSession = server.SessionManager.GetSession(user.UserId);
@@ -286,7 +339,7 @@ namespace GJTalkServer
             this.SessionUser = user;
             server.SessionManager.Add(this);
             Groups.AddRange(FriendshipManager.Instance.GetAllBuddyInGroup(user.Username));
-            var offlineMsgs = server.OfflineMessageManager.Get(user.Username, true); 
+            var offlineMsgs = server.OfflineMessageManager.Get(user.Username, true);
             if (offlineMsgs != null)
             {
                 foreach (var msg in offlineMsgs)

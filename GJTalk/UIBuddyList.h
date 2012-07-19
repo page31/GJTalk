@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include <vector>
 #include "../xmpp/client.h"
+#include "../xmpp/presence.h" 
+#include "../xmpp/jid.h"
 using namespace std;
 namespace DuiLib
 {
@@ -34,7 +36,8 @@ namespace DuiLib
 		CStdString m_sHeaderPath;
 
 	private:
-		bool m_bSelected;
+		bool m_bSelected; 
+		gloox::Presence::PresenceType m_presence;
 		void BindUI();
 		void CancelSelect();
 
@@ -46,13 +49,16 @@ namespace DuiLib
 		void Select(); 
 		void MouseEnter();
 		void MouseLeave();
-		bool IsSelected();
-
-
+		
+		bool IsSelected() const;
+		bool IsOnline() const;
+	 
+		void SetPresence(gloox::Presence::PresenceType presence);
 		void SetName(LPCTSTR pstrName);
 		void SetSignature(LPCTSTR pstrSignature);
 		void SetHeader(LPCTSTR pstrFile);
 		void SetJid(const gloox::JID& jid);
+
 		const gloox::JID& GetJid() const;
 		CStdString GetName()const;
 		CStdString GetSignature() const;
@@ -61,6 +67,9 @@ namespace DuiLib
 
 		BuddyItemPos GetMousePoint(int x,int y)const;
 		BuddyItemPos GetMousePoint()const;
+
+	 
+
 
 		friend class CBuddyListGroup;
 		friend class CBuddyListUI;

@@ -5,6 +5,9 @@
 #include "UIBuddyList.h"
 
 #include "../xmpp/rostermanager.h"
+#include "../xmpp/presence.h"
+#include "../xmpp/vcardhandler.h"
+#include "HeaderManager.h"
 
 #define DOCK_MOVE_STEP (50)
 #define DOCK_MOVE_INTERVAL (10)
@@ -26,9 +29,17 @@ LPCTSTR const pstrRecentBuddyListName=_T("listRecent");
 LPCTSTR const pstrOptTabBuddyListName=_T("optContactTab"); 
 LPCTSTR const pstrOptTabRecentListName=_T("optRecentTab"); 
 LPCTSTR const pstrListTableName=_T("tabContactList");  
+LPCTSTR const pstrButtonHeaderName=_T("btnHeader");
+LPCTSTR const pstrEditSignatureName=_T("editSignaure");
+LPCTSTR const pstrLabelNameName=_T("txtUsername");
 
-class CMainFrame:public CGJContextWnd,public ITrayIconListener,public IDialogBuilderCallback,
-	public gloox::RosterListener
+class CMainFrame:
+	public CGJContextWnd,
+	public ITrayIconListener,
+	public IDialogBuilderCallback,
+	public gloox::RosterListener,
+	public gloox::VCardHandler,
+	public HeaderHandler
 {
 
 private: 
@@ -40,6 +51,9 @@ private:
 	CBuddyListUI* m_pBuddyList;
 	CBuddyListUI* m_pRecentList;
 
+	CButtonUI *m_pBtnHeader;
+	CEditUI *m_pEditSignaure;
+	CLabelUI *m_pLabelName;
 	COptionUI* m_pOptTabBuddyList;
 	COptionUI* m_pOptTabRecentList;
 	CTabLayoutUI* m_pListTable;
@@ -108,7 +122,13 @@ public:
 
 	virtual void handleRosterError( const IQ& iq ) ;
 
+	virtual void handleVCard( const JID& jid, const VCard* vcard );
 
+	virtual void handleVCardResult( VCardContext context, const JID& jid, StanzaError se = StanzaErrorUndefined );
+
+	virtual void HandleHeaderUpdate( const CHeaderManager& manager,const JID& jid );
+
+ 
 	////
 
 

@@ -20,7 +20,7 @@ namespace GJTalkServer
         public long GetUserId(string username)
         {
             long id = -1;
-            if (string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(username))
             {
                 username = username.ToLower();
                 if (!idmap.TryGetValue(username, out id))

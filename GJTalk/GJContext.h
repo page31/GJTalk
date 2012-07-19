@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../xmpp/gloox.h"
 #include "GJTalk.h"
 #include "GJUser.h"
 #include "MainFrame.h"
@@ -12,11 +12,12 @@
 #include "../xmpp/messageeventhandler.h"
 #include "../xmpp/messagehandler.h"
 #include "../xmpp/messagesessionhandler.h"
-
+#include "../xmpp/vcardmanager.h"
+#include "../xmpp/vcardhandler.h"
 #include "TrayIcon.h"
 #include "UIBuddyList.h"
 #include "SessionManager.h"
-
+#include "HeaderManager.h"
 using namespace std;
 using namespace gloox;
 
@@ -31,7 +32,6 @@ namespace  MainFrameCloseReasons
 	};
 };
 
-
 class GJContext:
 	public ConnectionListener,
 	public LogHandler,
@@ -39,7 +39,8 @@ class GJContext:
 	public MessageHandler,
 	public TLSHandler,
 	public ITrayIconListener,
-	public IqHandler
+	public IqHandler,
+	public VCardHandler
 
 {
 public:
@@ -49,23 +50,26 @@ public:
 	CLoginFrame *m_pLoginFrame;
 	CSessionManager m_SessionManager;
 
+
+private:
+
+	JID *m_pSelf; 
+	Client *m_pClient; 
+	gloox::VCardManager *m_pVCardMgr;
+
 private:
 
 	bool m_bRecvData;
 
 	bool m_bConnected;
 
-	JID *m_pSelf; 
-	Client *m_pClient;
-
+	VCard m_vcSelf;
 	string m_Server;
 	int m_Port;  
 	CWinThread *m_pRecvThread;
-
+	CHeaderManager m_headerMgr;
 
 public:  
-	virtual void handleMessage( const Message& msg, MessageSession* session = 0 );
-	void OnWindowDestroyed(const CGJContextWnd* pWnd);
 
 	CBuddyListUI *GetBuddyList() const;
 	CLoginFrame& GetLoginFrame();
@@ -73,12 +77,15 @@ public:
 
 	CBuddyListItem *GetBuddyItemByJid(const JID& jid) const;
 
-
-
 	CString &GetAppName() const;
-
-	Client *GetClient() const;
+	JID *GetSelf() const;
+	const VCard *GetSelfVCard() const; 
+	Client *GetClient() const; 
+	VCardManager *GetVCardManager() const; 
 	CSessionManager &GetSessionManager();
+	CHeaderManager &GetHeaderManager();
+
+	void HandleUnreadMessageChanged(); 
 
 	bool IsReceiving() const;
 	void StartRecv();
@@ -86,11 +93,15 @@ public:
 	bool init(const string& sever,int port=-1);
 	bool SignIn(const string& username,const string& password,CLoginFrame *loginFrame);
 	bool IsSignedIn() const;
-	JID *GetSelf() const;
+
+	virtual void handleMessage( const Message& msg, MessageSession* session = 0 );
+	void OnWindowDestroyed(const CGJContextWnd* pWnd);
 
 	void onConnect() ;
 	void onDisconnect( ConnectionError e );
 	bool onTLSConnect( const CertInfo& info );
+	void onReceiveSelfVCard();
+
 	void handleEncryptedData( const TLSBase* /*base*/, const std::string& data );
 	void handleDecryptedData( const TLSBase* /*base*/, const std::string& data );
 	void handleHandshakeResult( const TLSBase* /*base*/, bool success, CertInfo& /*certinfo*/ );
@@ -103,5 +114,10 @@ public:
 
 	GJContext(void);
 	~GJContext(void);
+
+	virtual void handleVCard( const JID& jid, const VCard* vcard );
+
+	virtual void handleVCardResult( VCardContext context, const JID& jid, StanzaError se = StanzaErrorUndefined );
+
 };
 

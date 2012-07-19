@@ -15,12 +15,12 @@ namespace GJTalkServer
             this.server = server;
         }
         public bool HandleMessage(Session session, Message message)
-        {
+        { 
             string destUser = message.To.User;
             if (string.IsNullOrEmpty(destUser))
                 return false;
             if (!DeliverMessage(destUser, message))
-                server.OfflineMessageManager.Put(destUser, new Message[] { message }); //put to offline message 
+                server.OfflineMessageManager.Put(session.SessionUser.Username, destUser, new Message[] { message }); //put to offline message 
             return true;
         }
         public bool DeliverMessage(long to, XmppXElement element)

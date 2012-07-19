@@ -65,6 +65,7 @@ void CWebFrame::OnPostCreate()
 	if(!m_pHost)
 		throw CGJWndError::LOAD_ERROR;
 	m_pHost->GetControl(IID_IWebBrowser2,(void**)&m_pBrowser);
+	 
 	if(!m_pBrowser)
 		throw CGJWndError::LOAD_ERROR;  
 }

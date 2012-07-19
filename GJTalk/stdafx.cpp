@@ -28,3 +28,25 @@ string cstr_str(CString &cstr)
 	return cstr;
 #endif
 }
+
+CString utf8dec(const string& encodedstr)
+{
+	CString strRet;
+	wchar_t *buffer=NULL;
+	int cchStr=encodedstr.size();
+	int cchBuff=::MultiByteToWideChar(CP_UTF8,0,encodedstr.data(),cchStr,NULL,0);
+ 
+	if(cchBuff>0)
+	{
+		buffer=new wchar_t[cchBuff+1];
+		::MultiByteToWideChar(CP_UTF8,0,encodedstr.data(),cchStr,buffer,cchBuff);
+		buffer[cchBuff]='\0';
+	}
+	if(buffer)
+	{ 
+		strRet=CString(buffer);
+		delete[] buffer;
+	} 
+	return strRet;
+}
+

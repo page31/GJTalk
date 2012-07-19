@@ -25,22 +25,21 @@ namespace GJTalkServer
             if (string.IsNullOrEmpty(user))
                 return null;
 
-            user = user.ToLower();
-            string idStart = user + "|";
+            user = user.ToLower(); 
             var db = GetDatabase();
             var collection = db.GetCollection("offline_msg");
-            var query = from x in collection.AsQueryable<OfflineMessageItem>() where x.Id.StartsWith(idStart) select x;
+            var query = from x in collection.AsQueryable<OfflineMessageItem>() where x.To == user select x;
             List<Message> msgs = new List<Message>();
 
             foreach (var item in query)
             {
                 msgs.Add(new Matrix.Xmpp.Client.Message()
                 {
-                    From = item.From,
-                    To = item.To,
+                    From = item.From + "@gjtalk.com",
+                    To = item.To + "@gjtalk.com",
                     Body = item.Body,
-                    Subject = "offline",
-                    Id = item.Id.Substring(idStart.Length),
+                    //Subject = "offline",
+                    Id = item.Id,
                     Type = (Matrix.Xmpp.MessageType)Enum.Parse(
                     typeof(Matrix.Xmpp.MessageType), item.MessageType)
                 });
@@ -48,12 +47,12 @@ namespace GJTalkServer
             if (delete)
             {
                 QueryDocument doc = new QueryDocument();
-                doc.Add("_id", new BsonRegularExpression("^" + idStart.Replace("|","\\|")+"*"));
+                doc.Add("To", user);
                 collection.Remove(doc);
             }
             return msgs.ToArray();
         }
-        public void Put(string user, Message[] messages)
+        public void Put(string sender, string username, Message[] messages)
         {
             var db = GetDatabase();
             var collection = db.GetCollection("offline_msg");
@@ -62,12 +61,12 @@ namespace GJTalkServer
 
                 OfflineMessageItem msg = new OfflineMessageItem()
                 {
-                    Id = user + "|" + item.Id,
+                    Id = item.Id,
                     MessageType = item.Type.ToString(),
                     Body = item.Body,
-                    From = item.From,
+                    From = sender,
                     Time = DateTime.Now,
-                    To = item.To.ToString()
+                    To = username.ToLower()
                 };
                 collection.Insert<OfflineMessageItem>(msg);
             }

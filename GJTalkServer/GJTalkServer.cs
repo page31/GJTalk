@@ -30,13 +30,14 @@ namespace GJTalkServer
         void OnAccept(IAsyncResult result)
         {
             Socket socket = result.AsyncState as Socket;
-            //try
-            //{
+            try
+            {
                 new Session(this, socket.EndAccept(result));
-            //}
-            //catch
-            //{
-            //}
+            }
+            catch(Exception ex)
+            {
+
+            }
             BeginAccept(socket);
         }
         public void Start()
@@ -48,7 +49,7 @@ namespace GJTalkServer
 
             this.PacketManager = new PacketManager()
             {
-                ThreadCount = Environment.ProcessorCount * 2
+                ThreadCount =1 /*Environment.ProcessorCount * 2*/
             };
 
             listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

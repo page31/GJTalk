@@ -114,6 +114,7 @@
     <ClInclude Include="GJTalk.h" />
     <ClInclude Include="GJUser.h" />
     <ClInclude Include="GJWnd.h" />
+    <ClInclude Include="HeaderManager.h" />
     <ClInclude Include="ITrayIconListenner.h" />
     <ClInclude Include="LoginFrame.h" />
     <ClInclude Include="MainFrame.h" />
@@ -136,6 +137,7 @@
     <ClCompile Include="GJTalk.cpp" />
     <ClCompile Include="GJUser.cpp" />
     <ClCompile Include="GJWnd.cpp" />
+    <ClCompile Include="HeaderManager.cpp" />
     <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MessageFilterHelper.cpp" />

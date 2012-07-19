@@ -110,6 +110,9 @@ void CGJTalkApp::OnCrossThreadNotify(WPARAM wParam,LPARAM lParam)
 	case 2:
 		m_pContext->onDisconnect((gloox::ConnectionError)lParam);
 		break;
+	case 3:
+		m_pContext->onReceiveSelfVCard();
+		break;
 	default:
 		break;
 	}

@@ -5,8 +5,11 @@
 #include <map>
 #include <stack>
 #include <list>
+#include "..\xmpp\jid.h"
+
 using namespace std;
-typedef map<string,CChatFrame*> session_map;
+
+typedef map<JID,CChatFrame*> session_map;
 class CSessionMessage;
 typedef struct
 {
@@ -35,7 +38,7 @@ class CSessionManager
 private:
 	session_map m_sessions;
 	GJContext *m_pContext;
-	map<string,SessionItem> m_cachedSessoins;
+	map<JID,SessionItem> m_cachedSessoins;
 
 public:
 	void SetContext( GJContext* pContext);
@@ -46,8 +49,8 @@ public:
 	void HandleMessage(const Message& msg);
 
 	void OnChatFrameClose(const CChatFrame& frame);
-	bool IsChatFrameOpened(const CBuddyListItem& buddy) const;
-	CChatFrame& OpenChatFrame( CBuddyListItem& buddy);
-	CChatFrame& GetChatFrame( CBuddyListItem& buddy);
+	bool IsChatFrameOpened(const JID& jid) const;
+	CChatFrame& OpenChatFrame(const JID& jid);
+	CChatFrame& GetChatFrame( const JID& jid);
 };
 

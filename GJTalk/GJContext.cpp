@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "GJContext.h"
+#include "stdafx.h" 
+#include "GJContext.h" 
 #include "../xmpp/md5.h"
 #include "../xmpp/rostermanager.h"
 UINT RecvProc(LPVOID data)
@@ -11,7 +11,7 @@ UINT RecvProc(LPVOID data)
 			context->GetClient()->recv(100);
 		else
 			Sleep(100);
-	}
+	} 
 	return 0;
 }
 
@@ -35,7 +35,7 @@ CMainFrame& GJContext::GetMainFrame()
 GJContext::GJContext(void)
 	:m_pClient(NULL),m_pSelf(NULL),m_pMainFrame(NULL),
 	m_pLoginFrame(NULL),m_bRecvData(false),m_pRecvThread(NULL),
-	m_bConnected(false)
+	m_bConnected(false),m_pVCardMgr(NULL)
 {
 
 	m_SessionManager.SetContext(this);
@@ -140,8 +140,8 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 	}else { 
 		if(m_pClient) 
 			m_pClient->disconnect();  
-		m_pClient=new Client(*nSelf,encryptPassword(password),m_Port); 
-
+		m_pClient=new Client(*nSelf,encryptPassword(password),m_Port);  
+		m_pVCardMgr=new VCardManager(m_pClient);
 		if(!m_pClient)
 			bOk=false;
 		else
@@ -178,6 +178,7 @@ bool GJContext::IsSignedIn() const
 
 GJContext::~GJContext(void)
 {
+	StopRecv();
 	if(m_pClient)
 		m_pClient->disconnect();
 	if(m_pTrayIcon)
@@ -200,11 +201,12 @@ void GJContext::onConnect()
 		return;
 	}
 	if(m_bConnected)
-		return;
+		return; 
 	m_bConnected=true;
+	m_pClient->setPresence(gloox::Presence::PresenceType::Available,0);
+	GetVCardManager()->fetchVCard(m_pClient->jid(),this);
 	if(m_pLoginFrame) 
 		m_pLoginFrame->OnConnected();
-
 
 }
 
@@ -215,11 +217,15 @@ void GJContext::onDisconnect( ConnectionError e )
 	{
 		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,2,e);
 		return;
-	}
-
+	} 
 	m_bConnected=false;
 	if(m_pLoginFrame)
 		m_pLoginFrame->OnDisconnected(e);
+	if(m_pVCardMgr)
+	{
+		delete m_pVCardMgr;
+		m_pVCardMgr=NULL;
+	}
 }
 
 bool GJContext::onTLSConnect( const CertInfo& info )
@@ -268,3 +274,46 @@ void GJContext::handleIqID( const IQ& iq, int context )
 void GJContext::handleLog( LogLevel level, LogArea area, const std::string& message )
 { 
 }
+
+VCardManager * GJContext::GetVCardManager() const
+{
+	return m_pVCardMgr;
+}
+
+void GJContext::handleVCard( const JID& jid, const VCard* vcard )
+{
+	if(!m_pClient)
+		return;
+	if(jid==m_pClient->jid())
+	{
+		m_vcSelf=*vcard; 
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,3,NULL);
+	}
+}
+
+void GJContext::handleVCardResult( VCardContext context, const JID& jid, StanzaError se /*= StanzaErrorUndefined */ )
+{ 
+}
+
+const VCard * GJContext::GetSelfVCard() const
+{
+	return &m_vcSelf;
+}
+
+void GJContext::onReceiveSelfVCard()
+{
+	GetMainFrame().ShowWindow();
+}
+
+CHeaderManager & GJContext::GetHeaderManager()
+{
+	return m_headerMgr;
+}
+
+ 
+
+void GJContext::HandleUnreadMessageChanged()
+{
+
+}
+

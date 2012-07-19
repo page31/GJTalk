@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MainFrame.h"
-#include "../xmpp/rostermanager.h"
+#include "../xmpp/rostermanager.h" 
+#include "../xmpp/base64.h"
+#include <afx.h>
 
 #define FIX_DOCK_P(d) { if(d>DOCK_MOVE_STEP) d=DOCK_MOVE_STEP;}
 #define FIX_DOCK_N(d) { if(d<-DOCK_MOVE_STEP) d=-DOCK_MOVE_STEP;}
@@ -69,6 +71,7 @@ CMainFrame::CMainFrame(GJContext *context)
 	m_bMoving=false;
 	this->SetCaptionText(m_pContext->GetAppName());
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_EX_FRAME,WS_EX_OVERLAPPEDWINDOW|WS_EX_TOPMOST);
+	context->GetHeaderManager().RegisterHandler(this);
 }
 
 void CMainFrame::OnPostCreate()
@@ -80,11 +83,19 @@ void CMainFrame::OnPostCreate()
 	m_pOptTabBuddyList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabBuddyListName));
 	m_pOptTabRecentList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabRecentListName));
 	m_pListTable=static_cast<CTabLayoutUI*>(m_pm.FindControl(pstrListTableName));
+	m_pBtnHeader=static_cast<CButtonUI*>(m_pm.FindControl(pstrButtonHeaderName));
+	m_pEditSignaure=static_cast<CEditUI*>(m_pm.FindControl(pstrEditSignatureName));
+	m_pLabelName=static_cast<CLabelUI*>(m_pm.FindControl(pstrLabelNameName));
+
 	ASSERT(m_pOptTabBuddyList);
 	ASSERT(m_pOptTabRecentList);
 	ASSERT(m_pListTable);
 	ASSERT(m_pBuddyList);
 	ASSERT(m_pRecentList);
+	ASSERT(m_pBtnHeader);
+	ASSERT(m_pEditSignaure);
+	ASSERT(m_pLabelName);
+
 	m_pBuddyList->OnItemAction+= CDelegate<CMainFrame,CMainFrame>(this,&CMainFrame::OnBuddyItemAction);
 
 	/*m_pBuddyList->AddGroup(_T("test"));
@@ -106,9 +117,14 @@ void CMainFrame::OnPostCreate()
 
 	m_pBuddyList->GetGroup(i%m_pBuddyList->GetCount()).Add(*item);
 	}*/
-
+	ASSERT(GetContext());
 	LoadUser();
 	GetContext()->GetClient()->rosterManager()->registerRosterListener(this);  
+	ASSERT(GetContext()->GetSelfVCard());
+	auto vcard=GetContext()->GetSelfVCard();
+	m_pLabelName->SetText( utf8dec(vcard->nickname()));
+	m_pEditSignaure->SetText(utf8dec(vcard->desc()));
+	m_pBtnHeader->SetBkImage(GetContext()->GetHeaderManager().GetHeader(*GetContext()->GetSelf(),true));
 	UpdateDock();
 }
 void CMainFrame::UpdateDock(LPRECT pRect)
@@ -237,7 +253,11 @@ void CMainFrame::DoAnimateDock()
 }
 LRESULT CMainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if(uMsg==WM_MOVING)
+	if(uMsg==WM_CLOSE)
+	{
+		PostQuitMessage(0);
+	}
+	else if(uMsg==WM_MOVING)
 	{
 		m_bMoving=true;
 		RECT* rc=(RECT* )lParam;
@@ -297,7 +317,7 @@ bool CMainFrame::OnBuddyItemAction(LPVOID param)
 	else if(event->sType==_T("dbclick"))
 	{
 		if(m_pContext)
-			m_pContext->m_SessionManager.OpenChatFrame(*event->pSender);
+			m_pContext->m_SessionManager.OpenChatFrame(event->pSender->GetJid());
 	}
 
 	return false;
@@ -311,6 +331,7 @@ void CMainFrame::AddContactItem(CBuddyListItem& item)
 
 CMainFrame::~CMainFrame(void)
 {
+	GetContext()->GetHeaderManager().RemoveHandler(this);
 }
 
 
@@ -319,24 +340,33 @@ CMainFrame::~CMainFrame(void)
 void CMainFrame::handleItemAdded( const JID& jid ) 
 {
 	auto roster=GetContext()->GetClient()->rosterManager()->getRosterItem(jid); 
-	CBuddyListItem item;
-	item.SetJid(jid);
-	item.SetName(CString(roster->name().c_str())); 
-	m_pBuddyList->AddBuddy(CString(roster->groups().front().c_str()),item);
+	CBuddyListItem *item=new CBuddyListItem;
+	item->SetJid(jid);
+	item->SetName(utf8dec(roster->name()));
+
+	item->SetHeader(GetContext()->GetHeaderManager().GetHeader(jid,item->IsOnline()));
+
+	m_pBuddyList->AddBuddy(utf8dec(roster->groups().front()),*item); 
+	auto vcardMgr=GetContext()->GetVCardManager();
+	if(vcardMgr)
+		vcardMgr->fetchVCard(jid,this);
 }
 
 void CMainFrame::handleItemSubscribed( const JID& jid ) 
 {
+
 }
 
 
 void CMainFrame::handleItemRemoved( const JID& jid ) 
 {
+
 }
 
 
 void CMainFrame::handleItemUpdated( const JID& jid ) 
 {
+
 }
 
 
@@ -347,16 +377,33 @@ void CMainFrame::handleItemUnsubscribed( const JID& jid )
 
 void CMainFrame::handleRoster( const Roster& roster ) 
 {
+
 }
 
 void CMainFrame::handleRosterPresence( const RosterItem& item, const std::string& resource,
 									  Presence::PresenceType presence, const std::string& msg ) 
+
 {
+	if(m_pBuddyList)
+	{
+		CBuddyListItem* buddy= m_pBuddyList->FindBuddyItem(item.jid());
+		if(buddy)
+		{
+			bool online=buddy->IsOnline();
+			buddy->SetPresence(presence);
+			buddy->SetSignature(utf8dec(msg));
+			if(online!=buddy->IsOnline())
+			{
+				buddy->SetHeader(GetContext()->GetHeaderManager().GetHeader(item.jid(),buddy->IsOnline()));
+			}
+		}
+	}
 }
 
 void CMainFrame::handleSelfPresence( const RosterItem& item, const std::string& resource,
 									Presence::PresenceType presence, const std::string& msg ) 
 {
+
 }
 
 
@@ -380,4 +427,39 @@ void CMainFrame::handleNonrosterPresence( const Presence& presence )
 void CMainFrame::handleRosterError( const IQ& iq ) 
 {
 }
+
+void CMainFrame::handleVCard( const JID& jid, const VCard* vcard )
+{
+	if(!m_pBuddyList)
+		return; 
+	auto buddy=m_pBuddyList->FindBuddyItem(jid);
+	if(!buddy)
+		return; 
+	buddy->SetName(utf8dec(vcard->nickname()));
+	buddy->SetSignature(utf8dec(vcard->desc())); 
+
+	GetContext()->GetHeaderManager().UpdateHeader(jid,vcard->photo().binval); 
+}
+
+void CMainFrame::handleVCardResult( VCardContext context, const JID& jid, StanzaError se /*= StanzaErrorUndefined */ )
+{
+	if(context==VCardContext::FetchVCard)
+	{
+
+	}
+}
+
+void CMainFrame::HandleHeaderUpdate( const CHeaderManager& manager,const JID& jid )
+{
+	if(!m_pBuddyList)
+		return;
+	auto buddy=m_pBuddyList->FindBuddyItem(jid);
+	if(!buddy)
+		return;
+	buddy->SetHeader(manager.GetHeader(jid,buddy->IsOnline()));
+}
+
+
+
+
 ////

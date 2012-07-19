@@ -5,8 +5,8 @@
 
 CSessionMessage::CSessionMessage(const Message& msg)
 {
-	m_sSubject =msg.subject().c_str();
-	m_sBody=msg.body().c_str();
+	m_sSubject=utf8dec(msg.subject());
+	m_sBody=utf8dec(msg.body());
 	m_From=msg.from();
 	m_To=msg.to(); 
 }
@@ -46,30 +46,42 @@ CSessionManager::~CSessionManager(void)
 
 void CSessionManager::OnChatFrameClose(const CChatFrame& frame)
 {
-	auto iter=m_sessions.find(frame.GetTarget()->GetJid().username());
+	auto iter=m_sessions.find(frame.GetTarget());
 	if(iter!=m_sessions.end())
 		m_sessions.erase(iter);
 }
 
 
-CChatFrame& CSessionManager::GetChatFrame(CBuddyListItem& buddy)
+CChatFrame& CSessionManager::GetChatFrame(const JID& jid)
 {
 	CChatFrame *frame=NULL;
-	auto iter=m_sessions.find(buddy.GetJid().username());
+	auto iter=m_sessions.find(jid);
 	if(iter==m_sessions.end())	
 	{
 		frame=new CChatFrame(m_pContext);
-		m_sessions[buddy.GetJid().username()]=frame;
-		frame->InitTarget(buddy);
+		m_sessions[jid]=frame;
+		frame->InitTarget(jid);
+		auto sessionIter=m_cachedSessoins.find(jid);
+		if(sessionIter!=m_cachedSessoins.end())
+		{
+			for (auto iter_=sessionIter->second.messages.begin();iter_!=
+				sessionIter->second.messages.end();++iter_)
+			{
+				frame->OnReceiveMessage(*iter_);
+			}
+			m_cachedSessoins.erase(sessionIter);
+			if(m_cachedSessoins.size()==0)
+				m_pContext->HandleUnreadMessageChanged();
+		}
 	}
 	else
 		frame=iter->second;
 	return *frame;
 }
 
-CChatFrame& CSessionManager::OpenChatFrame(CBuddyListItem& buddy)
+CChatFrame& CSessionManager::OpenChatFrame(const JID& jid)
 { 
-	CChatFrame &frame=GetChatFrame(buddy);
+	CChatFrame &frame=GetChatFrame(jid);
 	frame.ShowWindow();
 	if(IsIconic(frame))
 		ShowWindow(frame,SW_RESTORE);
@@ -77,31 +89,35 @@ CChatFrame& CSessionManager::OpenChatFrame(CBuddyListItem& buddy)
 	return frame;
 }
 
-bool CSessionManager::IsChatFrameOpened(const CBuddyListItem& buddy) const
+bool CSessionManager::IsChatFrameOpened(const JID& jid) const
 {
-	return m_sessions.find(buddy.GetJid().username())!=m_sessions.end();
+	return m_sessions.find(jid)!=m_sessions.end();
 }
+
 void CSessionManager::HandleMessage(const Message& msg)
-{
-	auto buddy=m_pContext->GetBuddyList()->FindBuddyItem(msg.from());
-	if(buddy) //known buddy
+{ 
+	auto roster=m_pContext->GetClient()->rosterManager()->getRosterItem(msg.from());
+
+	if(roster) //known buddy
 	{
-		if(IsChatFrameOpened(*buddy))
-			GetChatFrame(*buddy).OnReceiveMessage(msg);
+		if(IsChatFrameOpened(msg.from()))
+			GetChatFrame(msg.from()).OnReceiveMessage(msg);
 		else
 		{
-			auto iter_s=m_cachedSessoins.find(msg.from().username());
-			SessionItem item;
+			auto iter_s=m_cachedSessoins.find(msg.from());
+			SessionItem *item;
 			if(iter_s==m_cachedSessoins.end())
-			{
-				item.buddy=buddy; 
-				m_cachedSessoins[msg.from().username()]=item;
+			{ 
+				m_cachedSessoins[msg.from()]=SessionItem();
+				item=&m_cachedSessoins[msg.from()];
 			}
 			else
 			{
-				item=iter_s->second;
-			}
-			/*item.messages.push_back(msg);*/
+				item=&iter_s->second;
+			} 
+
+			item->messages.push_back(msg);
+			m_pContext->HandleUnreadMessageChanged();
 		}
 	}
 	else// stranger

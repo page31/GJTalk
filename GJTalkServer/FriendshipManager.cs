@@ -46,7 +46,8 @@ namespace GJTalkServer
                 group.Buddies.Add(item);
             }
             return groups.Values.ToArray();
-        }
+        } 
+        
         public BuddyItem[] GetAllBuddy(string username)
         {
             var db = GetDatabase();

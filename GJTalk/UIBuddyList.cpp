@@ -30,10 +30,25 @@ BuddyItemPos CBuddyListItem::GetMousePoint()const
 	return GetMousePoint(pt.x,pt.y);
 }
 
-bool CBuddyListItem::IsSelected()
+bool CBuddyListItem::IsSelected() const
 {
 	return m_bSelected;
 }
+bool DuiLib::CBuddyListItem::IsOnline() const
+{
+	return m_presence!=Presence::Unavailable;
+}
+
+
+void DuiLib::CBuddyListItem::SetPresence(gloox::Presence::PresenceType presence )
+{
+	m_presence=presence;
+
+}
+
+ 
+
+ 
 
 void CBuddyListItem::MouseEnter()
 {
@@ -134,6 +149,7 @@ void CBuddyListItem::SetHeader(LPCTSTR pstrFile)
 	m_sHeaderPath=pstrFile;
 	if(m_pBtnHeader)
 		m_pBtnHeader->SetBkImage(pstrFile?pstrFile:_T(""));
+
 }
 
 CStdString CBuddyListItem::GetName()const
@@ -156,7 +172,8 @@ CBuddyListItem::CBuddyListItem():
 	m_pGroup(NULL),m_pContainer(NULL),m_bSelected(false),
 	m_pBtnHeader(NULL),
 	m_pNameLabel(NULL),
-	m_pSignatureLabel(NULL)
+	m_pSignatureLabel(NULL),
+	m_presence(Presence::Unavailable)
 {
 
 }
@@ -463,3 +480,4 @@ bool CBuddyListUI::OnGroupNotify(void* pMsg)
 	return false;
 }
 #pragma endregion
+
