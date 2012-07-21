@@ -23,3 +23,23 @@ CGJContextWnd::CGJContextWnd(GJContext* context)
 CGJContextWnd::~CGJContextWnd(void)
 {
 }
+
+LPCTSTR CGJContextWnd::GetWindowClassName() const
+{
+	return CGJWnd::GetWindowClassName();
+}
+
+LRESULT CGJContextWnd::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return CGJWnd::HandleMessage(uMsg,wParam,lParam);
+}
+
+void CGJContextWnd::OnFinalMessage( HWND hWnd)
+{
+	CGJWnd::OnFinalMessage(hWnd);
+}
+
+void CGJContextWnd::Notify( TNotifyUI& msg )
+{
+	CGJWnd::Notify(msg);
+}

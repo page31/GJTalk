@@ -349,3 +349,5 @@ CGJWnd::~CGJWnd(void)
 {
 
 }
+
+ 

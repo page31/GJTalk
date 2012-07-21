@@ -39,7 +39,7 @@ namespace GJTalkServer
                         var ri = new RosterItem(buddy.Username + "@gjtalk.com", buddy.Nickname, group.GroupName);
                         ri.Subscription = Subscription.both;
                         ri.SetAttribute("remark", buddy.Remark);
-                        
+
                         iq.Query.Add(ri);
                     }
                 }
@@ -59,21 +59,23 @@ namespace GJTalkServer
                 iq.Type = IqType.result;
                 Matrix.Xmpp.Vcard.Vcard vc = iq.Query as Matrix.Xmpp.Vcard.Vcard;
                 var vcard = VCardManager.Instance.Get(iq.To);
-                foreach (var mail in vcard.GetEmails())
+                if (vcard != null)
                 {
-                    vc.AddEmail(mail);
+
+                    foreach (var mail in vcard.GetEmails())
+                    {
+                        vc.AddEmail(mail);
+                    }
+                    vc.Nickname = vcard.Nickname;
+                    vc.Jid = vcard.Jid;
+                    vc.Description = vcard.Description;
+                    vc.Name = vcard.Name;
+                    vc.Fullname = vcard.Fullname;
+                    vc.Birthday = vcard.Birthday;
+                    vc.Photo = vcard.Photo;
+                    vc.Title = vcard.Title;
+                    vc.Url = vcard.Url;
                 }
-                vc.Nickname = vcard.Nickname;
-                vc.Jid = vcard.Jid;
-                vc.Description = vcard.Description;
-                vc.Name = vcard.Name;
-                vc.Fullname = vcard.Fullname;
-                vc.Birthday = vcard.Birthday;
-                vc.Photo = vcard.Photo;
-                vc.Title = vcard.Title;
-                vc.Url = vcard.Url;
-
-
             }
             else if (iq.Type == IqType.set)
             {
@@ -183,10 +185,11 @@ namespace GJTalkServer
                                 Type = XData.FieldType.Hidden
                             });
                             XData.Reported reported = new XData.Reported();
-                            reported.Add(new XData.Field("jid","JID",XData.FieldType.Jid_Single));
+                            reported.Add(new XData.Field("jid", "JID", XData.FieldType.Jid_Single));
                             reported.Add(new XData.Field("Username", "Username", XData.FieldType.Text_Single));
                             reported.Add(new XData.Field("Name", "Name", XData.FieldType.Text_Single));
                             reported.Add(new XData.Field("Email", "Email", XData.FieldType.Text_Single));
+                            reported.Add(new XData.Field("Signature", "Signature", XData.FieldType.Text_Single));
                             search.XData.Add(reported);
                             foreach (var user in query)
                             {
@@ -195,6 +198,7 @@ namespace GJTalkServer
                                 item.Add(new XData.Field("Email", user.Mail));
                                 item.Add(new XData.Field("Username", user.Username));
                                 item.Add(new XData.Field("jid", user.Username + "@gjtalk.com"));
+                                item.Add(new XData.Field("Signature", user.Signature));
                                 search.XData.AddItem(item);
                             }
                         }
@@ -230,6 +234,7 @@ namespace GJTalkServer
         void ProcessMessage(XmppBase.Message msg)
         {
             msg.From = Session.Jid;
+            msg.Delay = new Matrix.Xmpp.Delay.Delay(DateTime.Now, msg.From);
             Server.MessageManager.HandleMessage(this.Session, msg);
         }
         void ProcessAuth(MxAuth auth)

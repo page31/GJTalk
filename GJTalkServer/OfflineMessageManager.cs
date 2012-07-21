@@ -25,7 +25,7 @@ namespace GJTalkServer
             if (string.IsNullOrEmpty(user))
                 return null;
 
-            user = user.ToLower(); 
+            user = user.ToLower();
             var db = GetDatabase();
             var collection = db.GetCollection("offline_msg");
             var query = from x in collection.AsQueryable<OfflineMessageItem>() where x.To == user select x;
@@ -38,7 +38,7 @@ namespace GJTalkServer
                     From = item.From + "@gjtalk.com",
                     To = item.To + "@gjtalk.com",
                     Body = item.Body,
-                    //Subject = "offline",
+                    Delay = new Matrix.Xmpp.Delay.Delay(item.Time, item.From + "@gjtalkc.com"),
                     Id = item.Id,
                     Type = (Matrix.Xmpp.MessageType)Enum.Parse(
                     typeof(Matrix.Xmpp.MessageType), item.MessageType)
@@ -65,7 +65,7 @@ namespace GJTalkServer
                     MessageType = item.Type.ToString(),
                     Body = item.Body,
                     From = sender,
-                    Time = DateTime.Now,
+                    Time = item.Delay == null ? DateTime.Now : item.Delay.Stamp,
                     To = username.ToLower()
                 };
                 collection.Insert<OfflineMessageItem>(msg);

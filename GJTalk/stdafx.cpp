@@ -35,7 +35,7 @@ CString utf8dec(const string& encodedstr)
 	wchar_t *buffer=NULL;
 	int cchStr=encodedstr.size();
 	int cchBuff=::MultiByteToWideChar(CP_UTF8,0,encodedstr.data(),cchStr,NULL,0);
- 
+
 	if(cchBuff>0)
 	{
 		buffer=new wchar_t[cchBuff+1];
@@ -48,5 +48,48 @@ CString utf8dec(const string& encodedstr)
 		delete[] buffer;
 	} 
 	return strRet;
+}
+
+std::string utf8enc( const wchar_t * const pstr )
+{
+	string strRet;
+	char *buffer=NULL;
+	int cchStr=(int)_tcslen(pstr);
+	int cchBuff
+		=::WideCharToMultiByte(CP_UTF8,
+		0,pstr,cchStr,NULL,0,NULL,NULL);
+	if(cchBuff>0)
+	{
+		buffer=new char[cchBuff+1];
+		::WideCharToMultiByte(CP_UTF8,0,pstr,cchStr,
+			buffer,cchBuff,NULL,NULL);
+		buffer[cchBuff]='\0';
+	}
+	if(buffer)
+	{ 
+		strRet=buffer;
+		delete[] buffer; 
+	}
+	return strRet;
+}
+
+CString GetCurrentTimeString(bool includeDate/*=false*/ )
+{ 
+	return GetTimeString(time(NULL),includeDate);
+}
+
+CString GetTimeString( time_t time,bool includeDate/*=false*/ )
+{
+	tm ti;
+	tm *timeinfo=&ti;
+	localtime_s(timeinfo,&time); 
+	CString strTime; 
+	if(includeDate)
+		strTime.Format(_T("%04d-%02d-%02d %02d:%02d:%02d"),
+		timeinfo->tm_year,timeinfo->tm_mon,timeinfo->tm_mday,timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
+	else 
+		strTime.Format(_T("%02d:%02d:%02d"),
+		timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
+	return strTime; 
 }
 

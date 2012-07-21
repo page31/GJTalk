@@ -42,6 +42,22 @@ GJContext::GJContext(void)
 	m_pTrayIcon=new CTrayIcon();
 	m_pTrayIcon->AddListener(this);
 	m_pTrayIcon->SetTooltipText(this->GetAppName()); 
+	m_pSearchFrame=new CSearchFrame(this);
+}
+
+GJContext::~GJContext(void)
+{
+	StopRecv();
+	if(m_pClient)
+		m_pClient->disconnect();
+	if(m_pTrayIcon)
+		delete m_pTrayIcon;
+	if(m_pLoginFrame)
+		delete m_pLoginFrame;
+	if(m_pMainFrame)
+		delete m_pMainFrame;
+	if(m_pSearchFrame)
+		delete m_pSearchFrame;
 }
 
 void GJContext::OnWindowDestroyed(const CGJContextWnd* pWnd)
@@ -176,18 +192,6 @@ bool GJContext::IsSignedIn() const
 	return m_pClient&&m_pClient->authed();
 }
 
-GJContext::~GJContext(void)
-{
-	StopRecv();
-	if(m_pClient)
-		m_pClient->disconnect();
-	if(m_pTrayIcon)
-		delete m_pTrayIcon;
-	if(m_pLoginFrame)
-		delete m_pLoginFrame;
-	if(m_pMainFrame)
-		delete m_pMainFrame;
-}
 
 
 
@@ -203,7 +207,7 @@ void GJContext::onConnect()
 	if(m_bConnected)
 		return; 
 	m_bConnected=true;
-	m_pClient->setPresence(gloox::Presence::PresenceType::Available,0);
+	m_pClient->setPresence(gloox::Presence::Available,0);
 	GetVCardManager()->fetchVCard(m_pClient->jid(),this);
 	if(m_pLoginFrame) 
 		m_pLoginFrame->OnConnected();
@@ -212,7 +216,7 @@ void GJContext::onConnect()
 
 void GJContext::onDisconnect( ConnectionError e )
 {
-
+	StopRecv();
 	if(IsCrossThread())
 	{
 		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,2,e);
@@ -310,10 +314,15 @@ CHeaderManager & GJContext::GetHeaderManager()
 	return m_headerMgr;
 }
 
- 
+
 
 void GJContext::HandleUnreadMessageChanged()
 {
 
+}
+
+CSearchFrame & GJContext::GetSearchFrame() const
+{
+	return *m_pSearchFrame;
 }
 

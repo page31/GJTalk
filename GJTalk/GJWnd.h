@@ -13,13 +13,13 @@ protected:
 	CStdString m_sCaption;
 public:  
 	CPaintManagerUI m_pm;
-	LPCTSTR GetWindowClassName() const;
+	virtual LPCTSTR GetWindowClassName() const;
 	UINT GetClassStyle() const;
 	LRESULT OnCreate(UINT uMsg,WPARAM wParam,LPARAM lParam,bool &bHandled);
 	CGJWnd(void);
 
 	bool InitFromXmlFile( LPCTSTR lpszFilename,IDialogBuilderCallback* builderCallback=NULL);
-	LRESULT  HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT  HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
@@ -33,13 +33,21 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
 
-	void  OnFinalMessage(HWND /*hWnd*/);
+	virtual void  OnFinalMessage(HWND /*hWnd*/);
 
 	void GetWorkArea(LPRECT pRect);
 
 	void SetCaptionText(LPCTSTR pstrText);
 	CStdString GetCaptionText() const;
 	virtual	void Notify(TNotifyUI& msg);
+
+	template<typename ctlType>
+	inline ctlType *FindControl(LPCTSTR pstrName) const
+	{
+		return static_cast<ctlType*>(m_pm.FindControl(pstrName));
+	}
+	 
+
 
 	void OnPrepare();
 protected:

@@ -1038,7 +1038,7 @@ namespace gloox
 	void ClientBase::registerPresenceHandler( PresenceHandler* ph )
 	{
 		if( ph )
-			m_presenceHandlers.push_back( ph );
+			m_presenceHandlers.push_back(ph);
 	}
 
 	void ClientBase::removePresenceHandler( PresenceHandler* ph )

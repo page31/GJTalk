@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
+    <ClInclude Include="custsite.h" />
     <ClInclude Include="GJContext.h" />
     <ClInclude Include="GJContextWnd.h" />
     <ClInclude Include="GJTalk.h" />
@@ -118,10 +119,13 @@
     <ClInclude Include="ITrayIconListenner.h" />
     <ClInclude Include="LoginFrame.h" />
     <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="MenuWnd.h" />
     <ClInclude Include="MessageFilterHelper.h" />
+    <ClInclude Include="MessageFormat.h" />
     <ClInclude Include="MsgBox.h" />
     <ClInclude Include="MsgBoxFrame.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SearchFrame.h" />
     <ClInclude Include="SessionManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -132,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
+    <ClCompile Include="custsite.cpp" />
     <ClCompile Include="GJContext.cpp" />
     <ClCompile Include="GJContextWnd.cpp" />
     <ClCompile Include="GJTalk.cpp" />
@@ -141,8 +146,10 @@
     <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MessageFilterHelper.cpp" />
+    <ClCompile Include="MessageFormat.cpp" />
     <ClCompile Include="MsgBox.cpp" />
     <ClCompile Include="MsgBoxFrame.cpp" />
+    <ClCompile Include="SearchFrame.cpp" />
     <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -143,7 +143,7 @@ namespace gloox
 		* Compares two JIDs.
 		* @param right The second JID.
 		*/
-		bool operator<(const JID& right) const{return full()<right.full();}
+		bool operator<(const JID& right) const { return full() < right.full(); }
 
 		/**
 		* Converts to  @b true if the JID is valid, @b false otherwise.

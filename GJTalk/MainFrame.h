@@ -8,6 +8,8 @@
 #include "../xmpp/presence.h"
 #include "../xmpp/vcardhandler.h"
 #include "HeaderManager.h"
+#include "MenuWnd.h"
+
 
 #define DOCK_MOVE_STEP (50)
 #define DOCK_MOVE_INTERVAL (10)
@@ -32,6 +34,7 @@ LPCTSTR const pstrListTableName=_T("tabContactList");
 LPCTSTR const pstrButtonHeaderName=_T("btnHeader");
 LPCTSTR const pstrEditSignatureName=_T("editSignaure");
 LPCTSTR const pstrLabelNameName=_T("txtUsername");
+LPCTSTR const pstrButtonSearchName=_T("btnSearch");
 
 class CMainFrame:
 	public CGJContextWnd,
@@ -52,6 +55,8 @@ private:
 	CBuddyListUI* m_pRecentList;
 
 	CButtonUI *m_pBtnHeader;
+	CButtonUI *m_pBtnSearch;
+
 	CEditUI *m_pEditSignaure;
 	CLabelUI *m_pLabelName;
 	COptionUI* m_pOptTabBuddyList;
@@ -128,7 +133,7 @@ public:
 
 	virtual void HandleHeaderUpdate( const CHeaderManager& manager,const JID& jid );
 
- 
+
 	////
 
 

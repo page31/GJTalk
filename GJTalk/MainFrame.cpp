@@ -83,9 +83,16 @@ void CMainFrame::OnPostCreate()
 	m_pOptTabBuddyList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabBuddyListName));
 	m_pOptTabRecentList=static_cast<COptionUI*>(m_pm.FindControl(pstrOptTabRecentListName));
 	m_pListTable=static_cast<CTabLayoutUI*>(m_pm.FindControl(pstrListTableName));
+
 	m_pBtnHeader=static_cast<CButtonUI*>(m_pm.FindControl(pstrButtonHeaderName));
+	m_pBtnSearch=FindControl<CButtonUI>(pstrButtonSearchName);
+
+
 	m_pEditSignaure=static_cast<CEditUI*>(m_pm.FindControl(pstrEditSignatureName));
 	m_pLabelName=static_cast<CLabelUI*>(m_pm.FindControl(pstrLabelNameName));
+
+
+
 
 	ASSERT(m_pOptTabBuddyList);
 	ASSERT(m_pOptTabRecentList);
@@ -175,6 +182,18 @@ void CMainFrame::Notify(TNotifyUI& msg)
 	else if(msg.sType==_T("windowinit"))
 	{
 
+	}
+	else if(msg.sType==_T("click"))
+	{
+		if(msg.pSender==m_pBtnHeader)
+		{
+
+		}
+		else if(msg.pSender==m_pBtnSearch)
+		{
+			GetContext()->GetSearchFrame().ShowWindow();
+			::SetForegroundWindow(GetContext()->GetSearchFrame());
+		}
 	}
 	CGJContextWnd::Notify(msg);
 }
@@ -340,6 +359,8 @@ CMainFrame::~CMainFrame(void)
 void CMainFrame::handleItemAdded( const JID& jid ) 
 {
 	auto roster=GetContext()->GetClient()->rosterManager()->getRosterItem(jid); 
+	if(roster==NULL)
+		return;
 	CBuddyListItem *item=new CBuddyListItem;
 	item->SetJid(jid);
 	item->SetName(utf8dec(roster->name()));
@@ -430,6 +451,7 @@ void CMainFrame::handleRosterError( const IQ& iq )
 
 void CMainFrame::handleVCard( const JID& jid, const VCard* vcard )
 {
+	GetContext()->m_VCards[jid]=*vcard;
 	if(!m_pBuddyList)
 		return; 
 	auto buddy=m_pBuddyList->FindBuddyItem(jid);
@@ -443,7 +465,7 @@ void CMainFrame::handleVCard( const JID& jid, const VCard* vcard )
 
 void CMainFrame::handleVCardResult( VCardContext context, const JID& jid, StanzaError se /*= StanzaErrorUndefined */ )
 {
-	if(context==VCardContext::FetchVCard)
+	if(context==FetchVCard)
 	{
 
 	}

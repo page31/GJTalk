@@ -42,6 +42,8 @@ namespace GJTalkServer
         }
         public Vcard Get(Jid jid)
         {
+            if (jid == null)
+                return null;
             return Get(JIDEscaping.Unescape(jid.User));
         }
         public bool Set(Jid jid, Vcard vcard)

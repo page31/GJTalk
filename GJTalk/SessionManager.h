@@ -26,12 +26,17 @@ private:
 	JID m_From;
 	JID m_To;
 	CString m_sBody;
+	time_t m_time;
 public: 
 	CSessionMessage(const Message& msg);
 	CString Subjiect() const;
 	CString Body() const;
 	JID From() const;
 	JID To() const;
+	time_t Time() const
+	{
+		return m_time;
+	}
 };
 class CSessionManager
 {

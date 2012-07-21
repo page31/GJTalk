@@ -8,7 +8,21 @@ CSessionMessage::CSessionMessage(const Message& msg)
 	m_sSubject=utf8dec(msg.subject());
 	m_sBody=utf8dec(msg.body());
 	m_From=msg.from();
-	m_To=msg.to(); 
+	m_To=msg.to();  
+	if(msg.when())
+	{
+		int year,month,day,hour,min,sec;
+		sscanf_s(msg.when()->stamp().c_str(),"%d-%d-%dT%d:%d:%dZ",
+			&year,&month,&day,
+			&hour,&min,&sec);
+		CTime time(year,month,day,hour,min,sec,0); 
+		tm timeinfo;
+		time.GetLocalTm(&timeinfo);
+		TIME_ZONE_INFORMATION tz;
+		GetTimeZoneInformation(&tz);
+		m_time=mktime(&timeinfo);
+		m_time-=tz.Bias*60;
+	}
 }
 CString CSessionMessage::Subjiect() const
 {
@@ -59,8 +73,14 @@ CChatFrame& CSessionManager::GetChatFrame(const JID& jid)
 	if(iter==m_sessions.end())	
 	{
 		frame=new CChatFrame(m_pContext);
+		auto iterVCard=m_pContext->m_VCards.find(jid);
+
 		m_sessions[jid]=frame;
 		frame->InitTarget(jid);
+
+		if(iterVCard!=m_pContext->m_VCards.end())
+			frame->handleVCard(jid,&iterVCard->second);
+
 		auto sessionIter=m_cachedSessoins.find(jid);
 		if(sessionIter!=m_cachedSessoins.end())
 		{

@@ -6,6 +6,8 @@
 #include "GJTalk.h" 
 #include "LoginFrame.h"
 #include "WebFrame.h"
+#include "custsite.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -79,8 +81,9 @@ BOOL CGJTalkApp::InitInstance()
 
 	HRESULT hr=::CoInitialize(NULL);
 
+	CCustomOccManager *theManager=new CCustomOccManager();
 
-
+	AfxEnableControlContainer(theManager);
 
 
 	MessageFilterHelper *msgFilter=new MessageFilterHelper(); 
@@ -88,8 +91,9 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->GetLoginFrame().CenterWindow();
 	m_pContext->GetLoginFrame().ShowWindow();
-
+ 
 	CPaintManagerUI::MessageLoop();
+
 	if(m_pContext)
 		delete m_pContext;
 	if (pShellManager != NULL)

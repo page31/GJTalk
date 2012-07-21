@@ -95,7 +95,7 @@ void CHeaderManager::UpdateHeader( const JID& jid,const string& val )
 			for (int x = 0; x < mw; x++)
 			{
 				BYTE *pCur=pit*y+x*bytePerPixel+pData;
-				int grayVal=(*pCur)*0.3+(*(pCur+1))*0.59+(*(pCur+2))*0.11;
+				int grayVal=(int)((*pCur)*0.3+(*(pCur+1))*0.59+(*(pCur+2))*0.11);
 				*pCur=*(pCur+1)=*(pCur+2)=grayVal; 
 			}
 		}

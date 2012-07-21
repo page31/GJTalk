@@ -92,26 +92,6 @@ using namespace msgbox;
 
 string cstr_str(CString &cstr);
 CString utf8dec(const string& encodedstr);
-string utf8enc(const wchar_t * const pstr)
-{
-
-	string strRet;
-	char *buffer=NULL;
-	int cchStr=(int)_tcslen(pstr);
-	int cchBuff
-		=::WideCharToMultiByte(CP_UTF8,
-		0,pstr,cchStr,NULL,0,NULL,NULL);
-	if(cchBuff>0)
-	{
-		buffer=new char[cchBuff+1];
-		::WideCharToMultiByte(CP_UTF8,0,pstr,cchStr,
-			buffer,cchBuff,NULL,NULL);
-		buffer[cchBuff]='\0';
-	}
-	if(buffer)
-	{ 
-		strRet=buffer;
-		delete[] buffer; 
-	}
-	return strRet;
-}
+string utf8enc(const wchar_t * const pstr);
+CString GetCurrentTimeString(bool includeDate=false);
+CString GetTimeString(time_t time,bool includeDate=false);

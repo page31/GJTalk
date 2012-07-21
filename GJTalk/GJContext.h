@@ -18,6 +18,7 @@
 #include "UIBuddyList.h"
 #include "SessionManager.h"
 #include "HeaderManager.h"
+#include "SearchFrame.h"
 using namespace std;
 using namespace gloox;
 
@@ -50,8 +51,11 @@ public:
 	CLoginFrame *m_pLoginFrame;
 	CSessionManager m_SessionManager;
 
+	map<JID,VCard> m_VCards;
 
 private:
+
+	CSearchFrame *m_pSearchFrame;
 
 	JID *m_pSelf; 
 	Client *m_pClient; 
@@ -74,6 +78,8 @@ public:
 	CBuddyListUI *GetBuddyList() const;
 	CLoginFrame& GetLoginFrame();
 	CMainFrame& GetMainFrame();
+
+	CSearchFrame &GetSearchFrame() const;
 
 	CBuddyListItem *GetBuddyItemByJid(const JID& jid) const;
 

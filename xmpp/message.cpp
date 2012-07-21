@@ -48,6 +48,8 @@ namespace gloox
         setLang( &m_subjects, m_subject, (*it) );
       else if( (*it)->name() == "thread" )
         m_thread = (*it)->cdata();
+	  else if((*it)->name()=="delay")
+		  addExtension(new DelayedDelivery(*it));
     }
   }
 
