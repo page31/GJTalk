@@ -19,6 +19,7 @@
 #include "SessionManager.h"
 #include "HeaderManager.h"
 #include "SearchFrame.h"
+#include "MenuWnd.h"
 using namespace std;
 using namespace gloox;
 
@@ -41,7 +42,8 @@ class GJContext:
 	public TLSHandler,
 	public ITrayIconListener,
 	public IqHandler,
-	public VCardHandler
+	public VCardHandler,
+	public IMenuCallbackUI
 
 {
 public:
@@ -97,7 +99,7 @@ public:
 	void StartRecv();
 	void StopRecv();
 	bool init(const string& sever,int port=-1);
-	bool SignIn(const string& username,const string& password,CLoginFrame *loginFrame);
+	bool SignIn(LPCTSTR username,LPCTSTR password,CLoginFrame *loginFrame);
 	bool IsSignedIn() const;
 
 	virtual void handleMessage( const Message& msg, MessageSession* session = 0 );
@@ -118,12 +120,17 @@ public:
 	virtual void handleIqID( const IQ& iq, int context );
 	virtual void  OnTrayIconMessage(CTrayIconMessage &msg);
 
+	void ShowMainPanel();
+	void ShowMainMenu();
+
 	GJContext(void);
 	~GJContext(void);
 
 	virtual void handleVCard( const JID& jid, const VCard* vcard );
 
 	virtual void handleVCardResult( VCardContext context, const JID& jid, StanzaError se = StanzaErrorUndefined );
+
+	virtual void OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType );
 
 };
 

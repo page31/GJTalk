@@ -46,9 +46,9 @@ void DuiLib::CBuddyListItem::SetPresence(gloox::Presence::PresenceType presence 
 
 }
 
- 
 
- 
+
+
 
 void CBuddyListItem::MouseEnter()
 {
@@ -466,6 +466,11 @@ bool CBuddyListUI::OnGroupNotify(void* pMsg)
 				else if(msg.sType==_T("dbclick"))
 				{
 					event.sType=_T("dbclick");
+				}
+				else if(msg.sType==_T("menu"))
+				{
+					event.pSender->Select();
+					event.sType=_T("menu");
 				}
 				if(event.sType&&OnItemAction)
 				{

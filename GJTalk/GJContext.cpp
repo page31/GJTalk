@@ -2,6 +2,7 @@
 #include "GJContext.h" 
 #include "../xmpp/md5.h"
 #include "../xmpp/rostermanager.h"
+#include "MenuWnd.h"
 UINT RecvProc(LPVOID data)
 {
 	GJContext *context=static_cast<GJContext*>(data);
@@ -141,7 +142,7 @@ CString &GJContext::GetAppName() const
 	return *(new CString(buffer));
 }
 
-bool GJContext::SignIn(const string& username,const string& password,CLoginFrame *loginFrame)
+bool GJContext::SignIn(LPCTSTR username,LPCTSTR password,CLoginFrame *loginFrame)
 {
 	StopRecv();
 	this->m_pLoginFrame=loginFrame;
@@ -150,13 +151,13 @@ bool GJContext::SignIn(const string& username,const string& password,CLoginFrame
 	if(!nSelf)
 	{
 		bOk=false;
-	}else if(!nSelf->setServer(m_Server)||!nSelf->setUsername(username))
+	}else if(!nSelf->setServer(m_Server)||!nSelf->setUsername(utf8enc(username)))
 	{
 		bOk=false;
 	}else { 
 		if(m_pClient) 
 			m_pClient->disconnect();  
-		m_pClient=new Client(*nSelf,encryptPassword(password),m_Port);  
+		m_pClient=new Client(*nSelf,encryptPassword(utf8enc(password)),m_Port);  
 		m_pVCardMgr=new VCardManager(m_pClient);
 		if(!m_pClient)
 			bOk=false;
@@ -251,10 +252,41 @@ void GJContext::handleHandshakeResult( const TLSBase* base, bool success, CertIn
 {
 
 }
+void GJContext::ShowMainPanel()
+{
+	if(IsSignedIn()&&m_pMainFrame)
+		GetMainFrame().Appear();
+	else if(!IsSignedIn()&&m_pLoginFrame)
+		SetForegroundWindow(*m_pLoginFrame); 
+}
+
+void GJContext::ShowMainMenu()
+{
+	CMenuWnd *pMenu=new CMenuWnd();
+	POINT mousePt;
+	::GetCursorPos(&mousePt);
+	HWND parent=NULL;
+	CGJContextWnd *wnd=NULL;
+	if(m_pMainFrame&&IsSignedIn())
+		wnd=m_pMainFrame;
+	else if(m_pLoginFrame)
+		wnd=m_pLoginFrame; 
+	if(wnd)
+	{
+		parent=wnd->m_pm.GetPaintWindow();
+	}
+	pMenu->Init(parent ,mousePt,_T("TrayIconMenu.xml"),this);
+	pMenu->Show();
+}
+
+
 
 void GJContext::OnTrayIconMessage(CTrayIconMessage &msg)
-{
-
+{ 
+	if(msg.sMsg==_T("ldown"))
+		ShowMainPanel();
+	else if(msg.sMsg==_T("rup"))
+		ShowMainMenu();
 }
 
 void GJContext::handleMessageSession( MessageSession *session )
@@ -326,3 +358,15 @@ CSearchFrame & GJContext::GetSearchFrame() const
 	return *m_pSearchFrame;
 }
 
+void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
+{
+	CString sName=pSender->GetName();
+	if(sName==_T("menu_mainPanel"))
+	{
+		ShowMainPanel();
+	}
+	else if(sName==_T("menu_exit"))
+	{
+		PostQuitMessage(0);
+	}
+}

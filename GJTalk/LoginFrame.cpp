@@ -119,8 +119,8 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 					return;
 				}
 				else if(!GetContext()->SignIn(
-					m_pEditUser->GetText().ToUTF8(),
-					m_pEditPassword->GetText().ToUTF8(),
+					m_pEditUser->GetText(),
+					m_pEditPassword->GetText(),
 					this))
 				{
 					return;
@@ -138,14 +138,14 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 				m_pEditPassword->SetFocus();
 			else if(strName==_T("editPassword"))
 				GetContext()->SignIn(
-				m_pEditUser->GetText().ToUTF8(),
-				m_pEditPassword->GetText().ToUTF8(),
+				m_pEditUser->GetText(),
+				m_pEditPassword->GetText(),
 				this);
 
 		}
 	}
 	else
-	{
+	{   
 		if(msg.sType==_T("close"))
 		{
 			if(!m_pContext->IsSignedIn())

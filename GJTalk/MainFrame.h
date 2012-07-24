@@ -35,17 +35,22 @@ LPCTSTR const pstrButtonHeaderName=_T("btnHeader");
 LPCTSTR const pstrEditSignatureName=_T("editSignaure");
 LPCTSTR const pstrLabelNameName=_T("txtUsername");
 LPCTSTR const pstrButtonSearchName=_T("btnSearch");
+LPCTSTR const pstrButtonStatusName=_T("btnStatus");
+int const IDM_BUDDYITEM=0;
+int const IDM_STATUS=1;
 
 class CMainFrame:
 	public CGJContextWnd,
-	public ITrayIconListener,
 	public IDialogBuilderCallback,
 	public gloox::RosterListener,
 	public gloox::VCardHandler,
-	public HeaderHandler
+	public HeaderHandler,
+	public IMenuCallbackUI
 {
 
 private: 
+
+
 	DOCK_STYLE m_Dock;
 	static const UINT m_uDockTimer=0x123;
 	static const UINT m_uDockOutCheckTimer=0x124;
@@ -56,6 +61,7 @@ private:
 
 	CButtonUI *m_pBtnHeader;
 	CButtonUI *m_pBtnSearch;
+	CButtonUI *m_pBtnStatus;
 
 	CEditUI *m_pEditSignaure;
 	CLabelUI *m_pLabelName;
@@ -73,9 +79,10 @@ public:
 
 
 	void Notify(TNotifyUI& msg);
-	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	void OnTrayIconMessage(CTrayIconMessage &msg);
+	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam); 
 	void LoadUser();
+
+	void Appear();
 
 	void AddContactGroup(LPCTSTR pstrGroupName);
 	void AddContactItem(CBuddyListItem& item);
@@ -132,6 +139,8 @@ public:
 	virtual void handleVCardResult( VCardContext context, const JID& jid, StanzaError se = StanzaErrorUndefined );
 
 	virtual void HandleHeaderUpdate( const CHeaderManager& manager,const JID& jid );
+
+	virtual void OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType );
 
 
 	////

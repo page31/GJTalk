@@ -116,7 +116,7 @@ namespace DuiLib
 	typedef struct  
 	{ 
 		CBuddyListItem* pSender;
-		LPCTSTR sType;
+		CString sType;
 		BuddyItemPos pos;
 		WPARAM wParam;
 		LPARAM lParam;

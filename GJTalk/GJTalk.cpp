@@ -71,11 +71,11 @@ BOOL CGJTalkApp::InitInstance()
 	// 例如修改为公司或组织名
 	// SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CTrayIcon trayIcon;
+	//CTrayIcon trayIcon;
 
 	CPaintManagerUI::SetInstance(AfxGetInstanceHandle());
 	CPaintManagerUI::SetResourcePath(_T("C:\\Users\\suppo_000\\Desktop\\GJTalkSkin\\GJTalk"));
-	m_pContext=new GJContext;		
+	m_pContext=new GJContext();		
 
 	m_pContext->init("localhost");
 
@@ -91,11 +91,12 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->GetLoginFrame().CenterWindow();
 	m_pContext->GetLoginFrame().ShowWindow();
- 
+
 	CPaintManagerUI::MessageLoop();
 
-	if(m_pContext)
-		delete m_pContext;
+	//if(m_pContext)
+	//	delete m_pContext;
+
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;

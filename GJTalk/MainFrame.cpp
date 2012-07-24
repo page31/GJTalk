@@ -24,50 +24,46 @@ CControlUI* CMainFrame::CreateControl(LPCTSTR pstrClass)
 
 
 
-void CMainFrame::OnTrayIconMessage(CTrayIconMessage &msg)
+void CMainFrame::Appear()
 {
-	if(msg.pMsg==_T("ldown"))
-	{
-		if(IsWindowVisible(this->m_hWnd))
-		{ 
-			if(::IsIconic(this->m_hWnd))
-				::ShowWindow(this->m_hWnd,SW_RESTORE);
-			SetForegroundWindow(this->m_hWnd);
-		}
-		else
-		{
-			::ShowWindow(this->m_hWnd,SW_SHOW);
-		}
-		if(m_Dock!=DOCK_NONE)
-		{
-			StopAnimateDock();
-			RECT rc,rcWork;
-			GetWindowRect(*this,&rc);
-			GetWorkArea(&rcWork);
-			if(DOCK_TOP==m_Dock&& rc.top<0)
-			{
-				SetWindowPos(*this,NULL,rc.left,0,0,0,SWP_NOSIZE|SWP_NOZORDER);
-			}
-			else if(DOCK_LEFT==m_Dock&&rc.left<rcWork.left) 
-			{
-				SetWindowPos(*this,NULL,0,rc.top,0,0,SWP_NOSIZE|SWP_NOZORDER);
-			}
-			else if(DOCK_RIGHT==m_Dock&&rc.right>rcWork.right)
-			{
-				SetWindowPos(*this,NULL,rcWork.right-(rc.right-rc.left),rc.top,0,0,SWP_NOSIZE|SWP_NOZORDER); 
-			}
-			StopAnimateDock();
 
-		}
-
+	if(IsWindowVisible(this->m_hWnd))
+	{ 
+		if(::IsIconic(this->m_hWnd))
+			::ShowWindow(this->m_hWnd,SW_RESTORE);
+		SetForegroundWindow(this->m_hWnd);
 	}
+	else
+	{
+		::ShowWindow(this->m_hWnd,SW_SHOW);
+	}
+	if(m_Dock!=DOCK_NONE)
+	{
+		StopAnimateDock();
+		RECT rc,rcWork;
+		GetWindowRect(*this,&rc);
+		GetWorkArea(&rcWork);
+		if(DOCK_TOP==m_Dock&& rc.top<0)
+		{
+			SetWindowPos(*this,NULL,rc.left,0,0,0,SWP_NOSIZE|SWP_NOZORDER);
+		}
+		else if(DOCK_LEFT==m_Dock&&rc.left<rcWork.left) 
+		{
+			SetWindowPos(*this,NULL,0,rc.top,0,0,SWP_NOSIZE|SWP_NOZORDER);
+		}
+		else if(DOCK_RIGHT==m_Dock&&rc.right>rcWork.right)
+		{
+			SetWindowPos(*this,NULL,rcWork.right-(rc.right-rc.left),rc.top,0,0,SWP_NOSIZE|SWP_NOZORDER); 
+		}
+		StopAnimateDock();
+
+	} 
 }
 
 CMainFrame::CMainFrame(GJContext *context)
 	:CGJContextWnd(context)
 {
-	context->m_pMainFrame=this;
-	context->m_pTrayIcon->AddListener(this); 
+	context->m_pMainFrame=this; 
 	m_bMoving=false;
 	this->SetCaptionText(m_pContext->GetAppName());
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_EX_FRAME,WS_EX_OVERLAPPEDWINDOW|WS_EX_TOPMOST);
@@ -86,13 +82,12 @@ void CMainFrame::OnPostCreate()
 
 	m_pBtnHeader=static_cast<CButtonUI*>(m_pm.FindControl(pstrButtonHeaderName));
 	m_pBtnSearch=FindControl<CButtonUI>(pstrButtonSearchName);
+	m_pBtnStatus=FindControl<CButtonUI>(pstrButtonStatusName);
+
 
 
 	m_pEditSignaure=static_cast<CEditUI*>(m_pm.FindControl(pstrEditSignatureName));
 	m_pLabelName=static_cast<CLabelUI*>(m_pm.FindControl(pstrLabelNameName));
-
-
-
 
 	ASSERT(m_pOptTabBuddyList);
 	ASSERT(m_pOptTabRecentList);
@@ -100,6 +95,7 @@ void CMainFrame::OnPostCreate()
 	ASSERT(m_pBuddyList);
 	ASSERT(m_pRecentList);
 	ASSERT(m_pBtnHeader);
+	ASSERT(m_pBtnStatus);
 	ASSERT(m_pEditSignaure);
 	ASSERT(m_pLabelName);
 
@@ -193,6 +189,13 @@ void CMainFrame::Notify(TNotifyUI& msg)
 		{
 			GetContext()->GetSearchFrame().ShowWindow();
 			::SetForegroundWindow(GetContext()->GetSearchFrame());
+		}
+		else if(msg.pSender==m_pBtnStatus)
+		{
+			CMenuWnd *pMenu=new CMenuWnd(IDM_STATUS);
+			POINT ptMouse;
+			GetCursorPos(&ptMouse);
+			pMenu->Init(*this,ptMouse,_T("StatusMenu.xml"),this);
 		}
 	}
 	CGJContextWnd::Notify(msg);
@@ -321,22 +324,18 @@ void CMainFrame::AddContactGroup(LPCTSTR pstrGroupName)
 bool CMainFrame::OnBuddyItemAction(LPVOID param)
 {
 	CBuddyItemEvent *event=(CBuddyItemEvent*)param;
-	if(event->sType==_T("click"))
-	{
-
-	}
-	else if(event->sType==_T("mouseenter"))
-	{
-
-	}
-	else if(event->sType==_T("mouseleave"))
-	{
-
-	}
-	else if(event->sType==_T("dbclick"))
+	if(event->sType==_T("dbclick"))
 	{
 		if(m_pContext)
 			m_pContext->m_SessionManager.OpenChatFrame(event->pSender->GetJid());
+	}
+	else if(event->sType==_T("menu"))
+	{
+		CMenuWnd *pMenu=new CMenuWnd(IDM_BUDDYITEM);
+		POINT ptMouse;
+		::GetCursorPos(&ptMouse);
+		pMenu->Init(*this,ptMouse,_T("BuddyListMenu.xml"),this);
+		pMenu->Show();
 	}
 
 	return false;
@@ -479,6 +478,19 @@ void CMainFrame::HandleHeaderUpdate( const CHeaderManager& manager,const JID& ji
 	if(!buddy)
 		return;
 	buddy->SetHeader(manager.GetHeader(jid,buddy->IsOnline()));
+}
+
+void CMainFrame::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
+{
+	int id=pMenu->id(); 
+	if(id==IDM_BUDDYITEM)
+	{
+
+	}
+	else if(id==IDM_STATUS)
+	{
+
+	}
 }
 
 

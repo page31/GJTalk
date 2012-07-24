@@ -92,7 +92,10 @@ public:
 	IMenuCallbackUI(){};
 	~IMenuCallbackUI(){};
 	virtual void OnMenu(CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType)=0;
-	virtual void OnOpenning(CMenu *pMenu);
+	virtual void OnOpenning(CMenuWnd *pMenu)
+	{
+
+	}
 private:
 
 };
@@ -102,28 +105,44 @@ class CMenuWnd : public CWindowWnd, public INotifyUI
 {
 private:
 	IMenuCallbackUI *m_ph;
+	HWND m_hParent;
 	CString strXmlFile;
+	int m_id;
 public:
-	CMenuWnd() : m_pOwner(NULL), m_pShadowWnd(NULL),m_ph(NULL) { };
+	CMenuWnd() :  m_pShadowWnd(NULL),m_ph(NULL),m_id(-1) { };
+	CMenuWnd(int id) :  m_pShadowWnd(NULL),m_ph(NULL),m_id(id){};
 
-	void Init(CControlUI* pOwner, POINT pt,LPCTSTR pstrFile,IMenuCallbackUI *callbackUI) {
-		if( pOwner == NULL ) return;
-		m_ph=callbackUI;
-		strXmlFile=pstrFile;
-		m_pOwner = pOwner;
-		m_ptPos = pt;
-		Create(pOwner->GetManager()->GetPaintWindow(), NULL, WS_VISIBLE | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, WS_EX_TOOLWINDOW);
-		HWND hWndParent = m_hWnd;
-		while( ::GetParent(hWndParent) != NULL ) hWndParent = ::GetParent(hWndParent);
-		::ShowWindow(m_hWnd, SW_SHOW);
-		::SendMessage(hWndParent, WM_NCACTIVATE, TRUE, 0L);
+	int id()
+	{
+		return m_id;
 	}
 
+	void Init(HWND parent, POINT pt,LPCTSTR pstrFile,IMenuCallbackUI *callbackUI) {
+
+		m_ph=callbackUI;
+		strXmlFile=pstrFile; 
+		m_hParent=parent;
+		m_ptPos = pt;
+		Create(parent, NULL, WS_VISIBLE | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, WS_EX_TOOLWINDOW|WS_EX_TOPMOST);
+	}
+	void Show()
+	{ 
+		if(m_ph)
+			m_ph->OnOpenning(this);
+		HWND hWndParent = m_hParent;
+		while( ::GetParent(hWndParent) != NULL ) hWndParent = ::GetParent(hWndParent); 
+		::ShowWindow(m_hWnd, SW_SHOW);
+		SetForegroundWindow(m_hWnd);
+		::SetFocus(m_hWnd);
+		//::SendMessage(hWndParent, WM_NCACTIVATE, TRUE, 0L);  
+	}
 	void AdjustPostion() {
 		DuiLib::CRect rcWnd;
 		GetWindowRect(m_hWnd, &rcWnd);
 		int nWidth = rcWnd.GetWidth();
 		int nHeight = rcWnd.GetHeight();
+		int dx=-8,
+			dy=-8;
 		rcWnd.left = m_ptPos.x;
 		rcWnd.top = m_ptPos.y;
 		rcWnd.right = rcWnd.left + nWidth;
@@ -131,28 +150,16 @@ public:
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof(oMonitor);
 		::GetMonitorInfo(::MonitorFromWindow(*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
-		DuiLib::CRect rcWork = oMonitor.rcWork;
+		DuiLib::CRect rcWork = oMonitor.rcMonitor;
 
-		if( rcWnd.bottom > rcWork.bottom ) {
-			if( nHeight >= rcWork.GetHeight() ) {
-				rcWnd.top = 0;
-				rcWnd.bottom = nHeight;
-			}
-			else {
-				rcWnd.bottom = rcWork.bottom;
-				rcWnd.top = rcWnd.bottom - nHeight;
-			}
-		}
-		if( rcWnd.right > rcWork.right ) {
-			if( nWidth >= rcWork.GetWidth() ) {
-				rcWnd.left = 0;
-				rcWnd.right = nWidth;
-			}
-			else {
-				rcWnd.right = rcWork.right;
-				rcWnd.left = rcWnd.right - nWidth;
-			}
-		}
+		if( rcWnd.bottom > rcWork.bottom )  
+			dy-=nHeight-16; 
+
+		if( rcWnd.right > rcWork.right ) 
+			dx-=nWidth-16; 
+		 
+		OffsetRect(&rcWnd,dx,dy);
+		rcWnd=rc;
 		::SetWindowPos(m_hWnd, NULL, rcWnd.left, rcWnd.top, rcWnd.GetWidth(), rcWnd.GetHeight(), SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
 
@@ -165,16 +172,20 @@ public:
 			Close();
 		}
 		else if( msg.sType == _T("itemclick") ) {
-			if( msg.pSender->GetName() == _T("menu_Delete") ) {
-				if( m_pOwner ) m_pOwner->GetManager()->SendNotify(m_pOwner, _T("menu_Delete"), 0, 0, true);
+			if(m_ph)
+			{
+				m_ph->OnMenu(this,msg.pSender,_T("click") );
 			}
+			//if( msg.pSender->GetName() == _T("menu_Delete") ) {
+			//	if( m_pOwner ) m_pOwner->GetManager()->SendNotify(m_pOwner, _T("menu_Delete"), 0, 0, true);
+			//}
 		}
 	}
 
 	HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = NULL)
 	{
 		if( m_pShadowWnd == NULL ) m_pShadowWnd = new CShadowWnd;
-		m_pShadowWnd->Create(hwndParent, _T(""), WS_VISIBLE | WS_POPUP | WS_CLIPSIBLINGS, WS_EX_LAYERED | WS_EX_TOOLWINDOW, x, y, cx, cy, NULL);
+		m_pShadowWnd->Create(hwndParent, _T(""), WS_VISIBLE | WS_POPUP | WS_CLIPSIBLINGS, WS_EX_TOOLWINDOW|WS_EX_TOPMOST|WS_EX_LAYERED, x, y, cx, cy, NULL);
 
 		dwExStyle |= WS_EX_TOOLWINDOW;
 		return CWindowWnd::Create(hwndParent, pstrName, dwStyle, dwExStyle, x, y, cx, cy, hMenu);
@@ -184,6 +195,7 @@ public:
 	{
 		if( m_pShadowWnd != NULL ) m_pShadowWnd->ShowWindow(bShow, false);
 		CWindowWnd::ShowWindow(bShow, bTakeFocus);
+		::SetFocus(m_hWnd);
 	}
 
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -280,8 +292,8 @@ public:
 	}
 
 public:
-	CPaintManagerUI m_pm;
-	CControlUI* m_pOwner;
+	CPaintManagerUI m_pm; 
+
 	POINT m_ptPos;
 	CShadowWnd* m_pShadowWnd;
 };

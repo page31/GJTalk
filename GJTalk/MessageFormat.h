@@ -8,7 +8,11 @@ namespace gloox
 	class Tag;
 	class MessageFormat : public StanzaExtension
 	{
-
+	private:
+		CString m_font;
+		int m_fontSize;
+		int m_style;
+		COLORREF m_color;
 	public:
 		MessageFormat(void); 
 		MessageFormat (const gloox::Tag *tag);

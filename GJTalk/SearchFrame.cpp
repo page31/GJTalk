@@ -2,6 +2,7 @@
 #include "SearchFrame.h"
 #include "..\xmpp\iq.h"
 #include "..\xmpp\dataformitem.h"
+#include "MenuWnd.h"
 
 #define WM_ADDRESULT WM_USER+0x0050
 
@@ -39,6 +40,21 @@ void CSearchFrame::Notify( TNotifyUI& msg )
 				DoSearch(m_pTxtKeyword->GetText());
 			}
 		}
+	}
+	else if(msg.sType==_T("menu"))
+	{
+		if(msg.pSender==m_pResultList)
+		{ 
+			if(m_pResultList->GetCurSel()>=0)
+			{ 
+				CMenuWnd *menu=new CMenuWnd();
+				POINT pt=msg.ptMouse;
+				ClientToScreen(*this,&pt);
+				menu->Init(*this,pt,_T("SearchResultMenu.xml"),this);
+				menu->Show();
+			}
+		}
+
 	}
 	CGJContextWnd::Notify(msg);
 }
@@ -152,9 +168,10 @@ void CSearchFrame::AddResult( tagSearchResult *result )
 	}
 	vector<CString> item;
 	item.push_back(result->nickname);
-	item.push_back(result->email);
+	item.push_back(result->signature);
 	m_items.push_back(item);
 	CListTextElementUI *control=new CListTextElementUI();
+
 	m_pResultList->Add(control); 
 	delete result;
 }
@@ -164,4 +181,25 @@ LPCTSTR CSearchFrame::GetItemText( CControlUI* pList, int iItem, int iSubItem )
 	LPCTSTR pText=NULL; 
 	pText= m_items[iItem][iSubItem]; 
 	return pText;
+}
+
+void CSearchFrame::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
+{ 
+	if(_tcsicmp(sType,_T("click"))==0)
+	{
+		CStdString pstrName=pSender->GetName();
+		if(pstrName==_T("menu_add"))
+		{
+
+		}
+		else if(pstrName==_T("menu_profile"))
+		{
+
+		}
+	}
+}
+
+void CSearchFrame::OnOpenning( CMenuWnd *pMenu )
+{
+
 }

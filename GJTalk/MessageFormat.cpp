@@ -5,13 +5,22 @@
 MessageFormat::MessageFormat(void)
 	:StanzaExtension(0)
 {
-
+	m_style=0;
+	m_fontSize=12;
 }
 
 MessageFormat::MessageFormat( const Tag *tag )
 	:StanzaExtension(0)
 {
+	string size;
+	string style;
 
+	m_font=utf8dec(tag->findAttribute("font"));
+	size=tag->findAttribute("size");
+	style=tag->findAttribute("style");
+
+	m_fontSize=atoi(size.c_str());
+	m_style=atoi(style.c_str());
 }
 
 
@@ -21,20 +30,28 @@ MessageFormat::~MessageFormat(void)
 
 const std::string& MessageFormat::filterString() const
 {
-	throw std::exception("The method or operation is not implemented.");
+	static const string filter
+		="/message/format";
+	return filter;
 }
 
 StanzaExtension* MessageFormat::newInstance( const Tag* tag ) const
 {
-	throw std::exception("The method or operation is not implemented.");
+	return new MessageFormat(tag);
+
 }
 
 Tag* MessageFormat::tag() const
 {
-	throw std::exception("The method or operation is not implemented.");
+	Tag *tag=new Tag("Format");
+	tag->addAttribute("font",utf8enc(m_font));
+	tag->addAttribute("size",m_fontSize);
+	tag->addAttribute("color",(long) m_color);
+	tag->addAttribute("style",m_style);
+	return tag;
 }
 
 StanzaExtension* MessageFormat::clone() const
 {
-	throw std::exception("The method or operation is not implemented.");
+	return new MessageFormat(*this);
 }

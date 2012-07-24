@@ -192,8 +192,7 @@ namespace DuiLib {
 		const CStdString& operator=(const CStdString& src);
 		const CStdString& operator=(const TCHAR ch);
 		const CStdString& operator=(LPCTSTR pstr);
-
-		std::string& ToUTF8() const;
+		 
 #ifdef _UNICODE
 		const CStdString& CStdString::operator=(LPCSTR lpStr);
 		const CStdString& CStdString::operator+=(LPCSTR lpStr);

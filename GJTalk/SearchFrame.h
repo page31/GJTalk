@@ -2,6 +2,7 @@
 #include "GJContextWnd.h"
 #include "../xmpp/search.h"
 #include "../DuiLib/UIList.h"
+#include "MenuWnd.h"
 
 
 typedef struct
@@ -16,7 +17,8 @@ typedef struct
 class CSearchFrame :
 	public CGJContextWnd,
 	public gloox::SearchHandler,
-	public IListCallbackUI
+	public IListCallbackUI,
+	public IMenuCallbackUI
 {
 private:
 	vector<vector<CString>> m_items;
@@ -59,6 +61,10 @@ public:
 	virtual LRESULT HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 	virtual LPCTSTR GetItemText( CControlUI* pList, int iItem, int iSubItem );
+
+	virtual void OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType );
+
+	virtual void OnOpenning( CMenuWnd *pMenu );
 
 };
 

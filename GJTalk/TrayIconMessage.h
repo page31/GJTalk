@@ -7,7 +7,7 @@ class CTrayIconMessage
 { 
 public:
 	CTrayIconMessage();
-	LPCTSTR pMsg;
+	CString sMsg;
 	CTrayIcon* pSender;
 	WPARAM wParam;
 	LPARAM lParam;

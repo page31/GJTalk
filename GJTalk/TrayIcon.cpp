@@ -66,7 +66,7 @@ void CTrayIcon::RemoveListener( ITrayIconListener *const pListener)
 void CTrayIcon::Notify(LPCTSTR lpszMessage,WPARAM wParam,LPARAM lParam)
 {
 	CTrayIconMessage msg;
-	msg.pMsg=lpszMessage;
+	msg.sMsg=lpszMessage;
 	msg.wParam=wParam;
 	msg.lParam=lParam;
 	msg.pSender=this; 

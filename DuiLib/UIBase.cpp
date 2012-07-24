@@ -578,36 +578,9 @@ namespace DuiLib {
 		Append(pwstr);
 		return *this;
 	}
-	std::string& CStdString::ToUTF8() const
-	{
-		char *buffer=NULL;
-		int cchStr=(int)_tcslen(m_pstr);
-		int cchBuff
-			=::WideCharToMultiByte(CP_UTF8,
-			0,m_pstr,cchStr,NULL,0,NULL,NULL);
-		if(cchBuff>0)
-		{
-			buffer=new char[cchBuff+1];
-			::WideCharToMultiByte(CP_UTF8,0,m_pstr,cchStr,
-				buffer,cchBuff,NULL,NULL);
-			buffer[cchBuff]='\0';
-		}
-		if(buffer)
-		{
-			std::string *str=new std::string(buffer);
-			delete[] buffer;
-			return *str;
-		}
-		else
-		{
-			return *new std::string;
-		} 
-	}
+	 
 #else
-	std::string& CStdString::ToUTF8() const
-	{
-		return *new std::string(m_pstr);
-	}
+ 
 	const CStdString& CStdString::operator=(LPCWSTR lpwStr)
 	{      
 		ASSERT(!::IsBadStringPtrW(lpwStr,-1));
