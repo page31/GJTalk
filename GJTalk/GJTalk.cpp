@@ -12,6 +12,7 @@
 #define new DEBUG_NEW
 #endif
 #include "MessageFilterHelper.h"
+#include "InputBox.h"
 
 // CGJTalkApp
 
@@ -91,7 +92,7 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->GetLoginFrame().CenterWindow();
 	m_pContext->GetLoginFrame().ShowWindow();
-
+	 
 	CPaintManagerUI::MessageLoop();
 
 	//if(m_pContext)

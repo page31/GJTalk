@@ -12,6 +12,7 @@ using MxAuth = Matrix.Xmpp.Sasl.Auth;
 using XData = Matrix.Xmpp.XData;
 using XmppClient = Matrix.Xmpp.Client;
 using Matrix.Xmpp.Bind;
+using Matrix.Xmpp.Client;
 namespace GJTalkServer
 {
     class Packet
@@ -28,6 +29,7 @@ namespace GJTalkServer
 
         void ProcessRosterIq(XmppBase.Iq iq)
         {
+            List<Presence> presences = new List<Presence>();
             if (iq.Type == IqType.get)
             {
                 iq.SwitchDirection();
@@ -39,12 +41,30 @@ namespace GJTalkServer
                         var ri = new RosterItem(buddy.Username + "@gjtalk.com", buddy.Nickname, group.GroupName);
                         ri.Subscription = Subscription.both;
                         ri.SetAttribute("remark", buddy.Remark);
-
                         iq.Query.Add(ri);
+                        var buddySession = Server.SessionManager.GetSession(buddy.Username);
+                        if (buddySession != null)
+                        {
+                            var curPresence = buddySession.GetPresence();
+                            if (curPresence.Type != PresenceType.unavailable)
+                            {
+
+                                presences.Add(new Presence(curPresence.Show, curPresence.Status, curPresence.Priority)
+                                    {
+                                        Type = curPresence.Type,
+                                        From = buddySession.Jid,
+                                        To = Session.Jid
+                                    });
+                            }
+                        }
                     }
                 }
             }
             Session.Send(iq);
+            foreach (var item in presences)
+            {
+                Session.Send(item);
+            }
         }
         void ProcessSessionIq(XmppBase.Iq iq)
         {
@@ -294,6 +314,34 @@ namespace GJTalkServer
                             Session.Send(friendSession.GetPresence());
                     }
                 }
+            }
+            else if (presence.Type == PresenceType.subscribe)
+            {
+                if (presence.To == null)
+                    return;
+                string username = Session.SessionUser.Username;
+                string friend = JIDEscaping.Unescape(presence.To.User);
+                string group = presence.Status;
+                if (FriendshipManager.Instance.IsFriend(username, friend))
+                    FriendshipManager.Instance.UpdateFriend(username, friend,
+                        null, group, null,
+                        FriendUpdateFlags.UpdateGroup);
+                else
+                    FriendshipManager.Instance.RequestAddFriend(username, friend, group);
+                var friendSession = Server.SessionManager.GetSession(friend);
+                if (friendSession != null)
+                    friendSession.Send(presence);
+            }
+            else if (presence.Type == PresenceType.subscribed)
+            {
+                if (presence.To == null)
+                    return;
+                string username1 = JIDEscaping.Unescape(presence.To.User);
+                string username2 = JIDEscaping.Unescape(presence.From.User);
+                string group1 = null;
+                string group2 = presence.Status;
+
+
             }
             else
             {

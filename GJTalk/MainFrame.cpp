@@ -3,6 +3,7 @@
 #include "../xmpp/rostermanager.h" 
 #include "../xmpp/base64.h"
 #include <afx.h>
+#include "InputBox.h"
 
 #define FIX_DOCK_P(d) { if(d>DOCK_MOVE_STEP) d=DOCK_MOVE_STEP;}
 #define FIX_DOCK_N(d) { if(d<-DOCK_MOVE_STEP) d=-DOCK_MOVE_STEP;}
@@ -193,9 +194,9 @@ void CMainFrame::Notify(TNotifyUI& msg)
 		else if(msg.pSender==m_pBtnStatus)
 		{
 			CMenuWnd *pMenu=new CMenuWnd(IDM_STATUS);
-			POINT ptMouse;
-			GetCursorPos(&ptMouse);
-			pMenu->Init(*this,ptMouse,_T("StatusMenu.xml"),this);
+			DuiLib::CPoint ptButton=DuiLib::CPoint(m_pBtnStatus->GetX(),m_pBtnStatus->GetY()+m_pBtnStatus->GetHeight());
+			ClientToScreen(*this,&ptButton);
+			pMenu->Init(*this,ptButton,_T("StatusMenu.xml"),this);
 		}
 	}
 	CGJContextWnd::Notify(msg);
@@ -482,14 +483,56 @@ void CMainFrame::HandleHeaderUpdate( const CHeaderManager& manager,const JID& ji
 
 void CMainFrame::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 {
-	int id=pMenu->id(); 
-	if(id==IDM_BUDDYITEM)
-	{
+	if(_tcscmp(sType,_T("click"))!=0)
+		return;
 
+	int id=pMenu->id(); 
+	CString itemName=pSender->GetName();
+	if(id==IDM_BUDDYITEM)
+	{ 
+		CBuddyListItem *pItem=m_pBuddyList->GetSelectedBuddyItem();
+		if(!pItem)
+			return;
+		if(itemName==_T("menu_buddy_sendmsg"))
+		{
+			GetContext()->GetSessionManager().OpenChatFrame(pItem->GetJid());
+		}
+		else if(itemName==_T("menu_buddy_modifyremark"))
+		{
+			CInputBox inputBox;
+			CString strRemark;
+			if(inputBox.ShowInput(_T("修改备注"),strRemark,_T("输入备注"),_T(""),*this))
+			{
+
+			}
+		}
+		else if(itemName==_T("menu_buddy_profile"))
+		{
+
+		}
+		else if(itemName==_T("menu_buddy_changegroup"))
+		{
+
+		}
+		else if(itemName==_T("menu_buddy_delete"))
+		{
+
+		}
 	}
 	else if(id==IDM_STATUS)
 	{
-
+		if(itemName==_T("menu_status_online"))
+		{
+			GetContext()->GetClient()->setPresence(gloox::Presence::Available,1);
+		}
+		else if(itemName==_T("menu_status_away"))
+		{
+			GetContext()->GetClient()->setPresence(gloox::Presence::Away,1);
+		}
+		else if(itemName==_T("menu_status_hidden"))
+		{
+			GetContext()->GetClient()->setPresence(gloox::Presence::Unavailable,1);
+		}
 	}
 }
 

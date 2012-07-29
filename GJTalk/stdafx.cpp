@@ -38,9 +38,10 @@ CString utf8dec(const string& encodedstr)
 
 	if(cchBuff>0)
 	{
-		buffer=new wchar_t[cchBuff+1];
+		buffer=new wchar_t[cchBuff+2];
 		::MultiByteToWideChar(CP_UTF8,0,encodedstr.data(),cchStr,buffer,cchBuff);
 		buffer[cchBuff]='\0';
+		buffer[cchBuff+1]='\0';
 	}
 	if(buffer)
 	{ 

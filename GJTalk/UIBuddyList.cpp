@@ -252,14 +252,21 @@ void CBuddyListGroup::SetList(CBuddyListUI* list)
 {
 	this->m_pList=list;
 	BindUI();
-	//if(this->m_pList)
-	//{
-	//	for(auto iter=m_vItems.begin();iter!=m_vItems.end();++iter)
-	//	{
-	//		(*iter)->m_pControl->OnNotify.Clear();
-	//		(*iter)->m_pControl->OnNotify+=*list->m_pChildDelegate;
-	//	}
-	//}
+ 
+}
+
+CBuddyListItem * DuiLib::CBuddyListGroup::GetSelectedBuddyItem() const
+{
+	CBuddyListItem *pItem=NULL;
+	for (auto it=m_vItems.begin();it!=m_vItems.end();++it) 
+	{
+		if((*it)->IsSelected())
+		{
+			pItem=*it;
+			break;;
+		}
+	}
+	return pItem;
 }
 
 void CBuddyListGroup::Add(CBuddyListItem &item)
@@ -343,6 +350,16 @@ CBuddyListItem* CBuddyListUI::FindBuddyItem(const gloox::JID& jid) const
 			break;
 	}
 	return pItem;
+}
+CBuddyListItem * DuiLib::CBuddyListUI::GetSelectedBuddyItem() const
+{
+	CBuddyListItem *item=NULL;
+	for(auto it=m_vGroups.begin();it!=m_vGroups.end();++it)
+	{
+		if(item=(*it)->GetSelectedBuddyItem())
+			break;
+	}
+	return item;
 }
 
 CBuddyListUI::~CBuddyListUI()
@@ -485,4 +502,5 @@ bool CBuddyListUI::OnGroupNotify(void* pMsg)
 	return false;
 }
 #pragma endregion
+
 

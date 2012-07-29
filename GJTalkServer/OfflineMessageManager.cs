@@ -38,8 +38,7 @@ namespace GJTalkServer
                     From = item.From + "@gjtalk.com",
                     To = item.To + "@gjtalk.com",
                     Body = item.Body,
-                    Delay = new Matrix.Xmpp.Delay.Delay(item.Time, item.From + "@gjtalkc.com"),
-                    Id = item.Id,
+                    Delay = new Matrix.Xmpp.Delay.Delay(item.Time, item.From + "@gjtalkc.com"), 
                     Type = (Matrix.Xmpp.MessageType)Enum.Parse(
                     typeof(Matrix.Xmpp.MessageType), item.MessageType)
                 });
@@ -60,8 +59,7 @@ namespace GJTalkServer
             {
 
                 OfflineMessageItem msg = new OfflineMessageItem()
-                {
-                    Id = item.Id,
+                { 
                     MessageType = item.Type.ToString(),
                     Body = item.Body,
                     From = sender,

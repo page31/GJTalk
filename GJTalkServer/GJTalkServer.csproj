@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddFriendRequest.cs" />
     <Compile Include="BuddyGroup.cs" />
     <Compile Include="BuddyItem.cs" />
     <Compile Include="Crypto.cs" />

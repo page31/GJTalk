@@ -159,7 +159,6 @@ public:
 			dx-=nWidth-16; 
 		 
 		OffsetRect(&rcWnd,dx,dy);
-		rcWnd=rc;
 		::SetWindowPos(m_hWnd, NULL, rcWnd.left, rcWnd.top, rcWnd.GetWidth(), rcWnd.GetHeight(), SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
 
@@ -179,6 +178,18 @@ public:
 			//if( msg.pSender->GetName() == _T("menu_Delete") ) {
 			//	if( m_pOwner ) m_pOwner->GetManager()->SendNotify(m_pOwner, _T("menu_Delete"), 0, 0, true);
 			//}
+		}
+		else if(msg.sType==_T("mouseenter"))
+		{
+			CString strClass= msg.pSender->GetClass();
+			if(strClass==_T("Label"))
+			{
+
+			}
+		}
+		else if(msg.sType==_T("mouseleave"))
+		{
+
 		}
 	}
 

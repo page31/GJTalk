@@ -2,7 +2,10 @@
 #define __UIBASE_H__
 
 #include <string>
+#include <map>
 #pragma once
+#include <list>
+
 
 namespace DuiLib {
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +195,7 @@ namespace DuiLib {
 		const CStdString& operator=(const CStdString& src);
 		const CStdString& operator=(const TCHAR ch);
 		const CStdString& operator=(LPCTSTR pstr);
-		 
+
 #ifdef _UNICODE
 		const CStdString& CStdString::operator=(LPCSTR lpStr);
 		const CStdString& CStdString::operator+=(LPCSTR lpStr);
@@ -260,22 +263,172 @@ namespace DuiLib {
 		bool Remove(LPCTSTR key);
 		int GetSize() const;
 		LPCTSTR GetAt(int iIndex) const;
-		LPCTSTR operator[] (int nIndex) const;
-
+		LPCTSTR operator[] (int nIndex) const; 
 	protected:
 		TITEM** m_aT;
 		int m_nBuckets;
 	};
 
 
+	class UILIB_API CPropertyBag
+	{
+	private:
+		CStdStringPtrMap m_mProperties;
+
+		void CopyData(const CStdStringPtrMap &map)
+		{ 
+			if(Count()==0)
+			{
+				for (int i=0;i<map.GetSize();i++)
+				{
+					LPCTSTR pstrKey=map.GetAt(i);
+					m_mProperties.Insert(pstrKey,
+						new CStdString(*static_cast<CStdString*>(map.Find(pstrKey))));
+				}  
+			}
+			else
+			{
+				for (int i=0;i<map.GetSize();i++)
+				{
+					LPCTSTR pstrKey=map.GetAt(i);
+					m_mProperties.Set(pstrKey,
+						new CStdString(*static_cast<CStdString*>(map.Find(pstrKey))));
+				}  
+			}
+
+		}
+	public:
+		CPropertyBag()
+		{
+
+		}
+		CPropertyBag(const CPropertyBag& bag)
+		{
+			CopyData(bag.m_mProperties);
+		}
+		CPropertyBag& operator=(const CPropertyBag &bag)
+		{ 
+			Clear(); 
+			CopyData(bag.m_mProperties);
+			return *this;
+		}
+		CPropertyBag& operator+=(const CPropertyBag &bag)
+		{
+			CopyData(bag.m_mProperties);
+			return *this;
+		}
+		CPropertyBag operator+(const CPropertyBag &bag)
+		{
+			CPropertyBag newBag=*this;
+			newBag+=bag;
+			return newBag;
+		}
+		void Set(LPCTSTR pstrName,LPCTSTR pstrValue)
+		{
+			CStdString *pOld= static_cast<CStdString*>( m_mProperties.Set(pstrName,new CStdString(pstrValue)));
+			if(pOld)
+				delete pOld;
+		}
+		bool Remove(LPCTSTR pstrName)
+		{
+			CStdString *pValue=static_cast<CStdString*>(m_mProperties.Find(pstrName));
+			if(pValue)
+			{
+				delete pValue;
+				m_mProperties.Remove(pstrName);
+			}
+			return pValue!=NULL;
+		}
+		bool RemoveAt(int index)
+		{
+			if(index>=Count()) 
+				return false;
+			LPCTSTR pstrKey=m_mProperties.GetAt(index);
+			return	Remove(pstrKey);
+		}
+		bool HasProperty(LPCTSTR pstrName) const
+		{
+			return m_mProperties.Find(pstrName)!=NULL;
+		}
+		LPCTSTR Get(LPCTSTR pstrName) const
+		{
+			CStdString *pValue;
+			pValue=static_cast<CStdString*>(m_mProperties.Find(pstrName));
+			if(pValue)
+				return *pValue;
+			else
+				return NULL;
+		}
+		int Count() const
+		{
+			return m_mProperties.GetSize();
+		}
+		void Clear()
+		{
+			while (m_mProperties.GetSize()>0)
+			{
+				LPCTSTR pstrKey=m_mProperties.GetAt(0);
+				CStdString *pValue=static_cast<CStdString*>(m_mProperties.Find(pstrKey));
+				delete pValue;
+				m_mProperties.Remove(pstrKey);
+			}
+		}
+		LPCTSTR GetNameAt(int index) const
+		{
+			LPCTSTR pstrName=m_mProperties.GetAt(index);
+			return pstrName;
+		}
+		LPCTSTR GetValueAt(int index) const
+		{
+			LPCTSTR pstrName=m_mProperties.GetAt(index);
+			if(pstrName) 
+				return Get(pstrName); 
+			else 
+				return NULL;
+		}
+		LPCTSTR operator[](LPCTSTR pstrName)
+		{
+			return Get(pstrName);
+		}
+		LPCTSTR operator[](int index)
+		{
+			return GetValueAt(index);
+		}
+	};
+
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
 	class UILIB_API CWindowWnd
 	{
+	private:
+		static CStdPtrArray aWindows;
+
+		static HWND hWndModel;
+
+
+		void DisableWindowForModelLoop()
+		{
+			for(int i=0;i<aWindows.GetSize();i++)
+			{
+				CWindowWnd *pWnd=static_cast<CWindowWnd*>(aWindows[i]);
+				EnableWindow(*pWnd,false);
+			}
+			 
+		}
+		void EnableWindowForModelLoop()
+		{
+			for(int i=0;i<aWindows.GetSize();i++)
+			{
+				CWindowWnd *pWnd=static_cast<CWindowWnd*>(aWindows[i]);
+				EnableWindow(*pWnd,pWnd->IsEnabled());
+			}
+		}
+	private:
+		bool m_bEnabled;
 	public:
 		CWindowWnd();
-
+		~CWindowWnd();
 		HWND GetHWND() const;
 		operator HWND() const;
 
@@ -287,10 +440,13 @@ namespace DuiLib {
 		HWND Subclass(HWND hWnd);
 		void Unsubclass();
 		void ShowWindow(bool bShow = true, bool bTakeFocus = true);
-		UINT ShowModal();
+		UINT ShowModal(HWND parent=NULL);
 		void Close(UINT nRet = IDOK);
 		void CenterWindow();
 		void SetIcon(UINT nRes);
+
+		void Enable(bool bEnable=true);
+		bool IsEnabled() const;
 
 		LRESULT SendMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);
 		LRESULT PostMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);

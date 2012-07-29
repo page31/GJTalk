@@ -578,9 +578,9 @@ namespace DuiLib {
 		Append(pwstr);
 		return *this;
 	}
-	 
+
 #else
- 
+
 	const CStdString& CStdString::operator=(LPCWSTR lpwStr)
 	{      
 		ASSERT(!::IsBadStringPtrW(lpwStr,-1));
@@ -933,6 +933,8 @@ namespace DuiLib {
 		return NULL;
 	}
 
+
+
 	LPCTSTR CStdStringPtrMap::operator[] (int nIndex) const
 	{
 		return GetAt(nIndex);
@@ -942,10 +944,15 @@ namespace DuiLib {
 	//
 	//
 
-	CWindowWnd::CWindowWnd() : m_hWnd(NULL), m_OldWndProc(::DefWindowProc), m_bSubclassed(false)
+	CWindowWnd::CWindowWnd() : m_hWnd(NULL), m_OldWndProc(::DefWindowProc), m_bSubclassed(false),
+		m_bEnabled(true)
 	{
+		aWindows.Add(this);
 	}
-
+	CWindowWnd::~CWindowWnd()
+	{
+		aWindows.Remove(aWindows.Find(this));
+	}
 	HWND CWindowWnd::GetHWND() const 
 	{ 
 		return m_hWnd; 
@@ -1009,28 +1016,52 @@ namespace DuiLib {
 		::ShowWindow(m_hWnd, bShow ? (bTakeFocus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
 	}
 
-	UINT CWindowWnd::ShowModal()
+	UINT CWindowWnd::ShowModal(HWND parent)
 	{
 		ASSERT(::IsWindow(m_hWnd));
 		UINT nRet = 0;
-		HWND hWndParent = GetWindowOwner(m_hWnd);
+		HWND hWndParent;
+		if(parent==NULL||!IsWindow(parent))
+			hWndParent= GetWindowOwner(m_hWnd);
+		else 
+			hWndParent=parent; 
+		HWND capture=GetCapture();
+		if(capture)
+		{
+			::SendMessage(capture,WM_CANCELMODE,0,0);
+			::ReleaseCapture();
+		}
+		HWND hWndOldModel=hWndModel;
+		hWndModel=m_hWnd;
+		/*	DisableWindowForModelLoop();*/
+
+		EnableWindow(hWndParent,false);
 		::ShowWindow(m_hWnd, SW_SHOWNORMAL);
-		::EnableWindow(hWndParent, FALSE);
+		::EnableWindow(m_hWnd, true);
 		MSG msg = { 0 };
 		while( ::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0) ) {
-			if( msg.message == WM_CLOSE && msg.hwnd == m_hWnd ) {
-				nRet = msg.wParam;
-				::EnableWindow(hWndParent, TRUE);
-				::SetFocus(hWndParent);
-			}
+
+			if(msg.message==WM_CLOSE&&msg.hwnd==m_hWnd) 
+				nRet=msg.wParam;  
+
 			if( !CPaintManagerUI::TranslateMessage(&msg) ) {
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 			}
+
 			if( msg.message == WM_QUIT ) break;
+
+			if(!PeekMessage(&msg,NULL,0,0,0))
+				WaitMessage();
 		}
+
 		::EnableWindow(hWndParent, TRUE);
 		::SetFocus(hWndParent);
+
+		hWndModel=hWndOldModel;
+		EnableWindowForModelLoop();
+		::SetFocus(hWndParent);
+
 		if( msg.message == WM_QUIT ) ::PostQuitMessage(msg.wParam);
 		return nRet;
 	}
@@ -1206,6 +1237,29 @@ namespace DuiLib {
 	void CWindowWnd::OnFinalMessage(HWND /*hWnd*/)
 	{
 	}
+
+	void CWindowWnd::Enable( bool bEnable/*=true*/ )
+	{
+		if(IsWindow(m_hWnd))
+		{
+			if(hWndModel!=NULL&&hWndModel!=m_hWnd)
+				EnableWindow(m_hWnd,FALSE);
+			else
+				EnableWindow(m_hWnd,bEnable?TRUE:FALSE);
+		}
+		m_bEnabled=bEnable;
+	}
+
+	bool CWindowWnd::IsEnabled() const
+	{
+		return m_bEnabled;
+	}
+
+	HWND CWindowWnd::hWndModel;
+
+	DuiLib::CStdPtrArray CWindowWnd::aWindows;
+
+
 
 
 	/////////////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 #include "..\xmpp\iq.h"
 #include "..\xmpp\dataformitem.h"
 #include "MenuWnd.h"
+#include "AddBuddyFrame.h"
 
 #define WM_ADDRESULT WM_USER+0x0050
 
@@ -169,6 +170,7 @@ void CSearchFrame::AddResult( tagSearchResult *result )
 	vector<CString> item;
 	item.push_back(result->nickname);
 	item.push_back(result->signature);
+	item.push_back(utf8dec(result->jid.bare()));
 	m_items.push_back(item);
 	CListTextElementUI *control=new CListTextElementUI();
 
@@ -189,11 +191,17 @@ void CSearchFrame::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 	{
 		CStdString pstrName=pSender->GetName();
 		if(pstrName==_T("menu_add"))
-		{
+		{ 
+			/*	gloox::StringList groups; 
+			GetContext()->GetClient()->rosterManager()->subscribe(utf8enc(m_items[m_pResultList->GetCurSel()][2]),
+			EmptyString,groups);*/
+
+			CAddBuddyFrame::OpenFor(JID(utf8enc(m_items[m_pResultList->GetCurSel()][2])),GetContext());
+
 
 		}
 		else if(pstrName==_T("menu_profile"))
-		{
+		{ 
 
 		}
 	}

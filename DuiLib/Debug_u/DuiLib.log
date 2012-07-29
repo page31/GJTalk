@@ -1,33 +1,13 @@
-﻿Build started 7/25/2012 1:50:03 AM.
-     1>Project "C:\Users\suppo_000\Documents\GitHub\GJTalk\DuiLib\DuiLib.vcxproj" on node 2 (Rebuild target(s)).
-     1>_PrepareForClean:
-         Deleting file ".\Debug_u\DuiLib.lastbuildstate".
-       InitializeBuildStatus:
+﻿Build started 7/29/2012 7:33:29 PM.
+     1>Project "C:\Users\suppo_000\Documents\GitHub\GJTalk\DuiLib\DuiLib.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
          Creating ".\Debug_u\DuiLib.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D UILIB_EXPORTS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp".\Debug_u/DuiLib.pch" /Fo".\Debug_u/" /Fd".\Debug_u/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt StdAfx.cpp
-         StdAfx.cpp
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D UILIB_EXPORTS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug_u/" /Fd".\Debug_u/vc100.pdb" /Gd /TC /analyze- /errorReport:prompt .\stb_image.c
-         stb_image.c
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D UILIB_EXPORTS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp".\Debug_u/DuiLib.pch" /Fo".\Debug_u/" /Fd".\Debug_u/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt UIActiveX.cpp UIBase.cpp UICombo.cpp UICommonControls.cpp UIContainer.cpp UIControl.cpp UIDelegate.cpp UIDlgBuilder.cpp UIlib.cpp UIList.cpp UIManager.cpp UIMarkup.cpp UIRender.cpp UIRichEdit.cpp .\UIWebBrowser.cpp
-         UIWebBrowser.cpp
-         UIRichEdit.cpp
-         UIRender.cpp
-         UIMarkup.cpp
-         UIManager.cpp
-         UIList.cpp
-         UIlib.cpp
-         UIDlgBuilder.cpp
-         UIDelegate.cpp
-         UIControl.cpp
-         UIContainer.cpp
-         UICommonControls.cpp
-         UICombo.cpp
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D UILIB_EXPORTS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp".\Debug_u/DuiLib.pch" /Fo".\Debug_u/" /Fd".\Debug_u/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt UIBase.cpp
          UIBase.cpp
-         UIActiveX.cpp
-         Generating Code...
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D UILIB_EXPORTS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug_u/" /Fd".\Debug_u/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt XUnzip.cpp
-         XUnzip.cpp
+         All outputs are up-to-date.
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\bin\DuiLib_ud.dll" /INCREMENTAL /NOLOGO Riched20.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:".\Debug_u\DuiLib_ud.pdb" /TLBID:1 /BASE:"0x11000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:"../bin/DuiLib_ud.lib" /MACHINE:X86 /DLL .\Debug_u/stb_image.obj
          .\Debug_u/StdAfx.obj
@@ -47,13 +27,12 @@
          .\Debug_u/UIRichEdit.obj
          .\Debug_u/UIWebBrowser.obj
          .\Debug_u/XUnzip.obj
-            Creating library ../bin/DuiLib_ud.lib and object ../bin/DuiLib_ud.exp
          DuiLib.vcxproj -> C:\Users\suppo_000\Documents\GitHub\GJTalk\DuiLib\..\bin\DuiLib_ud.dll
        FinalizeBuildStatus:
          Deleting file ".\Debug_u\DuiLib.unsuccessfulbuild".
          Touching ".\Debug_u\DuiLib.lastbuildstate".
-     1>Done Building Project "C:\Users\suppo_000\Documents\GitHub\GJTalk\DuiLib\DuiLib.vcxproj" (Rebuild target(s)).
+     1>Done Building Project "C:\Users\suppo_000\Documents\GitHub\GJTalk\DuiLib\DuiLib.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:10.29
+Time Elapsed 00:00:01.36

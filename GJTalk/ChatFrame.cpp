@@ -210,9 +210,9 @@ void CChatFrame::SendChatMessage( LPCTSTR pstrContent,LPCTSTR pstrFont,int fontS
 { 
 	Message msg(gloox::Message::Chat,
 		m_jid,utf8enc(pstrContent));
-	MessageFormat format;
+	MessageFormat *format=new MessageFormat;
 
-	msg.addExtension(&format);
+	msg.addExtension(format);
 	GetContext()->GetClient()->send(msg);
 	AddToRecord(utf8dec(GetContext()->GetSelfVCard()->nickname()),pstrContent,pstrFont,fontSize,color,time(NULL),true);
 }

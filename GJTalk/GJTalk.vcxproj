@@ -108,6 +108,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddBuddyFrame.h" />
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="custsite.h" />
     <ClInclude Include="GJContext.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="GJUser.h" />
     <ClInclude Include="GJWnd.h" />
     <ClInclude Include="HeaderManager.h" />
+    <ClInclude Include="InputBox.h" />
     <ClInclude Include="ITrayIconListenner.h" />
     <ClInclude Include="LoginFrame.h" />
     <ClInclude Include="MainFrame.h" />
@@ -135,6 +137,7 @@
     <ClInclude Include="WebFrame.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddBuddyFrame.cpp" />
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="custsite.cpp" />
     <ClCompile Include="GJContext.cpp" />
@@ -143,6 +146,7 @@
     <ClCompile Include="GJUser.cpp" />
     <ClCompile Include="GJWnd.cpp" />
     <ClCompile Include="HeaderManager.cpp" />
+    <ClCompile Include="InputBox.cpp" />
     <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MessageFilterHelper.cpp" />
@@ -164,9 +168,11 @@
     <ResourceCompile Include="GJTalk.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\Downloads\GJTalkSmall.ico" />
     <None Include="directui license.txt" />
     <None Include="duilib license.txt" />
     <None Include="res\GJTalk.rc2" />
+    <None Include="res\icon1.ico" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\GJTalk.ico" />

@@ -126,6 +126,8 @@ namespace DuiLib {
 		bool IsUpdateNeeded() const;
 		void NeedUpdate();
 		void NeedParentUpdate();
+
+
 		DWORD GetAdjustColor(DWORD dwColor);
 
 		virtual void Init();
@@ -135,6 +137,8 @@ namespace DuiLib {
 		virtual void DoEvent(TEventUI& event);
 
 		virtual void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
+		virtual void ApplyPropertyBag(const CPropertyBag& bag );
+
 		CControlUI* ApplyAttributeList(LPCTSTR pstrList);
 
 		virtual SIZE EstimateSize(SIZE szAvailable);
@@ -147,6 +151,7 @@ namespace DuiLib {
 		virtual void PaintBorder(HDC hDC);
 
 		virtual void DoPostPaint(HDC hDC, const RECT& rcPaint);
+
 
 	public:
 		CEventSource OnInit;

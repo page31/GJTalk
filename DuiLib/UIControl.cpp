@@ -863,6 +863,7 @@ namespace DuiLib {
 	{
 		CStdString sItem;
 		CStdString sValue;
+	
 		while( *pstrList != _T('\0') ) {
 			sItem.Empty();
 			sValue.Empty();
@@ -978,6 +979,14 @@ namespace DuiLib {
 	void CControlUI::DoPostPaint(HDC hDC, const RECT& rcPaint)
 	{
 		return;
+	}
+
+	void CControlUI::ApplyPropertyBag( const CPropertyBag& bag )
+	{
+		for (int i=0;i<bag.Count();i++)
+		{
+			SetAttribute(bag.GetNameAt(i),bag.GetValueAt(i));
+		}
 	}
 
 } // namespace DuiLib

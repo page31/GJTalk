@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "GJTalk.h"
-#include "TrayIcon.h"
+#include "TrayIcon.h" 
 
 // CTrayIcon
 const UINT CTrayIcon::m_nTimerID    = 4567;
@@ -17,7 +17,16 @@ IMPLEMENT_DYNAMIC(CTrayIcon, CWnd)
 	CWnd::CreateEx(0, AfxRegisterWndClass(0),_T(""), WS_POPUP, 0,0,0,0, NULL, 0);
 	m_tnd.cbSize = sizeof(NOTIFYICONDATA);
 	m_tnd.hWnd=this->GetSafeHwnd();
-	m_tnd.hIcon=::LoadIcon(AfxGetResourceHandle(),MAKEINTRESOURCE(IDR_MAINFRAME));
+
+	int cx=GetSystemMetrics(SM_CXSMICON);
+	int cy=GetSystemMetrics(SM_CYSMICON);
+	 
+	m_tnd.hIcon=(HICON)LoadImage(AfxGetInstanceHandle(),
+		MAKEINTRESOURCE(IDR_MAINFRAME),IMAGE_ICON,
+		cx,cy,LR_SHARED);
+
+
+
 	m_tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP|NIF_INFO;
 	m_tnd.szInfoTitle[0] = _T('\0');
 	m_tnd.uTimeout    = 3 * 1000; // convert time to ms

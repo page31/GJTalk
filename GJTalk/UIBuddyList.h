@@ -102,6 +102,8 @@ namespace DuiLib
 		void Remove(CBuddyListItem &item);
 		bool ContainsItem(const CBuddyListItem &item) const;
 
+		CBuddyListItem *GetSelectedBuddyItem() const;
+
 		void BindUI();
 
 		CBuddyListItem* FindBuddyItem(const gloox::JID& jid) const;
@@ -145,7 +147,8 @@ namespace DuiLib
 		CBuddyListGroup &GetGroup(int index);
 		int Count() const;
 
-		CBuddyListItem* FindBuddyItem(const gloox::JID& jid) const;
+		CBuddyListItem *FindBuddyItem(const gloox::JID& jid) const;
+		CBuddyListItem *GetSelectedBuddyItem() const;
 
 		bool OnGroupNotify(void* msg);
 		friend class CBuddyListGroup;
