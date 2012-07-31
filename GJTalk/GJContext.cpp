@@ -324,8 +324,10 @@ void GJContext::handleVCard( const JID& jid, const VCard* vcard )
 		return;
 	if(jid==m_pClient->jid())
 	{
+
 		m_vcSelf=*vcard; 
-		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,3,NULL);
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,CT_RECEIVE_SELF_VCARD,NULL);
+
 	}
 }
 
@@ -375,13 +377,23 @@ void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 
 void GJContext::handleSubscription( const Subscription& subscription )
 { 
+	SubscriptionRequest request;
+
+	request.from=subscription.from();
+	request.msg=utf8dec(subscription.status());
+	OnSubscriptionRequest(request);
+}
+
+void GJContext::OnSubscriptionRequest( const SubscriptionRequest &request )
+{
 	if(IsCrossThread()) 
 	{
-		AfxGetApp()->PostThreadMessage(DM_CROSSTHREAD_NOTIFY,CT_HANDLE_SUBSCRIPTION,(LPARAM)(new Subscription(subscription)));
+		AfxGetApp()->PostThreadMessage(DM_CROSSTHREAD_NOTIFY,CT_HANDLE_SUBSCRIPTION,
+			(LPARAM)(new SubscriptionRequest(request)));
 		return;
 	}
 	CSubscriptionFrame *frame=new CSubscriptionFrame(this);
-	frame->SetSubscription(subscription);
+	frame->SetSubscription(request);
 	frame->CenterWindow();
 	frame->ShowWindow(); 
 }

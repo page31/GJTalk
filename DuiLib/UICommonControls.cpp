@@ -7,7 +7,7 @@ namespace DuiLib {
 	//
 
 	CLabelUI::CLabelUI() : m_uTextStyle(DT_VCENTER), m_dwTextColor(0), 
-		m_dwDisabledTextColor(0), m_iFont(-1), m_bShowHtml(false)
+		m_dwDisabledTextColor(0), m_iFont(-1), m_bShowHtml(false),m_bSingleLine(true)
 	{
 		::ZeroMemory(&m_rcTextPadding, sizeof(m_rcTextPadding));
 	}
@@ -167,6 +167,8 @@ namespace DuiLib {
 			rcTextPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
 			SetTextPadding(rcTextPadding);
 		}
+		else if(_tcscmp(pstrName,_T("singleline"))==0) 
+			SetSingleLine(_tcscmp(pstrValue,_T("true"))==0);
 		else if( _tcscmp(pstrName, _T("showhtml")) == 0 ) SetShowHtml(_tcscmp(pstrValue, _T("true")) == 0);
 		else CControlUI::SetAttribute(pstrName, pstrValue);
 	}
@@ -183,22 +185,36 @@ namespace DuiLib {
 		rc.right -= m_rcTextPadding.right;
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
+		UINT uStyle=m_uTextStyle;
+		if(GetSingleLine())
+			uStyle|=DT_SINGLELINE;
 		if( IsEnabled() ) {
 			if( m_bShowHtml )
 				CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
-				NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+				NULL, NULL, nLinks, uStyle);
 			else
 				CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+				m_iFont, uStyle);
 		}
 		else {
 			if( m_bShowHtml )
 				CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
-				NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+				NULL, NULL, nLinks, uStyle);
 			else
 				CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+				m_iFont, uStyle);
 		}
+	}
+
+	void CLabelUI::SetSingleLine( bool bSingleLine/*=true*/ )
+	{
+		m_bSingleLine=bSingleLine;
+		Invalidate();
+	}
+
+	bool CLabelUI::GetSingleLine() const
+	{
+		return m_bSingleLine;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -1458,7 +1474,7 @@ Label_ForeImage:
 		if( event.Type == UIEVENT_SETCURSOR && IsEnabled() )
 		{
 			POINT &mp=event.ptMouse; 
-		 
+
 			if(mp.x>m_rcItem.left+ m_rcTextPadding.left&&mp.x<m_rcItem.right- m_rcTextPadding.right&&
 				mp.y>m_rcItem.top+ m_rcTextPadding.top&&
 				mp.y<m_rcItem.bottom-m_rcTextPadding.bottom)

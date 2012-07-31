@@ -11,15 +11,15 @@ CLoginFrame::CLoginFrame(GJContext *context)
 	m_pContext->m_pTrayIcon->ShowIcon();
 	m_pContext->m_pTrayIcon->SetIcon(IDR_MAINFRAME);
 	this->SetCaptionText(m_pContext->GetAppName());
-	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_DIALOG,0L);
+	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_FRAME^WS_THICKFRAME,UI_WNDSTYLE_EX_FRAME); 
 }
 
 
 void CLoginFrame::OnPostCreate()
 {
-	long style=::GetWindowLong(m_hWnd,GWL_STYLE);
-	style^=WS_THICKFRAME; 
-	::SetWindowLong(m_hWnd,GWL_STYLE,style);
+	//long style=::GetWindowLong(m_hWnd,GWL_STYLE);
+	//style^=WS_THICKFRAME; 
+	//::SetWindowLong(m_hWnd,GWL_STYLE,style);
 
 	if(!this->InitFromXmlFile(_T("LoginFrame.xml")))
 		throw CGJWndError::LOAD_ERROR;

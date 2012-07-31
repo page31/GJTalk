@@ -112,18 +112,18 @@ void CGJTalkApp::OnCrossThreadNotify(WPARAM wParam,LPARAM lParam)
 		return;
 	switch (wParam)
 	{
-	case 1:
+	case CT_CONNECT:
 		m_pContext->onConnect();
 		break;
-	case 2:
+	case CT_DISCONNECT:
 		m_pContext->onDisconnect((gloox::ConnectionError)lParam);
 		break;
-	case 3:
+	case CT_RECEIVE_SELF_VCARD:
 		m_pContext->onReceiveSelfVCard();
 		break;
-	case 4:
-		m_pContext->handleSubscription(*((gloox::Subscription*)lParam));
-		delete (gloox::Subscription*)lParam;
+	case CT_HANDLE_SUBSCRIPTION:
+		m_pContext->OnSubscriptionRequest(*((SubscriptionRequest*)lParam));
+		delete (SubscriptionRequest*)lParam;
 	default:
 		break;
 	}

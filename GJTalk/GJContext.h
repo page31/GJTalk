@@ -27,13 +27,6 @@
 using namespace std;
 using namespace gloox;
 
-enum CROSS_THREAD_ACTION
-{
-	CT_CONNECT,
-	CT_DISCONNECT,
-	CT_RECEIVE_SELF_VCARD,
-	CT_HANDLE_SUBSCRIPTION
-};
 
 
 namespace  MainFrameCloseReasons
@@ -44,6 +37,21 @@ namespace  MainFrameCloseReasons
 		Exit,
 		SwitchUser
 	};
+};
+
+enum CROSS_THREAD_ACTION
+{
+	CT_CONNECT,
+	CT_DISCONNECT,
+	CT_RECEIVE_SELF_VCARD,
+	CT_HANDLE_SUBSCRIPTION,
+	DT_HANDLE_VCARD
+};
+
+struct SubscriptionRequest
+{
+	JID from;
+	CString msg;
 };
 
 class GJContext:
@@ -145,6 +153,8 @@ public:
 
 	virtual void OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType );
 
+
+	void OnSubscriptionRequest(const SubscriptionRequest &request);
 	virtual void handleSubscription( const Subscription& subscription );
 
 };

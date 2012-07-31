@@ -12,7 +12,7 @@ public:
 	CSubscriptionFrame(GJContext *context);
 	~CSubscriptionFrame(void);
 
-	void SetSubscription(const Subscription& subscription);
+	void SetSubscription(const SubscriptionRequest& subscription);
 
 	virtual void OnPostCreate();
 

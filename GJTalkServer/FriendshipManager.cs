@@ -93,7 +93,23 @@ namespace GJTalkServer
                   new BsonElement("OwnerUsername", ownerUsername.ToLower()),
                   new BsonElement("FriendUsername", friendUsername.ToLower()));
 
-            req = collection.FindOneAs<AddFriendRequest>(query);
+            var resp = collection.Find(query);
+            resp.Limit = 1;
+            if (resp.Size() == 0)
+                return null;
+            foreach (var item in resp)
+            {
+                req = new AddFriendRequest()
+                {
+                    Time = item.GetValue("Time").AsDateTime,
+                    OwnerUsername = item.GetValue("OwnerUsername").AsString,
+                    FriendUsername = item.GetValue("FriendUsername").AsString,
+                    GroupName = item.GetValue("GroupName").AsString,
+                    Remark = item.GetValue("Remark").AsString,
+                    Message = item.GetValue("Message").AsString
+
+                };
+            }
             if (remove)
                 collection.Remove(query);
 
@@ -108,9 +124,19 @@ namespace GJTalkServer
             var queryDoc = new QueryDocument();
             queryDoc.Add("OwnerUsername", ownerUsername.ToLower());
 
-            foreach (var req in collection.FindAs<AddFriendRequest>(queryDoc))
+            foreach (var req in collection.Find(queryDoc))
             {
-                requests.Add(req);
+                AddFriendRequest request = new AddFriendRequest()
+                {
+                    Time = req.GetValue("Time").AsDateTime,
+                    OwnerUsername = req.GetValue("OwnerUsername").AsString,
+                    FriendUsername = req.GetValue("FriendUsername").AsString,
+                    GroupName = req.GetValue("GroupName").AsString,
+                    Remark = req.GetValue("Remark").AsString,
+                    Message = req.GetValue("Message").AsString
+
+                };
+                requests.Add(request);
             }
             return requests.ToArray();
 
