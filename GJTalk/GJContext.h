@@ -5,6 +5,7 @@
 #include "MainFrame.h"
 #include "LoginFrame.h"
 #include <string>
+
 #include "../xmpp/client.h"
 #include "../xmpp/connectionlistener.h"
 #include "../xmpp/loghandler.h" 
@@ -14,14 +15,25 @@
 #include "../xmpp/messagesessionhandler.h"
 #include "../xmpp/vcardmanager.h"
 #include "../xmpp/vcardhandler.h"
+#include "../xmpp/subscriptionhandler.h"
+
 #include "TrayIcon.h"
 #include "UIBuddyList.h"
 #include "SessionManager.h"
 #include "HeaderManager.h"
 #include "SearchFrame.h"
 #include "MenuWnd.h"
+
 using namespace std;
 using namespace gloox;
+
+enum CROSS_THREAD_ACTION
+{
+	CT_CONNECT,
+	CT_DISCONNECT,
+	CT_RECEIVE_SELF_VCARD,
+	CT_HANDLE_SUBSCRIPTION
+};
 
 
 namespace  MainFrameCloseReasons
@@ -43,7 +55,8 @@ class GJContext:
 	public ITrayIconListener,
 	public IqHandler,
 	public VCardHandler,
-	public IMenuCallbackUI
+	public IMenuCallbackUI,
+	public SubscriptionHandler
 
 {
 public:
@@ -131,6 +144,8 @@ public:
 	virtual void handleVCardResult( VCardContext context, const JID& jid, StanzaError se = StanzaErrorUndefined );
 
 	virtual void OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType );
+
+	virtual void handleSubscription( const Subscription& subscription );
 
 };
 

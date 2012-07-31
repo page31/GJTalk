@@ -92,7 +92,7 @@ BOOL CGJTalkApp::InitInstance()
 
 	m_pContext->GetLoginFrame().CenterWindow();
 	m_pContext->GetLoginFrame().ShowWindow();
-	 
+
 	CPaintManagerUI::MessageLoop();
 
 	//if(m_pContext)
@@ -108,6 +108,8 @@ BOOL CGJTalkApp::InitInstance()
 
 void CGJTalkApp::OnCrossThreadNotify(WPARAM wParam,LPARAM lParam)
 {
+	if(!m_pContext)
+		return;
 	switch (wParam)
 	{
 	case 1:
@@ -119,6 +121,9 @@ void CGJTalkApp::OnCrossThreadNotify(WPARAM wParam,LPARAM lParam)
 	case 3:
 		m_pContext->onReceiveSelfVCard();
 		break;
+	case 4:
+		m_pContext->handleSubscription(*((gloox::Subscription*)lParam));
+		delete (gloox::Subscription*)lParam;
 	default:
 		break;
 	}

@@ -20,7 +20,7 @@ namespace GJTalkServer
             if (string.IsNullOrEmpty(destUser))
                 return false;
             if (!DeliverMessage(destUser, message))
-                server.OfflineMessageManager.Put(session.SessionUser.Username, destUser, new Message[] { message }); //put to offline message 
+                server.OfflineMessageManager.PutChatMessage(session.SessionUser.Username, destUser, new Message[] { message }); //put to offline message 
             return true;
         }
         public bool DeliverMessage(long to, XmppXElement element)

@@ -93,6 +93,10 @@ void CAddBuddyFrame::Notify( TNotifyUI& msg )
 					utf8enc(m_pEditRemark->GetText()),group,utf8enc(m_pEditMsg->GetText()));
 				this->Close();
 			}
+			else if(strName==_T("btnCancel"))
+			{
+				 this->Close();
+			}
 
 		}
 	}
@@ -105,6 +109,7 @@ void CAddBuddyFrame::OpenFor(const JID &jid,GJContext *pContext )
 	if(it!=m_opened.end())
 	{
 		(*it->second).ShowWindow();
+		(*it->second).SetForegroundWindow();
 		return;
 	}
 	CAddBuddyFrame *frame=new CAddBuddyFrame(jid,pContext); 

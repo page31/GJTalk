@@ -132,7 +132,7 @@ public:
 		HWND hWndParent = m_hParent;
 		while( ::GetParent(hWndParent) != NULL ) hWndParent = ::GetParent(hWndParent); 
 		::ShowWindow(m_hWnd, SW_SHOW);
-		SetForegroundWindow(m_hWnd);
+		SetForegroundWindow();
 		::SetFocus(m_hWnd);
 		//::SendMessage(hWndParent, WM_NCACTIVATE, TRUE, 0L);  
 	}
@@ -157,7 +157,7 @@ public:
 
 		if( rcWnd.right > rcWork.right ) 
 			dx-=nWidth-16; 
-		 
+
 		OffsetRect(&rcWnd,dx,dy);
 		::SetWindowPos(m_hWnd, NULL, rcWnd.left, rcWnd.top, rcWnd.GetWidth(), rcWnd.GetHeight(), SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	}

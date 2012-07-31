@@ -130,6 +130,7 @@
     <ClInclude Include="SearchFrame.h" />
     <ClInclude Include="SessionManager.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SubscriptionFrame.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TrayIconMessage.h" />
@@ -159,6 +160,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SubscriptionFrame.cpp" />
     <ClCompile Include="TrayIcon.cpp" />
     <ClCompile Include="TrayIconMessage.cpp" />
     <ClCompile Include="UIBuddyList.cpp" />

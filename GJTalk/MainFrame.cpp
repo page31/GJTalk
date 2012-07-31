@@ -32,7 +32,7 @@ void CMainFrame::Appear()
 	{ 
 		if(::IsIconic(this->m_hWnd))
 			::ShowWindow(this->m_hWnd,SW_RESTORE);
-		SetForegroundWindow(this->m_hWnd);
+		SetForegroundWindow();
 	}
 	else
 	{
@@ -56,8 +56,7 @@ void CMainFrame::Appear()
 		{
 			SetWindowPos(*this,NULL,rcWork.right-(rc.right-rc.left),rc.top,0,0,SWP_NOSIZE|SWP_NOZORDER); 
 		}
-		StopAnimateDock();
-
+		StopAnimateDock(); 
 	} 
 }
 

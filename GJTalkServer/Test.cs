@@ -11,7 +11,7 @@ namespace GJTalkServer
         void TestOfflineManager()
         {
             OfflineMessageManager manager = new OfflineMessageManager();
-            manager.Put("test","admin", new Message[]{
+            manager.PutChatMessage("test","admin", new Message[]{
                 new Message()
                 {
                     From="353230192@qq.com",
@@ -27,7 +27,7 @@ namespace GJTalkServer
                     Body="test message1 at "+ DateTime.Now.ToString()
                 }
             });
-            var msgs = manager.Get("cpage31@gmail.com", true);
+            var msgs = manager.GetChatMessage("cpage31@gmail.com", true);
         }
         public void Start()
         {

@@ -80,8 +80,7 @@ void CChatFrame::InitTarget(const JID& jid)
 		m_vcard.setNickname(m_jid.username());
 	OnVCardUpdated();
 	if(!m_bVCardInited)
-		GetContext()->GetVCardManager()->fetchVCard(m_jid,this);
-
+		GetContext()->GetVCardManager()->fetchVCard(m_jid,this); 
 }
 
 
@@ -106,6 +105,8 @@ void CChatFrame::OnVCardUpdated()
 {
 	if(m_pTitleLabel)
 		m_pTitleLabel->SetText(utf8dec(m_vcard.nickname()));
+	SetWindowText(m_hWnd,m_pTitleLabel->GetText());
+
 	if(m_pSignatureLabel)
 		m_pSignatureLabel->SetText(utf8dec(m_vcard.desc()));
 	auto roster=GetContext()->GetClient()->rosterManager()->getRosterItem(m_jid); 

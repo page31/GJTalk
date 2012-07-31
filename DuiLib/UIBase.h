@@ -441,6 +441,7 @@ namespace DuiLib {
 		void Unsubclass();
 		void ShowWindow(bool bShow = true, bool bTakeFocus = true);
 		UINT ShowModal(HWND parent=NULL);
+	
 		void Close(UINT nRet = IDOK);
 		void CenterWindow();
 		void SetIcon(UINT nRes);
@@ -451,7 +452,7 @@ namespace DuiLib {
 		LRESULT SendMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);
 		LRESULT PostMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);
 		void ResizeClient(int cx = -1, int cy = -1);
-
+		void SetForegroundWindow();
 	protected:
 		virtual LPCTSTR GetWindowClassName() const = 0;
 		virtual LPCTSTR GetSuperClassName() const;

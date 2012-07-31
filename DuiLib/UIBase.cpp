@@ -1255,6 +1255,11 @@ namespace DuiLib {
 		return m_bEnabled;
 	}
 
+	void CWindowWnd::SetForegroundWindow()
+	{
+		::SetForegroundWindow(m_hWnd);
+	}
+
 	HWND CWindowWnd::hWndModel;
 
 	DuiLib::CStdPtrArray CWindowWnd::aWindows;

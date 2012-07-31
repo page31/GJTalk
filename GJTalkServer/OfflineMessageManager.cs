@@ -7,6 +7,7 @@ using Matrix.Xmpp.Base;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Client = Matrix.Xmpp.Client;
 namespace GJTalkServer
 {
     class OfflineMessageManager
@@ -20,7 +21,7 @@ namespace GJTalkServer
                 server.Connect();
             return server.GetDatabase(ConfigurationManager.AppSettings["mongoDbName"]);
         }
-        public Message[] Get(string user, bool delete)
+        public Message[] GetChatMessage(string user, bool delete)
         {
             if (string.IsNullOrEmpty(user))
                 return null;
@@ -38,7 +39,7 @@ namespace GJTalkServer
                     From = item.From + "@gjtalk.com",
                     To = item.To + "@gjtalk.com",
                     Body = item.Body,
-                    Delay = new Matrix.Xmpp.Delay.Delay(item.Time, item.From + "@gjtalkc.com"), 
+                    Delay = new Matrix.Xmpp.Delay.Delay(item.Time, item.From + "@gjtalkc.com"),
                     Type = (Matrix.Xmpp.MessageType)Enum.Parse(
                     typeof(Matrix.Xmpp.MessageType), item.MessageType)
                 });
@@ -51,7 +52,7 @@ namespace GJTalkServer
             }
             return msgs.ToArray();
         }
-        public void Put(string sender, string username, Message[] messages)
+        public void PutChatMessage(string sender, string username, Message[] messages)
         {
             var db = GetDatabase();
             var collection = db.GetCollection("offline_msg");
@@ -59,7 +60,7 @@ namespace GJTalkServer
             {
 
                 OfflineMessageItem msg = new OfflineMessageItem()
-                { 
+                {
                     MessageType = item.Type.ToString(),
                     Body = item.Body,
                     From = sender,
@@ -68,6 +69,46 @@ namespace GJTalkServer
                 };
                 collection.Insert<OfflineMessageItem>(msg);
             }
+        }
+
+        public void PutPresence(Presence presence)
+        {
+            var db = GetDatabase();
+            var collection = db.GetCollection("offline_presence");
+            collection.Insert(
+                new BsonDocument(
+                    new BsonElement("from", JIDEscaping.Unescape(presence.From.User)),
+                    new BsonElement("to", JIDEscaping.Unescape(presence.To.User)),
+                    new BsonElement("type", presence.Type.ToString()),
+                    new BsonElement("value", presence.ToString())
+                    ));
+        }
+        public Presence[] GetPresence(string from, string to, Matrix.Xmpp.PresenceType? type, bool remove)
+        {
+
+            List<Presence> presences = new List<Presence>();
+            var db = GetDatabase();
+            var collection = db.GetCollection("offline_presence");
+            var query = new QueryDocument();
+            if (from != null)
+                query.Add("from", from);
+            if (to != null)
+                query.Add("to", to);
+            if (type != null)
+                query.Add("type", type.ToString());
+
+            MongoCursor<BsonDocument> cursor;
+            if (from == null && to == null)
+                cursor = collection.FindAll();
+            else
+                cursor = collection.Find(query);
+
+            foreach (var item in cursor)
+            {
+                Presence presence = (Presence)Presence.LoadXml(item.GetValue("value").AsString);
+                presences.Add(presence);
+            }
+            return presences.ToArray();
         }
     }
 }

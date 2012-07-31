@@ -3,6 +3,7 @@
 #include "../xmpp/md5.h"
 #include "../xmpp/rostermanager.h"
 #include "MenuWnd.h"
+#include "SubscriptionFrame.h"
 UINT RecvProc(LPVOID data)
 {
 	GJContext *context=static_cast<GJContext*>(data);
@@ -166,6 +167,7 @@ bool GJContext::SignIn(LPCTSTR username,LPCTSTR password,CLoginFrame *loginFrame
 			m_pClient->registerConnectionListener(this);
 			m_pClient->registerIqHandler(this,0);
 			m_pClient->registerMessageHandler(this);
+			m_pClient->registerSubscriptionHandler(this);
 			bOk= m_pClient->connect(false);
 
 		}
@@ -202,7 +204,7 @@ void GJContext::onConnect()
 
 	if(IsCrossThread())
 	{
-		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,1,NULL);
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,CT_CONNECT,NULL);
 		return;
 	}
 	if(m_bConnected)
@@ -220,7 +222,7 @@ void GJContext::onDisconnect( ConnectionError e )
 	StopRecv();
 	if(IsCrossThread())
 	{
-		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,2,e);
+		AfxGetApp()->PostThreadMessageW(DM_CROSSTHREAD_NOTIFY,CT_DISCONNECT,e);
 		return;
 	} 
 	m_bConnected=false;
@@ -369,4 +371,17 @@ void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 	{
 		PostQuitMessage(0);
 	}
+}
+
+void GJContext::handleSubscription( const Subscription& subscription )
+{ 
+	if(IsCrossThread()) 
+	{
+		AfxGetApp()->PostThreadMessage(DM_CROSSTHREAD_NOTIFY,CT_HANDLE_SUBSCRIPTION,(LPARAM)(new Subscription(subscription)));
+		return;
+	}
+	CSubscriptionFrame *frame=new CSubscriptionFrame(this);
+	frame->SetSubscription(subscription);
+	frame->CenterWindow();
+	frame->ShowWindow(); 
 }

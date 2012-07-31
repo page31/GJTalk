@@ -339,13 +339,19 @@ namespace GJTalkServer
             this.SessionUser = user;
             server.SessionManager.Add(this);
             Groups.AddRange(FriendshipManager.Instance.GetAllBuddyInGroup(user.Username));
-            var offlineMsgs = server.OfflineMessageManager.Get(user.Username, true);
+            var offlineMsgs = server.OfflineMessageManager.GetChatMessage(user.Username, true);
             if (offlineMsgs != null)
             {
                 foreach (var msg in offlineMsgs)
                 {
                     Send(msg);
                 }
+            }
+            var offlineSubscriptions = server.OfflineMessageManager.GetPresence(null, username, PresenceType.subscribe, true);
+            if (offlineSubscriptions != null)
+            {
+                foreach (var sub in offlineSubscriptions)
+                    Send(sub);
             }
         }
     }
