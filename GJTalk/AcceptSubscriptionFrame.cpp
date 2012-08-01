@@ -1,30 +1,23 @@
 #include "stdafx.h"
-#include "AddBuddyFrame.h"
+#include "AcceptSubscriptionFrame.h"
 #include "InputBox.h"
 
 
-map<std::string,CAddBuddyFrame*> CAddBuddyFrame::m_opened;
-
-CAddBuddyFrame::CAddBuddyFrame(const JID &jid,GJContext *pContext)
-	:CGJContextWnd(pContext)
+CAcceptSubscriptionFrame::CAcceptSubscriptionFrame(GJContext *context)
+	:CGJContextWnd(context)
 {
 	this->Create(NULL,_T("添加联系人"),UI_WNDSTYLE_FRAME^WS_THICKFRAME,UI_WNDSTYLE_EX_FRAME);
-	m_opened[jid.bare()]=this;
-	m_jid=jid.bareJID();
 }
 
 
-CAddBuddyFrame::~CAddBuddyFrame(void)
+CAcceptSubscriptionFrame::~CAcceptSubscriptionFrame(void)
 {
-	m_opened.erase(m_jid.bare());
 }
 
-void CAddBuddyFrame::OnPostCreate()
+void CAcceptSubscriptionFrame::OnPostCreate()
 {
-	InitFromXmlFile(_T("AddBuddyFrame.xml"));
-
+	InitFromXmlFile(_T("AcceptSubscriptionFrame.xml"));
 	m_pBtnAddGroup=FindControl<CButtonUI>(_T("btnAddGroup"));
-	m_pEditMsg=FindControl<CEditUI>(_T("editMsg"));
 	m_pEditRemark=FindControl<CEditUI>(_T("editRemark"));
 	m_pCBGroups=FindControl<CComboBoxUI>(_T("cbGroups"));
 
@@ -33,23 +26,22 @@ void CAddBuddyFrame::OnPostCreate()
 	{
 		StringList groups=it->second->groups();
 		for(auto it2=groups.begin();it2!=groups.end();++it2)
-		{
-			CString strGroupName=utf8dec((*it2).c_str());
-			CListLabelElementUI *pItem=new CListLabelElementUI();
-			pItem->SetText(strGroupName);
-			m_groups.push_back(strGroupName);
-			m_pCBGroups->Add(pItem);
+		{ 
+			AddGroupItem(utf8dec((*it2).c_str()));
 		} 
+	}
+	if(m_pCBGroups->GetCount()==0)
+	{
+		AddGroupItem(_T("我的好友"));
 	}
 	if(m_pCBGroups->GetCount()>0)
 		m_pCBGroups->SelectItem(0);
 }
 
-void CAddBuddyFrame::Notify( TNotifyUI& msg )
-{ 
+void CAcceptSubscriptionFrame::Notify( TNotifyUI& msg )
+{
 	if(msg.pSender)
 	{
-
 		CStdString strName=msg.pSender->GetName();
 		if(msg.sType==_T("click"))
 		{
@@ -87,39 +79,33 @@ void CAddBuddyFrame::Notify( TNotifyUI& msg )
 			}  
 			else if(strName==_T("btnAdd"))
 			{
-				StringList group;
-				group.push_back(utf8enc(m_groups[m_pCBGroups->GetCurSel()]));
-				GetContext()->GetClient()->rosterManager()->subscribe(m_jid,
-					utf8enc(m_pEditRemark->GetText()),group,utf8enc(m_pEditMsg->GetText()));
-				this->Close();
+				m_strGroup=m_groups[m_pCBGroups->GetCurSel()];
+				m_strRemark=m_pEditRemark->GetText();
+				this->Close(0);
 			}
 			else if(strName==_T("btnCancel"))
 			{
 				this->Close();
 			}
-
 		}
 	}
 	CGJContextWnd::Notify(msg);
 }
 
-void CAddBuddyFrame::OpenFor(const JID &jid,GJContext *pContext )
+CString CAcceptSubscriptionFrame::Remark() const
 {
-	auto it= m_opened.find(jid.bare());
-	if(it!=m_opened.end())
-	{
-		(*it->second).ShowWindow();
-		(*it->second).SetForegroundWindow();
-		return;
-	}
-	CAddBuddyFrame *frame=new CAddBuddyFrame(jid,pContext); 
-	frame->CenterWindow();
-	frame->ShowWindow();
-
+	return m_strRemark;
 }
 
-void CAddBuddyFrame::OnFinalMessage( HWND hwnd)
+CString CAcceptSubscriptionFrame::GroupName() const
 {
-	if(hwnd==m_hWnd)
-		delete this;
+	return m_strGroup;
+}
+
+void CAcceptSubscriptionFrame::AddGroupItem( LPCTSTR pstrName )
+{
+	CListLabelElementUI *pItem=new CListLabelElementUI();
+	pItem->SetText(pstrName);
+	m_groups.push_back(pstrName);
+	m_pCBGroups->Add(pItem);
 }

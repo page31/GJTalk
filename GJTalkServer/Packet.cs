@@ -308,10 +308,12 @@ namespace GJTalkServer
             {
                 Session.Send(item);
             }
+            Session.SendOfflineMessages();
         }
         void ProcessSetRoster(XmppBase.Iq iq)
         {
             Roster roster = iq.Query as Roster;
+            Roster respRoster = new Roster();
             foreach (var item in roster.GetRoster())
             {
                 string owner = Session.SessionUser.Username;
@@ -325,7 +327,7 @@ namespace GJTalkServer
                 {
                     FriendshipManager.Instance.RemoveFriend(owner,
                         JIDEscaping.Unescape(item.Jid.User));
-
+                    return;
                 }
                 if (FriendshipManager.Instance.IsFriend(
                     Session.SessionUser.Username,
@@ -336,6 +338,14 @@ namespace GJTalkServer
                         flags |= FriendUpdateFlags.UpdateGroup;
                     FriendshipManager.Instance.UpdateFriend(owner, username,
                         null, group, item.Name, flags);
+
+                    respRoster.Add(item);
+                }
+                else if (FriendshipManager.Instance.IsFriend(username, Session.SessionUser.Username))
+                {
+                    FriendshipManager.Instance.AddFriend(Session.SessionUser.Username,
+                        group == null ? "我的好友" : group, username, item.Name);
+                    respRoster.Add(item);
                 }
                 else
                 {
@@ -344,8 +354,11 @@ namespace GJTalkServer
                         flags |= RequestAddFriendUpdateFlags.UpdateGroup;
                     FriendshipManager.Instance.RequestAddFriend(owner, username, item.Name, group, null, flags);
                 }
-
             }
+            iq.Type = IqType.result;
+            iq.Query = respRoster;
+            iq.SwitchDirection();
+            Session.Send(iq);
         }
 
         void ProcessSubscribeRequest(XmppBase.Presence presence)
@@ -359,10 +372,21 @@ namespace GJTalkServer
 
             string message = presence.Status;
             if (FriendshipManager.Instance.IsFriend(username, friend))
+            {
                 return;
+            }
+            else if (FriendshipManager.Instance.IsFriend(friend, username))
+            {
+                Session.Send(new Presence(PresenceType.subscribed)
+                    {
+                        From = presence.To
+                    });
+            }
             else
+            {
                 FriendshipManager.Instance.RequestAddFriend(username, friend, null, null, message,
                     RequestAddFriendUpdateFlags.UpdateMessage);
+            }
             var friendSession = Server.SessionManager.GetSession(friend);
             presence.XDelay = new Matrix.Xmpp.Delay.XDelay(DateTime.Now);
             if (friendSession != null)
@@ -387,7 +411,10 @@ namespace GJTalkServer
             AddFriendRequest request = FriendshipManager.Instance.GetAddFriendRequest(owner, friend, true);
             if (request == null)
                 return;
-
+            if (accept)
+            {
+                FriendshipManager.Instance.AddFriend(owner, request.GroupName, friend, request.Remark);
+            }
             var ownerSession = Server.SessionManager.GetSession(owner);
             if (ownerSession != null)
                 ownerSession.Send(presence);

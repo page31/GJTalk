@@ -1037,6 +1037,7 @@ namespace DuiLib {
 
 		EnableWindow(hWndParent,false);
 		::ShowWindow(m_hWnd, SW_SHOWNORMAL);
+		::SetForegroundWindow(m_hWnd);
 		::EnableWindow(m_hWnd, true);
 		MSG msg = { 0 };
 		while( ::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0) ) {

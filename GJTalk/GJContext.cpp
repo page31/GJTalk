@@ -378,7 +378,9 @@ void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 void GJContext::handleSubscription( const Subscription& subscription )
 { 
 	SubscriptionRequest request;
-
+	
+	if(subscription.subtype()==Subscription::Subscribed)
+		return;
 	request.from=subscription.from();
 	request.msg=utf8dec(subscription.status());
 	OnSubscriptionRequest(request);

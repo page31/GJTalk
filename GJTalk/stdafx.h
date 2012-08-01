@@ -95,3 +95,5 @@ CString utf8dec(const string& encodedstr);
 string utf8enc(const wchar_t * const pstr);
 CString GetCurrentTimeString(bool includeDate=false);
 CString GetTimeString(time_t time,bool includeDate=false);
+
+list<string> SingleStringList(const string &str);

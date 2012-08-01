@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SubscriptionFrame.h"
+#include "AcceptSubscriptionFrame.h"
 
 
 CSubscriptionFrame::CSubscriptionFrame(GJContext *context)
@@ -35,8 +36,15 @@ void CSubscriptionFrame::Notify( TNotifyUI& msg )
 	{
 		if(msg.pSender==m_pBtnAccept)
 		{
-			GetContext()->GetClient()->rosterManager()->ackSubscriptionRequest(m_from,true);
-			GetContext()->GetClient()->rosterManager()->add 
+			CAcceptSubscriptionFrame frame(this->GetContext());
+			frame.CenterWindow();
+			bool bOk=frame.ShowModal(m_hWnd)==0;
+			if(bOk)
+			{
+				GetContext()->GetClient()->rosterManager()->ackSubscriptionRequest(m_from,true);
+				GetContext()->GetClient()->rosterManager()->subscribe(m_from,
+					utf8enc(frame.Remark()), SingleStringList(utf8enc(frame.GroupName())));
+			} 
 		}
 		else if(msg.pSender==m_pBtnRefuse)
 		{

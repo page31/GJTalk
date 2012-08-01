@@ -108,6 +108,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AcceptSubscriptionFrame.h" />
     <ClInclude Include="AddBuddyFrame.h" />
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="custsite.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="WebFrame.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AcceptSubscriptionFrame.cpp" />
     <ClCompile Include="AddBuddyFrame.cpp" />
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="custsite.cpp" />

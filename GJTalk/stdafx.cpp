@@ -94,3 +94,10 @@ CString GetTimeString( time_t time,bool includeDate/*=false*/ )
 	return strTime; 
 }
 
+list<string> SingleStringList( const string &str )
+{
+	list<string> list;
+	list.push_back(str);
+	return list;
+}
+

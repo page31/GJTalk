@@ -102,6 +102,9 @@
     <ClInclude Include="SubscriptionFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AcceptSubscriptionFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GJTalk.cpp">
@@ -174,6 +177,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SubscriptionFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AcceptSubscriptionFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

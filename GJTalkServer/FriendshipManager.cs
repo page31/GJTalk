@@ -74,13 +74,22 @@ namespace GJTalkServer
 
             if (flags == RequestAddFriendUpdateFlags.UpdateAll || (flags & RequestAddFriendUpdateFlags.UpdateRemark) ==
                 RequestAddFriendUpdateFlags.UpdateRemark)
-                updateDoc.Set("Remark", remark);
+                if (remark == null && updateDoc.Contains("Remark"))
+                    updateDoc.Remove("Remark");
+                else if (remark != null)
+                    updateDoc.Set("Remark", remark);
             if (flags == RequestAddFriendUpdateFlags.UpdateAll || (flags & RequestAddFriendUpdateFlags.UpdateMessage) ==
              RequestAddFriendUpdateFlags.UpdateMessage)
-                updateDoc.Set("Message", message);
+                if (message == null && updateDoc.Contains("Message"))
+                    updateDoc.Remove("Message");
+                else if (message != null)
+                    updateDoc.Set("Message", message);
             if (flags == RequestAddFriendUpdateFlags.UpdateAll || (flags & RequestAddFriendUpdateFlags.UpdateGroup) ==
              RequestAddFriendUpdateFlags.UpdateGroup)
-                updateDoc.Set("GroupName", groupName);
+                if (groupName == null && updateDoc.Contains("GroupName"))
+                    updateDoc.Remove("GroupName");
+                else if (groupName != null)
+                    updateDoc.Set("GroupName", groupName);
             updateDoc.Set("Time", DateTime.Now);
             collection.Update(queryDoc, updateDoc, UpdateFlags.Upsert);
         }
@@ -104,10 +113,9 @@ namespace GJTalkServer
                     Time = item.GetValue("Time").AsDateTime,
                     OwnerUsername = item.GetValue("OwnerUsername").AsString,
                     FriendUsername = item.GetValue("FriendUsername").AsString,
-                    GroupName = item.GetValue("GroupName").AsString,
-                    Remark = item.GetValue("Remark").AsString,
-                    Message = item.GetValue("Message").AsString
-
+                    GroupName = item.Contains("GroupName") ? item.GetValue("GroupName").AsString : null,
+                    Remark = item.Contains("Remark") ? item.GetValue("Remark").AsString : null,
+                    Message = item.Contains("Message") ? item.GetValue("Message").AsString : null
                 };
             }
             if (remove)
@@ -261,8 +269,8 @@ namespace GJTalkServer
             doc.Add("group", groupname);
             doc.Add("username", username);
             doc.Add("addtime", DateTime.Now);
-            doc.Add("nickname", username);
-            doc.Add("remark", remark);
+            doc.Add("nickname", username, username != null);
+            doc.Add("remark", remark, remark != null);
             collection.Insert(doc);
         }
         public void RemoveFriend(string owner, string username)

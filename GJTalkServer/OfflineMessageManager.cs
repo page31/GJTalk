@@ -108,6 +108,8 @@ namespace GJTalkServer
                 Presence presence = (Presence)Presence.LoadXml(item.GetValue("value").AsString);
                 presences.Add(presence);
             }
+            if (remove)
+                collection.Remove(query);
             return presences.ToArray();
         }
     }

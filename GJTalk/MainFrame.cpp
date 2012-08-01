@@ -305,13 +305,16 @@ LRESULT CMainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void CMainFrame::LoadUser()
 { 
-	auto rosterMgr=GetContext()->GetClient()->rosterManager();  
+	auto rosterMgr=GetContext()->GetClient()->rosterManager();
+	bool bFilled=false;
 	for(auto iter=rosterMgr->roster()->begin();iter!=rosterMgr->roster()->end();
 		++iter)
 	{
 		handleItemAdded(iter->second->jid());
+		bFilled=true;
 	}
-	rosterMgr->fill();
+	if(!bFilled)
+		rosterMgr->fill();
 
 }
 
