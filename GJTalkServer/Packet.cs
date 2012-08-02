@@ -282,7 +282,8 @@ namespace GJTalkServer
             {
                 foreach (var buddy in group.Buddies)
                 {
-                    var ri = new RosterItem(buddy.Username + "@gjtalk.com", buddy.Remark == null ? buddy.Nickname : buddy.Remark, group.GroupName);
+                    var ri = buddy.ToRosterItem();
+                    //var ri = new RosterItem(JIDEscaping.Escape(buddy.Username) + "@gjtalk.com", buddy.Remark == null ? buddy.Nickname : buddy.Remark, group.GroupName);
                     ri.Subscription = Subscription.both;
 
                     iq.Query.Add(ri);
@@ -413,7 +414,36 @@ namespace GJTalkServer
                 return;
             if (accept)
             {
-                FriendshipManager.Instance.AddFriend(owner, request.GroupName, friend, request.Remark);
+                var u1 = Server.AuthManager.GetUser(owner);
+                var u2 = Server.AuthManager.GetUser(friend);
+
+                FriendshipManager.Instance.AddFriend(owner, request.GroupName, friend, request.Remark, u2.Nickname);
+
+
+                RosterItem r1 = new RosterItem(JIDEscaping.Escape(u1.Username) + "@gjtalk.com", request.Remark == null ? u1.Nickname : request.Remark,
+                    request.GroupName);
+                r1.Subscription = Subscription.both;
+                var roster = new Roster();
+                roster.AddRosterItem(r1);
+                Session.Send(new Iq(IqType.result)
+                    {
+                        From = "gjtalk.com",
+                        Query = roster,
+                        To = Session.Jid
+                    });
+                var friendSession = Server.SessionManager.GetSession(friend);
+                if (friendSession != null)
+                {
+                    var buddy = FriendshipManager.Instance.GetBuddy(friend, owner);
+                    var roster2 = new Roster();
+                    roster.AddRosterItem(buddy.ToRosterItem());
+                    friendSession.Send(new Iq(IqType.result)
+                        {
+                            From = "gjtalk.com",
+                            Query = roster2,
+                            To = friendSession.Jid
+                        });
+                }
             }
             var ownerSession = Server.SessionManager.GetSession(owner);
             if (ownerSession != null)

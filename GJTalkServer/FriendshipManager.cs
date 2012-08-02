@@ -190,7 +190,33 @@ namespace GJTalkServer
             }
             return groups.Values.ToArray();
         }
+        public BuddyItem GetBuddy(string owner, string friend)
+        {
+            var db = GetDatabase();
+            if (!db.CollectionExists("friends"))
+                return null;
+            var collection = db.GetCollection("friends");
+            QueryDocument queryDoc = new QueryDocument();
+            queryDoc.Add("owner", owner.ToLower());
+            queryDoc.Add("username", friend.ToLower());
+            var results = collection.Find(queryDoc);
+            results.Limit = 1;
 
+            foreach (var item in results)
+            {
+                BuddyItem newItem = new BuddyItem();
+                newItem.Username = item.GetElement("username").Value.AsString;
+                newItem.GroupName = item.GetElement("group").Value.AsString;
+                if (item.Contains("remark"))
+                    newItem.Remark = item.GetElement("remark").Value.AsString;
+                if (item.Contains("nickname"))
+                    newItem.Nickname = item.GetElement("nickname").Value.AsString;
+
+                return newItem;
+
+            }
+            return null;
+        }
         public BuddyItem[] GetAllBuddy(string username)
         {
             var db = GetDatabase();
@@ -256,7 +282,7 @@ namespace GJTalkServer
             collection.Update(queryDoc
                 , updateDoc, UpdateFlags.Upsert);
         }
-        public void AddFriend(string owner, string groupname, string username, string remark)
+        public void AddFriend(string owner, string groupname, string username, string remark, string nickname)
         {
             if (owner == null || username == null)
                 return;
@@ -269,7 +295,7 @@ namespace GJTalkServer
             doc.Add("group", groupname);
             doc.Add("username", username);
             doc.Add("addtime", DateTime.Now);
-            doc.Add("nickname", username, username != null);
+            doc.Add("nickname", nickname, nickname != null);
             doc.Add("remark", remark, remark != null);
             collection.Insert(doc);
         }
