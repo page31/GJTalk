@@ -369,7 +369,7 @@ void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 	{
 		ShowMainPanel();
 	}
-	else if(sName==_T("menu_exit"))
+	else if(sName==_T("m enu_exit"))
 	{
 		PostQuitMessage(0);
 	}

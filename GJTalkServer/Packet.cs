@@ -330,6 +330,8 @@ namespace GJTalkServer
                         JIDEscaping.Unescape(item.Jid.User));
                     return;
                 }
+
+
                 if (FriendshipManager.Instance.IsFriend(
                     Session.SessionUser.Username,
                     username))
@@ -338,22 +340,16 @@ namespace GJTalkServer
                     if (group != null)
                         flags |= FriendUpdateFlags.UpdateGroup;
                     FriendshipManager.Instance.UpdateFriend(owner, username,
-                        null, group, item.Name, flags);
-
-                    respRoster.Add(item);
-                }
-                else if (FriendshipManager.Instance.IsFriend(username, Session.SessionUser.Username))
-                {
-                    FriendshipManager.Instance.AddFriend(Session.SessionUser.Username,
-                        group == null ? "我的好友" : group, username, item.Name);
+                        null, group, item.Name, null, flags);
                     respRoster.Add(item);
                 }
                 else
                 {
-                    RequestAddFriendUpdateFlags flags = RequestAddFriendUpdateFlags.UpdateRemark;
-                    if (group != null)
-                        flags |= RequestAddFriendUpdateFlags.UpdateGroup;
-                    FriendshipManager.Instance.RequestAddFriend(owner, username, item.Name, group, null, flags);
+                    var sqlUser = Server.AuthManager.GetUser(username);
+                    if (sqlUser == null)
+                        return;
+                    FriendshipManager.Instance.AddFriend(Session.SessionUser.Username,
+                        group, username, item.Name, sqlUser.Nickname, Subscription.from);
                 }
             }
             iq.Type = IqType.result;
@@ -364,36 +360,12 @@ namespace GJTalkServer
 
         void ProcessSubscribeRequest(XmppBase.Presence presence)
         {
-            if (presence.To == null)
-                return;
-            string username = Session.SessionUser.Username;
-            string friend = JIDEscaping.Unescape(presence.To.User);
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(friend))
-                return;
-
-            string message = presence.Status;
-            if (FriendshipManager.Instance.IsFriend(username, friend))
-            {
-                return;
-            }
-            else if (FriendshipManager.Instance.IsFriend(friend, username))
-            {
-                Session.Send(new Presence(PresenceType.subscribed)
-                    {
-                        From = presence.To
-                    });
-            }
-            else
-            {
-                FriendshipManager.Instance.RequestAddFriend(username, friend, null, null, message,
-                    RequestAddFriendUpdateFlags.UpdateMessage);
-            }
-            var friendSession = Server.SessionManager.GetSession(friend);
-            presence.XDelay = new Matrix.Xmpp.Delay.XDelay(DateTime.Now);
-            if (friendSession != null)
-                friendSession.Send(presence);
-            else
+            var session = Server.SessionManager.GetSession(JIDEscaping.Unescape(presence.To));
+            if (session == null)
                 Server.OfflineMessageManager.PutPresence(presence);
+            else
+                session.Send(presence);
+
         }
         void ProcessUnsubscribeRequest(XmppBase.Presence presence)
         {
@@ -405,51 +377,24 @@ namespace GJTalkServer
         }
         void ProcessSubscribeResposne(XmppBase.Presence presence)
         {
-            bool accept = presence.Type == PresenceType.subscribed;
+            if (presence.To == null)
+                return;
+
             string owner = JIDEscaping.Unescape(presence.To.User);
             string friend = Session.SessionUser.Username;
 
-            AddFriendRequest request = FriendshipManager.Instance.GetAddFriendRequest(owner, friend, true);
-            if (request == null)
-                return;
-            if (accept)
-            {
-                var u1 = Server.AuthManager.GetUser(owner);
-                var u2 = Server.AuthManager.GetUser(friend);
-
-                FriendshipManager.Instance.AddFriend(owner, request.GroupName, friend, request.Remark, u2.Nickname);
-
-
-                RosterItem r1 = new RosterItem(JIDEscaping.Escape(u1.Username) + "@gjtalk.com", request.Remark == null ? u1.Nickname : request.Remark,
-                    request.GroupName);
-                r1.Subscription = Subscription.both;
-                var roster = new Roster();
-                roster.AddRosterItem(r1);
-                Session.Send(new Iq(IqType.result)
-                    {
-                        From = "gjtalk.com",
-                        Query = roster,
-                        To = Session.Jid
-                    });
-                var friendSession = Server.SessionManager.GetSession(friend);
-                if (friendSession != null)
-                {
-                    var buddy = FriendshipManager.Instance.GetBuddy(friend, owner);
-                    var roster2 = new Roster();
-                    roster.AddRosterItem(buddy.ToRosterItem());
-                    friendSession.Send(new Iq(IqType.result)
-                        {
-                            From = "gjtalk.com",
-                            Query = roster2,
-                            To = friendSession.Jid
-                        });
-                }
-            }
-            var ownerSession = Server.SessionManager.GetSession(owner);
-            if (ownerSession != null)
-                ownerSession.Send(presence);
-            else
+            var session = Server.SessionManager.GetSession(presence.To);
+            if (session == null)
                 Server.OfflineMessageManager.PutPresence(presence);
+            else
+                session.Send(presence);
+            if (FriendshipManager.Instance.IsFriend(owner, friend))
+            {
+                FriendshipManager.Instance.UpdateFriend(owner, friend, null, null, null, Subscription.both,
+                    FriendUpdateFlags.UpdateSubscription);
+            }
+
+
         }
         void ProcessSubscription(XmppBase.Presence presence)
         {

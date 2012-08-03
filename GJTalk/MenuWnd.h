@@ -163,7 +163,9 @@ public:
 	}
 
 	LPCTSTR GetWindowClassName() const { return _T("MenuWnd"); };
-	void OnFinalMessage(HWND /*hWnd*/) { delete this; };
+	void OnFinalMessage(HWND /*hWnd*/) { 
+		delete this;
+	};
 
 	void Notify(TNotifyUI& msg)
 	{
@@ -191,6 +193,7 @@ public:
 		{
 
 		}
+	
 	}
 
 	HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = NULL)

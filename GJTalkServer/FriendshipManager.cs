@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using Matrix.Xmpp.Roster;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -13,7 +14,8 @@ namespace GJTalkServer
         UpdateGroup = 0x01,
         UpdateRemark = 0x02,
         UpdateNickname = 0x04,
-        UpdateAll = 0x08
+        UpdateSubscription = 0x08,
+        UpdateAll = 0x0F
     }
     enum RequestAddFriendUpdateFlags
     {
@@ -242,7 +244,7 @@ namespace GJTalkServer
             }
             return items;
         }
-        public void UpdateFriend(string owner, string username, string nickname, string group, string remark, FriendUpdateFlags flags)
+        public void UpdateFriend(string owner, string username, string nickname, string group, string remark, Subscription? subscriptionType, FriendUpdateFlags flags)
         {
             if (owner == null || username == null)
                 return;
@@ -257,18 +259,7 @@ namespace GJTalkServer
             var queryDoc = new QueryDocument(new BsonElement("owner", owner),
                 new BsonElement("username", username));
 
-            UpdateDocument updateDoc;
-
-            var cur = collection.Find(queryDoc);
-
-            if (cur.Size() > 0)
-                updateDoc = new UpdateDocument(cur.ToBsonDocument());
-            else
-            {
-                updateDoc = new UpdateDocument();
-                updateDoc.Add("owner", owner);
-                updateDoc.Add("username", username);
-            }
+            BsonDocument updateDoc = new BsonDocument();
 
             if (flags == FriendUpdateFlags.UpdateAll || (flags & FriendUpdateFlags.UpdateGroup) == FriendUpdateFlags.UpdateGroup)
                 updateDoc.Add("group", group);
@@ -279,10 +270,13 @@ namespace GJTalkServer
             if (flags == FriendUpdateFlags.UpdateAll || (flags & FriendUpdateFlags.UpdateRemark) == FriendUpdateFlags.UpdateRemark)
                 updateDoc.Add("remark", remark);
 
+            if (flags == FriendUpdateFlags.UpdateAll || (flags & FriendUpdateFlags.UpdateSubscription) == FriendUpdateFlags.UpdateSubscription)
+                updateDoc.Add("subscription", subscriptionType.ToString());
+
             collection.Update(queryDoc
-                , updateDoc, UpdateFlags.Upsert);
+                , new UpdateDocument("$set", updateDoc), UpdateFlags.Upsert);
         }
-        public void AddFriend(string owner, string groupname, string username, string remark, string nickname)
+        public void AddFriend(string owner, string groupname, string username, string remark, string nickname, Subscription subscriptionType = Subscription.from)
         {
             if (owner == null || username == null)
                 return;
@@ -297,6 +291,7 @@ namespace GJTalkServer
             doc.Add("addtime", DateTime.Now);
             doc.Add("nickname", nickname, nickname != null);
             doc.Add("remark", remark, remark != null);
+            doc.Add("subscription", subscriptionType.ToString());
             collection.Insert(doc);
         }
         public void RemoveFriend(string owner, string username)

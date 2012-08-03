@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Matrix;
 
 namespace GJTalkServer
 {
@@ -31,6 +32,10 @@ namespace GJTalkServer
                 long userId = server.AuthManager.GetUserId(username);
                 return GetSession(userId);
             }
+        }
+        public Session GetSession(Jid jid)
+        {
+            return GetSession(JIDEscaping.Unescape(jid.User));
         }
         public bool IsOnline(string username)
         {

@@ -119,7 +119,6 @@ void CAddBuddyFrame::OpenFor(const JID &jid,GJContext *pContext )
 }
 
 void CAddBuddyFrame::OnFinalMessage( HWND hwnd)
-{
-	if(hwnd==m_hWnd)
-		delete this;
+{  
+	delete this;
 }

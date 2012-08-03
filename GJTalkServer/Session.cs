@@ -90,12 +90,16 @@ namespace GJTalkServer
         }
         public void Send(string data, DataSentAction action)
         {
+
             Send(data, (object)action);
         }
         public void Send(string data, object userState)
         {
             if (string.IsNullOrEmpty(data) || socket == null)
                 return;
+#if DEBUG
+            Console.WriteLine("Send:" + data);
+#endif
             byte[] buffer = Encoding.UTF8.GetBytes(data);
             lock (socket)
             {
@@ -138,8 +142,10 @@ namespace GJTalkServer
             catch { }
             if (size > 0)
             {
+#if DEBUG
                 string str = Encoding.UTF8.GetString(buffer, 0, size);
-                Console.WriteLine(str);
+                Console.WriteLine("Recv:" + str);
+#endif
                 streamParser.Write(buffer, 0, size);
                 BeginRead();
             }
