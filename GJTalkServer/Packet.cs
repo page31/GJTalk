@@ -360,7 +360,7 @@ namespace GJTalkServer
 
         void ProcessSubscribeRequest(XmppBase.Presence presence)
         {
-            var session = Server.SessionManager.GetSession(JIDEscaping.Unescape(presence.To));
+            var session = Server.SessionManager.GetSession(presence.To);
             if (session == null)
                 Server.OfflineMessageManager.PutPresence(presence);
             else

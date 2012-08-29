@@ -7,9 +7,8 @@ CLoginFrame::CLoginFrame(GJContext *context)
 	:CGJContextWnd(context),m_pEditPassword(NULL),
 	m_pEditUser(NULL)
 {  
-	context->m_pLoginFrame=this;
-	m_pContext->m_pTrayIcon->ShowIcon();
-	m_pContext->m_pTrayIcon->SetIcon(IDR_MAINFRAME);
+	context->m_pLoginFrame=this; 
+	/*m_pContext->m_pTrayIcon->SetIcon(IDR_MAINFRAME);*/
 	this->SetCaptionText(m_pContext->GetAppName());
 	this->Create(NULL,m_pContext->GetAppName(),UI_WNDSTYLE_FRAME^WS_THICKFRAME,UI_WNDSTYLE_EX_FRAME); 
 }
@@ -86,9 +85,9 @@ void CLoginFrame::OnDisconnected(ConnectionError error)
 void CLoginFrame::Notify(TNotifyUI& msg)
 {
 
+	CGJWnd::Notify(msg);
 	if(msg.pSender)
 	{
-		CGJWnd::Notify(msg);
 		CStdString strName=msg.pSender->GetName();
 		if(msg.pSender==m_pLnkReg||msg.pSender==m_pLnkForgotPwd)
 		{
@@ -143,19 +142,21 @@ void CLoginFrame::Notify(TNotifyUI& msg)
 				this);
 
 		}
+	} 
+
+	if(msg.sType==_T("close"))
+	{
+		if(!m_pContext->IsSignedIn())
+			::PostQuitMessage(0);
 	}
-	else
-	{   
-		if(msg.sType==_T("close"))
-		{
-			if(!m_pContext->IsSignedIn())
-				::PostQuitMessage(0);
-		}
-		else if(msg.sType==_T("final"))
-		{
-			m_pContext->OnWindowDestroyed(this);
-		}
+	else if(msg.sType==_T("final"))
+	{
+		m_pContext->OnWindowDestroyed(this);
 	}
+	else if(msg.sType==_T("windowinit"))
+	{
+		m_pContext->m_pTrayIcon->ShowIcon();
+	} 
 }
 
 CLoginFrame::~CLoginFrame(void)

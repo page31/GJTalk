@@ -518,7 +518,7 @@ void CMainFrame::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 		}
 		else if(itemName==_T("menu_buddy_delete"))
 		{
-
+			GetContext()->GetClient()->rosterManager()->remove(pItem->GetJid());
 		}
 	}
 	else if(id==IDM_STATUS)

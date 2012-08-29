@@ -347,7 +347,7 @@ namespace GJTalkServer
                     Send(msg);
                 }
             }
-            var offlineSubscriptions = server.OfflineMessageManager.GetPresence(null, SessionUser.Username, PresenceType.subscribe, true);
+            var offlineSubscriptions = server.OfflineMessageManager.GetPresence(null, SessionUser.Username, null, true);
             if (offlineSubscriptions != null)
             {
                 foreach (var sub in offlineSubscriptions)

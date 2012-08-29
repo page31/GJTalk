@@ -6,12 +6,13 @@
 #include "TrayIcon.h" 
 
 // CTrayIcon
-const UINT CTrayIcon::m_nTimerID    = 4567;
+const UINT CTrayIcon::m_nFlashTimerID = 4001;
+const UINT CTrayIcon::m_nTimerID    = 4002; 
 UINT CTrayIcon::m_nMaxTooltipLength  = 64;
 
 IMPLEMENT_DYNAMIC(CTrayIcon, CWnd)
 
-	CTrayIcon::CTrayIcon()
+	CTrayIcon::CTrayIcon():m_bFlash(false)
 {
 	this->Initialise(); 
 	CWnd::CreateEx(0, AfxRegisterWndClass(0),_T(""), WS_POPUP, 0,0,0,0, NULL, 0);
@@ -20,7 +21,7 @@ IMPLEMENT_DYNAMIC(CTrayIcon, CWnd)
 
 	int cx=GetSystemMetrics(SM_CXSMICON);
 	int cy=GetSystemMetrics(SM_CYSMICON);
-	 
+
 	m_tnd.hIcon=(HICON)LoadImage(AfxGetInstanceHandle(),
 		MAKEINTRESOURCE(IDR_MAINFRAME),IMAGE_ICON,
 		cx,cy,LR_SHARED);
@@ -113,11 +114,14 @@ bool CTrayIcon::AddIcon()
 
 	if (m_bEnabled)
 	{
+		HICON hIcon=m_tnd.hIcon;
 		m_tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 		if (!Shell_NotifyIcon(NIM_ADD, &m_tnd))
 			m_bShowIconPending = TRUE;
 		else
 			m_bRemoved = m_bHidden = FALSE;
+		/*SetIcon((HICON)NULL);
+		SetIcon(hIcon); */
 	}
 	return (m_bRemoved == FALSE);
 }
@@ -421,20 +425,44 @@ LRESULT CTrayIcon::OnTrayNotification(UINT wParam, LONG lParam)
 	}
 	return 1;
 }
+void CTrayIcon::StartFlash( int interval/*=1000*/ )
+{
+	StopFlash();
+	m_hSavedIcon=GetIcon();
+	m_uIDFlashTimer=SetTimer(m_nFlashTimerID,interval,NULL);
+}
+
+void CTrayIcon::StopFlash()
+{
+	m_bFlash=false;
+	KillTimer(m_uIDFlashTimer);
+	if(m_hSavedIcon)
+		SetIcon(m_hSavedIcon);
+	m_hSavedIcon=NULL;
+}
+
+
 void CTrayIcon::OnTimer(UINT nIDEvent) 
 {
-	if (nIDEvent != m_uIDTimer) 
-		return; 
-	COleDateTime CurrentTime = COleDateTime::GetCurrentTime();
-	COleDateTimeSpan period = CurrentTime - m_StartTime;
 
-	if (m_nAnimationPeriod > 0 && m_nAnimationPeriod < period.GetTotalSeconds())
+	if (nIDEvent == m_uIDTimer) 
+	{ 
+		COleDateTime CurrentTime = COleDateTime::GetCurrentTime();
+		COleDateTimeSpan period = CurrentTime - m_StartTime;
+
+		if (m_nAnimationPeriod > 0 && m_nAnimationPeriod < period.GetTotalSeconds())
+		{
+			StopAnimation();
+			return;
+		} 
+		StepAnimation();
+	}
+	else if(nIDEvent==m_nFlashTimerID)
 	{
-		StopAnimation();
-		return;
-	} 
-	StepAnimation();
+		SetIcon(GetIcon()==m_hSavedIcon?NULL:m_hSavedIcon);
+	}
 }
+
 ////
 BEGIN_MESSAGE_MAP(CTrayIcon, CWnd)
 	ON_WM_TIMER()

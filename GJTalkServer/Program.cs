@@ -55,7 +55,7 @@ namespace GJTalkServer
             presence.From = user + "@gjtalk.com";
             presence.Status = status;
             presence.Show = (Matrix.Xmpp.Show)Enum.Parse(typeof(Matrix.Xmpp.Show), show);
-           
+
             var friends = FriendshipManager.Instance.GetAllBuddy(user);
 
             foreach (var friend in friends)
@@ -101,6 +101,19 @@ namespace GJTalkServer
         static void Main(string[] args)
         {
             SetEnv();
+
+            Console.WriteLine("Check if mongoDB is online...");
+            if (!MongoDbHelper.IsOnline())
+            {
+                Console.WriteLine("mongoDB isn't online.");
+                Console.WriteLine("Starting mongoDB.");
+                MongoDbHelper.CheckAndRun();
+            }
+            else
+            {
+                Console.WriteLine("mongoDB is online.");
+            }
+
             new Test().Start();
             server = new GJTalkServer();
             server.Start();

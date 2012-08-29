@@ -64,6 +64,7 @@
     <Compile Include="HeaderManager.cs" />
     <Compile Include="JIDEscaping.cs" />
     <Compile Include="MessageMangaer.cs" />
+    <Compile Include="MongoDbHelper.cs" />
     <Compile Include="OfflineMessageItem.cs" />
     <Compile Include="OfflineMessageManager.cs" />
     <Compile Include="Packet.cs" />

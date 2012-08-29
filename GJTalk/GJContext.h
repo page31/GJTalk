@@ -23,6 +23,7 @@
 #include "HeaderManager.h"
 #include "SearchFrame.h"
 #include "MenuWnd.h"
+#include "../xmpp/rosterlistener.h"
 
 using namespace std;
 using namespace gloox;
@@ -64,7 +65,7 @@ class GJContext:
 	public IqHandler,
 	public VCardHandler,
 	public IMenuCallbackUI,
-	public SubscriptionHandler
+	public RosterListener
 
 {
 public:
@@ -155,7 +156,30 @@ public:
 
 
 	void OnSubscriptionRequest(const SubscriptionRequest &request);
-	virtual void handleSubscription( const Subscription& subscription );
+
+	virtual void handleItemAdded( const JID& jid );
+
+	virtual void handleItemSubscribed( const JID& jid );
+
+	virtual void handleItemRemoved( const JID& jid );
+
+	virtual void handleItemUpdated( const JID& jid );
+
+	virtual void handleItemUnsubscribed( const JID& jid );
+
+	virtual void handleRoster( const Roster& roster );
+
+	virtual void handleRosterPresence( const RosterItem& item, const std::string& resource, Presence::PresenceType presence, const std::string& msg );
+
+	virtual void handleSelfPresence( const RosterItem& item, const std::string& resource, Presence::PresenceType presence, const std::string& msg );
+
+	virtual bool handleSubscriptionRequest( const JID& jid, const std::string& msg );
+
+	virtual bool handleUnsubscriptionRequest( const JID& jid, const std::string& msg );
+
+	virtual void handleNonrosterPresence( const Presence& presence );
+
+	virtual void handleRosterError( const IQ& iq );
 
 };
 

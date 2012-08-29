@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJTalkServer", "GJTalkServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GJTalkServerPressureTest", "..\GJTalkServerPressureTest\GJTalkServerPressureTest.csproj", "{5AAB8D4E-5201-407B-852E-2AF92432F307}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerUnitTest", "..\ServerUnitTest\ServerUnitTest.csproj", "{F5A3598B-6998-410B-BB1E-4D01EA077B27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AAB8D4E-5201-407B-852E-2AF92432F307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5A3598B-6998-410B-BB1E-4D01EA077B27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5A3598B-6998-410B-BB1E-4D01EA077B27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5A3598B-6998-410B-BB1E-4D01EA077B27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5A3598B-6998-410B-BB1E-4D01EA077B27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

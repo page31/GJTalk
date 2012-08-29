@@ -12,6 +12,10 @@ class CTrayIcon : public CWnd
 protected:
 	TrayIconListenerList m_listeners;
 
+private:
+	bool	m_bFlash;
+
+
 public:
 
 
@@ -23,6 +27,8 @@ public:
 	void AddListener(  ITrayIconListener *const listener);
 	void RemoveListener(  ITrayIconListener *const listener);
 
+	void StartFlash(int interval=500);
+	void StopFlash();
 
 	bool Enabled() { return m_bEnabled; }
 	bool Visible() { return !m_bHidden; } 
@@ -71,6 +77,7 @@ protected:
 
 	CArray<HICON, HICON> m_IconList;
 	UINT_PTR     m_uIDTimer;
+	UINT_PTR m_uIDFlashTimer;
 	INT_PTR      m_nCurrentIcon;
 	COleDateTime m_StartTime;
 	UINT         m_nAnimationPeriod;
@@ -80,6 +87,7 @@ protected:
 	UINT         m_uCreationFlags;
 
 	static const UINT m_nTimerID;
+	static const UINT m_nFlashTimerID; 
 	static UINT  m_nMaxTooltipLength;
 	DECLARE_MESSAGE_MAP()
 };

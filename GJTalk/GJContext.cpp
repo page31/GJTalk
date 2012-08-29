@@ -43,7 +43,7 @@ GJContext::GJContext(void)
 	m_SessionManager.SetContext(this);
 	m_pTrayIcon=new CTrayIcon();
 	m_pTrayIcon->AddListener(this);
-	m_pTrayIcon->SetTooltipText(this->GetAppName()); 
+	m_pTrayIcon->SetTooltipText(this->GetAppName());  
 	m_pSearchFrame=new CSearchFrame(this);
 }
 
@@ -167,7 +167,7 @@ bool GJContext::SignIn(LPCTSTR username,LPCTSTR password,CLoginFrame *loginFrame
 			m_pClient->registerConnectionListener(this);
 			m_pClient->registerIqHandler(this,0);
 			m_pClient->registerMessageHandler(this);
-			m_pClient->registerSubscriptionHandler(this);
+			m_pClient->rosterManager()->registerRosterListener(this,false);
 			bOk= m_pClient->connect(false);
 
 		}
@@ -375,16 +375,7 @@ void GJContext::OnMenu( CMenuWnd *pMenu,CControlUI* pSender,LPCTSTR sType )
 	}
 }
 
-void GJContext::handleSubscription( const Subscription& subscription )
-{ 
-	SubscriptionRequest request;
-	
-	if(subscription.subtype()==Subscription::Subscribed)
-		return;
-	request.from=subscription.from();
-	request.msg=utf8dec(subscription.status());
-	OnSubscriptionRequest(request);
-}
+
 
 void GJContext::OnSubscriptionRequest( const SubscriptionRequest &request )
 {
@@ -398,4 +389,73 @@ void GJContext::OnSubscriptionRequest( const SubscriptionRequest &request )
 	frame->SetSubscription(request);
 	frame->CenterWindow();
 	frame->ShowWindow(); 
+}
+
+void GJContext::handleItemAdded( const JID& jid )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleItemSubscribed( const JID& jid ) //TODO:
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleItemRemoved( const JID& jid )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleItemUpdated( const JID& jid )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleItemUnsubscribed( const JID& jid ) //TODO:
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleRoster( const Roster& roster )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleRosterPresence( const RosterItem& item, const std::string& resource, Presence::PresenceType presence, const std::string& msg )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleSelfPresence( const RosterItem& item, const std::string& resource, Presence::PresenceType presence, const std::string& msg ) //TODO:
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+bool GJContext::handleSubscriptionRequest( const JID& jid, const std::string& msg )
+{
+	if(GetClient()&&GetClient()->rosterManager()->getRosterItem(jid))
+	{
+		GetClient()->rosterManager()->ackSubscriptionRequest(jid,true);
+	}
+	SubscriptionRequest request; 
+	request.from=jid;
+	request.msg=utf8dec(msg);
+	OnSubscriptionRequest(request);
+	return false;
+}
+
+bool GJContext::handleUnsubscriptionRequest( const JID& jid, const std::string& msg )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+	return true;
+}
+
+void GJContext::handleNonrosterPresence( const Presence& presence )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
+}
+
+void GJContext::handleRosterError( const IQ& iq )
+{
+	/*throw std::exception("The method or operation is not implemented.");*/
 }
